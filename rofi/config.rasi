@@ -1,0 +1,42 @@
+// Портативный конфиг rofi (DOT-3).
+@import "colors.rasi"
+
+configuration {
+    modi: "drun,run,window";
+    show-icons: true;
+    font: "monospace 12";
+}
+
+window {
+    background-color: @background;
+    text-color: @foreground;
+    border: 2px;
+    border-color: @accent;
+    border-radius: 6px;
+    width: 40%;
+}
+
+mainbox {
+    background-color: @background;
+}
+
+inputbar {
+    background-color: @black;
+    text-color: @foreground;
+    padding: 8px;
+}
+
+listview {
+    background-color: @background;
+    lines: 8;
+}
+
+element {
+    padding: 6px;
+    text-color: @foreground;
+}
+
+element selected {
+    background-color: @accent;
+    text-color: @background;
+}

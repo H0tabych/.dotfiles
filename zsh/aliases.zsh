@@ -1,0 +1,7 @@
+alias ls='ls --color=auto'
+alias ll='ls -lh'
+alias la='ls -lah'
+alias grep='grep --color=auto'
+alias ..='cd ..'
+alias ...='cd ../..'
+alias g='git'

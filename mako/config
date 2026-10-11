@@ -1,0 +1,26 @@
+# Сгенерировано theme/gen/generate.sh из theme/palette.toml (цвета) + статическая часть ниже.
+# Не редактируйте цвета здесь — правьте theme/palette.toml и перегенерируйте.
+
+sort=-time
+layer=overlay
+anchor=top-right
+width=320
+height=120
+margin=10
+padding=12
+border-size=2
+border-radius=8
+default-timeout=5000
+ignore-timeout=false
+
+background-color=#1e1e2e
+text-color=#cdd6f4
+border-color=#8caaee
+progress-color=over #8caaee
+
+[urgency=low]
+border-color=#45475a
+
+[urgency=critical]
+border-color=#e78284
+default-timeout=0

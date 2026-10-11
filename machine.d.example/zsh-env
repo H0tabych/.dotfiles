@@ -1,0 +1,4 @@
+# Заглушка машинного слоя (DOT-5): переменные окружения шелла, специфичные для хоста.
+# Реальный файл — ~/.config/machine.d/zsh-env, не коммитится.
+# export EDITOR=nvim
+# export PATH="$HOME/.local/bin:$PATH"

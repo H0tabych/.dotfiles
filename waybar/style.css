@@ -1,0 +1,37 @@
+@import url("colors.css");
+
+* {
+    font-family: monospace;
+    font-size: 13px;
+    min-height: 0;
+}
+
+window#waybar {
+    background-color: @background;
+    color: @foreground;
+}
+
+#workspaces button {
+    padding: 0 8px;
+    color: @foreground;
+}
+
+#workspaces button.active {
+    color: @accent;
+}
+
+#clock,
+#battery,
+#network,
+#pulseaudio,
+#tray {
+    padding: 0 10px;
+}
+
+#battery.warning {
+    color: @yellow;
+}
+
+#battery.critical {
+    color: @red;
+}

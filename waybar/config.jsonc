@@ -1,0 +1,38 @@
+// Портативный конфиг waybar (DOT-3). Батарея/мониторы — автоопределение waybar,
+// машинный слой не требуется (DOT-5: include нужен только там, где без него нельзя).
+{
+    "layer": "top",
+    "position": "top",
+    "height": 30,
+    "spacing": 4,
+
+    "modules-left": ["hyprland/workspaces"],
+    "modules-center": ["clock"],
+    "modules-right": ["pulseaudio", "network", "battery", "tray"],
+
+    "hyprland/workspaces": {
+        "format": "{icon}",
+        "format-icons": { "default": "", "active": "" }
+    },
+    "clock": {
+        "format": "{:%H:%M  %d.%m.%Y}"
+    },
+    "battery": {
+        "format": "{capacity}% {icon}",
+        "format-icons": ["", "", "", "", ""],
+        "format-charging": "{capacity}% "
+    },
+    "network": {
+        "format-wifi": "{essid} ",
+        "format-ethernet": "eth ",
+        "format-disconnected": "disconnected"
+    },
+    "pulseaudio": {
+        "format": "{volume}% {icon}",
+        "format-muted": "muted",
+        "format-icons": { "default": ["", "", ""] }
+    },
+    "tray": {
+        "spacing": 8
+    }
+}

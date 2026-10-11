@@ -1,0 +1,12 @@
+/* Сгенерировано theme/gen/generate.sh из theme/palette.toml — не редактируйте руками. */
+@define-color background #1e1e2e;
+@define-color foreground #cdd6f4;
+@define-color accent #8caaee;
+@define-color black #45475a;
+@define-color red #e78284;
+@define-color green #a6d189;
+@define-color yellow #e5c890;
+@define-color blue #8caaee;
+@define-color magenta #f4b8e4;
+@define-color cyan #81c8be;
+@define-color white #b5bfe2;

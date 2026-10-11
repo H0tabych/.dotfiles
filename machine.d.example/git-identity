@@ -1,0 +1,5 @@
+# Заглушка машинного слоя (DOT-5). Реальный файл создаёт Nix/install.sh
+# в ~/.config/machine.d/git-identity — не коммитится в dotfiles (SEC-10).
+[user]
+    name = <Имя>
+    email = <email>

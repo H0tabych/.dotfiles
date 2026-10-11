@@ -1,0 +1,28 @@
+# Единственный источник палитры (DOT-9).
+# Правьте значения здесь, затем выполните theme/gen/generate.sh —
+# он перегенерирует colors.* во всех каталогах приложений.
+# nixos-config читает только этот файл (без секции generated ниже).
+
+[colors]
+background      = "#1e1e2e"
+foreground      = "#cdd6f4"
+cursor          = "#f5e0dc"
+accent          = "#8caaee"
+
+black           = "#45475a"
+red             = "#e78284"
+green           = "#a6d189"
+yellow          = "#e5c890"
+blue            = "#8caaee"
+magenta         = "#f4b8e4"
+cyan            = "#81c8be"
+white           = "#b5bfe2"
+
+bright_black    = "#626880"
+bright_red      = "#ea999c"
+bright_green    = "#c1e1a6"
+bright_yellow   = "#e9d6a4"
+bright_blue     = "#a5c8ff"
+bright_magenta  = "#f2bbe0"
+bright_cyan     = "#a4d8d1"
+bright_white    = "#c6cbf2"

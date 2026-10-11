@@ -1,0 +1,24 @@
+# Портативный конфиг git (DOT-3). Identity (имя/почта — SEC-10) — не здесь,
+# а в машинном слое: ~/.config/machine.d/git-identity (DOT-5, заглушка — machine.d.example/).
+
+[include]
+    path = ~/.config/machine.d/git-identity
+
+[init]
+    defaultBranch = main
+
+[pull]
+    rebase = false
+
+[core]
+    editor = nvim
+    autocrlf = input
+
+[color]
+    ui = auto
+
+[alias]
+    st = status
+    co = checkout
+    br = branch
+    lg = log --oneline --graph --decorate

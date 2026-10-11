@@ -1,0 +1,32 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  checks:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: shellcheck
+        run: |
+          for f in $(find . -name '*.sh' -not -path './.git/*'); do
+            shellcheck "$f"
+          done
+
+      - name: bash syntax
+        run: |
+          for f in $(find . -name '*.sh' -not -path './.git/*'); do
+            bash -n "$f"
+          done
+
+      - name: scan-forbidden (DOT-1, SEC-10)
+        run: bash checks/scan-forbidden.sh
+
+      - name: palette regenerated (DOT-9)
+        run: |
+          bash theme/gen/generate.sh
+          git diff --exit-code -- '*/colors.*' '*/config' '*/theme.toml' \
+            || { echo 'colors.* не соответствуют palette.toml — перегенерируйте и закоммитьте'; exit 1; }

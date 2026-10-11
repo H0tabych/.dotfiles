@@ -1,0 +1,70 @@
+# Сгенерировано theme/gen/generate.sh из theme/palette.toml — не редактируйте руками.
+
+[manager]
+cwd = { fg = "#8caaee" }
+
+hovered         = { reversed = true }
+preview_hovered = { underline = true }
+
+find_keyword  = { fg = "#e5c890", italic = true }
+find_position = { fg = "#f4b8e4", bg = "reset", italic = true }
+
+marker_copied   = { fg = "#a6d189", bg = "#a6d189" }
+marker_cut      = { fg = "#e78284", bg = "#e78284" }
+marker_marked   = { fg = "#8caaee", bg = "#8caaee" }
+marker_selected = { fg = "#8caaee", bg = "#8caaee" }
+
+tab_active   = { fg = "#1e1e2e", bg = "#8caaee" }
+tab_inactive = { fg = "#cdd6f4", bg = "#45475a" }
+
+border_symbol = "│"
+border_style  = { fg = "#45475a" }
+
+[status]
+separator_open  = ""
+separator_close = ""
+
+mode_normal = { fg = "#1e1e2e", bg = "#8caaee", bold = true }
+mode_select = { fg = "#1e1e2e", bg = "#a6d189", bold = true }
+mode_unset  = { fg = "#1e1e2e", bg = "#f4b8e4", bold = true }
+
+progress_label  = { fg = "#cdd6f4", bold = true }
+progress_normal = { fg = "#8caaee", bg = "#45475a" }
+progress_error  = { fg = "#e78284", bg = "#45475a" }
+
+permissions_t = { fg = "#8caaee" }
+permissions_r = { fg = "#e5c890" }
+permissions_w = { fg = "#e78284" }
+permissions_x = { fg = "#a6d189" }
+permissions_s = { fg = "#45475a" }
+
+[input]
+border   = { fg = "#8caaee" }
+title    = {}
+value    = {}
+selected = { reversed = true }
+
+[select]
+border = { fg = "#8caaee" }
+active = { fg = "#8caaee" }
+inactive = {}
+
+[tasks]
+border  = { fg = "#8caaee" }
+title   = {}
+hovered = { underline = true }
+
+[which]
+mask            = { bg = "#1e1e2e" }
+cand            = { fg = "#81c8be" }
+rest            = { fg = "#45475a" }
+desc            = { fg = "#8caaee" }
+separator       = "  "
+separator_style = { fg = "#45475a" }
+
+[help]
+on      = { fg = "#81c8be" }
+run     = { fg = "#8caaee" }
+desc    = { fg = "#45475a" }
+hovered = { bg = "#45475a", bold = true }
+footer  = { fg = "#cdd6f4", bg = "#45475a" }

@@ -1,0 +1,13 @@
+# Портативная раскладка клавиш yazi (DOT-3). Минимальный набор сверх умолчаний yazi.
+
+[[manager.prepend_keymap]]
+on = ["g", "g"]
+run = "arrow top"
+
+[[manager.prepend_keymap]]
+on = ["G"]
+run = "arrow bottom"
+
+[[manager.prepend_keymap]]
+on = ["<C-a>"]
+run = "toggle_all"
