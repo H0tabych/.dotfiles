@@ -12,7 +12,7 @@ setopt interactive_comments
 
 autoload -Uz compinit && compinit -d "${XDG_CACHE_HOME:-$HOME/.cache}/zsh/zcompdump"
 
-source "${0:h}/aliases.zsh"
+source "$ZDOTDIR/aliases.zsh"
 
 PROMPT='%F{blue}%~%f %# '
 
