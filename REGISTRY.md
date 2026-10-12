@@ -27,7 +27,8 @@
 
 `machine.d.example/` — заглушки для `~/.config/machine.d/*`, который создаёт Nix/`install.sh`
 и который не коммитится (DOT-5). Сейчас используется для: `git-identity` (имя/почта, SEC-10),
-`zsh-env` (переменные окружения шелла), `hypr-monitors.conf` (описание мониторов).
+`zsh-env` (переменные окружения шелла), `hypr-monitors.conf` (описание мониторов),
+`hypr-input.conf` (раскладка клавиатуры, DESK-7).
 
 ## Статус
 
