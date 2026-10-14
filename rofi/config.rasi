@@ -38,5 +38,5 @@ element {
 
 element selected {
     background-color: @accent;
-    text-color: @on_accent;
+    text-color: @on-accent;
 }

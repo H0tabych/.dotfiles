@@ -13,8 +13,8 @@
     text:     #DCE7EC;
 
     accent:      #7FD6B0;
-    accent_warm: #F2A988;
-    on_accent:   #070D12;
+    accent-warm: #F2A988;
+    on-accent:   #070D12;
 
     success: #B5DB86;
     warning: #F0B86E;
