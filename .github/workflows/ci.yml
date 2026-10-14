@@ -25,8 +25,11 @@ jobs:
       - name: scan-forbidden (DOT-1, SEC-10)
         run: bash checks/scan-forbidden.sh
 
+      - name: palette checks (DSN-A1, DSN-A2, DSN-TOK-3)
+        run: python3 theme/gen/gen.py --check
+
       - name: palette regenerated (DOT-9)
         run: |
-          bash theme/gen/generate.sh
-          git diff --exit-code -- '*/colors.*' '*/config' '*/theme.toml' \
-            || { echo 'colors.* не соответствуют palette.toml — перегенерируйте и закоммитьте'; exit 1; }
+          python3 theme/gen/gen.py
+          git diff --exit-code -- '*/colors.*' 'hypr/colors.conf' 'mako/config' '*/theme.toml' \
+            || { echo 'сгенерированные файлы не соответствуют palette.toml — перегенерируйте и закоммитьте'; exit 1; }

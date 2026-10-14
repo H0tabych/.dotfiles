@@ -1,23 +1,37 @@
--- Сгенерировано theme/gen/generate.sh из theme/palette.toml — не редактируйте руками.
 return {
-  background     = "__background__",
-  foreground     = "__foreground__",
-  cursor         = "__cursor__",
-  accent         = "__accent__",
-  black          = "__black__",
-  red            = "__red__",
-  green          = "__green__",
-  yellow         = "__yellow__",
-  blue           = "__blue__",
-  magenta        = "__magenta__",
-  cyan           = "__cyan__",
-  white          = "__white__",
-  bright_black   = "__bright_black__",
-  bright_red     = "__bright_red__",
-  bright_green   = "__bright_green__",
-  bright_yellow  = "__bright_yellow__",
-  bright_blue    = "__bright_blue__",
-  bright_magenta = "__bright_magenta__",
-  bright_cyan    = "__bright_cyan__",
-  bright_white   = "__bright_white__",
+  crust    = "${crust}",
+  mantle   = "${mantle}",
+  base     = "${base}",
+  surface0 = "${surface0}",
+  surface1 = "${surface1}",
+  surface2 = "${surface2}",
+  overlay0 = "${overlay0}",
+  overlay1 = "${overlay1}",
+  subtext0 = "${subtext0}",
+  subtext1 = "${subtext1}",
+  text     = "${text}",
+
+  accent      = "${accent}",
+  accent_warm = "${accent_warm}",
+  on_accent   = "${on_accent}",
+
+  success = "${success}",
+  warning = "${warning}",
+  error   = "${error}",
+  info    = "${info}",
+  special = "${special}",
+  teal    = "${teal}",
+
+  selection = "${selection}",
+
+  ansi = {
+    regular = {
+      "${ansi_regular_0}", "${ansi_regular_1}", "${ansi_regular_2}", "${ansi_regular_3}",
+      "${ansi_regular_4}", "${ansi_regular_5}", "${ansi_regular_6}", "${ansi_regular_7}",
+    },
+    bright = {
+      "${ansi_bright_0}", "${ansi_bright_1}", "${ansi_bright_2}", "${ansi_bright_3}",
+      "${ansi_bright_4}", "${ansi_bright_5}", "${ansi_bright_6}", "${ansi_bright_7}",
+    },
+  },
 }

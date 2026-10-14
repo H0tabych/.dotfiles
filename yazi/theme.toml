@@ -1,70 +1,69 @@
-# Сгенерировано theme/gen/generate.sh из theme/palette.toml — не редактируйте руками.
-
+# Сгенерировано theme/gen/gen.py из theme/palette.toml (вариант tree, профиль ac) — не редактируйте
 [manager]
-cwd = { fg = "#8caaee" }
+cwd = { fg = "#7FD6B0" }
 
 hovered         = { reversed = true }
 preview_hovered = { underline = true }
 
-find_keyword  = { fg = "#e5c890", italic = true }
-find_position = { fg = "#f4b8e4", bg = "reset", italic = true }
+find_keyword  = { fg = "#F0B86E", italic = true }
+find_position = { fg = "#B49AE8", bg = "reset", italic = true }
 
-marker_copied   = { fg = "#a6d189", bg = "#a6d189" }
-marker_cut      = { fg = "#e78284", bg = "#e78284" }
-marker_marked   = { fg = "#8caaee", bg = "#8caaee" }
-marker_selected = { fg = "#8caaee", bg = "#8caaee" }
+marker_copied   = { fg = "#B5DB86", bg = "#B5DB86" }
+marker_cut      = { fg = "#F0817F", bg = "#F0817F" }
+marker_marked   = { fg = "#7AAEEA", bg = "#7AAEEA" }
+marker_selected = { fg = "#7FD6B0", bg = "#7FD6B0" }
 
-tab_active   = { fg = "#1e1e2e", bg = "#8caaee" }
-tab_inactive = { fg = "#cdd6f4", bg = "#45475a" }
+tab_active   = { fg = "#0E1A22", bg = "#7FD6B0" }
+tab_inactive = { fg = "#DCE7EC", bg = "#1F313D" }
 
 border_symbol = "│"
-border_style  = { fg = "#45475a" }
+border_style  = { fg = "#1F313D" }
 
 [status]
 separator_open  = ""
 separator_close = ""
 
-mode_normal = { fg = "#1e1e2e", bg = "#8caaee", bold = true }
-mode_select = { fg = "#1e1e2e", bg = "#a6d189", bold = true }
-mode_unset  = { fg = "#1e1e2e", bg = "#f4b8e4", bold = true }
+mode_normal = { fg = "#0E1A22", bg = "#7FD6B0", bold = true }
+mode_select = { fg = "#0E1A22", bg = "#B5DB86", bold = true }
+mode_unset  = { fg = "#0E1A22", bg = "#B49AE8", bold = true }
 
-progress_label  = { fg = "#cdd6f4", bold = true }
-progress_normal = { fg = "#8caaee", bg = "#45475a" }
-progress_error  = { fg = "#e78284", bg = "#45475a" }
+progress_label  = { fg = "#DCE7EC", bold = true }
+progress_normal = { fg = "#7FD6B0", bg = "#1F313D" }
+progress_error  = { fg = "#F0817F", bg = "#1F313D" }
 
-permissions_t = { fg = "#8caaee" }
-permissions_r = { fg = "#e5c890" }
-permissions_w = { fg = "#e78284" }
-permissions_x = { fg = "#a6d189" }
-permissions_s = { fg = "#45475a" }
+permissions_t = { fg = "#7AAEEA" }
+permissions_r = { fg = "#F0B86E" }
+permissions_w = { fg = "#F0817F" }
+permissions_x = { fg = "#B5DB86" }
+permissions_s = { fg = "#1F313D" }
 
 [input]
-border   = { fg = "#8caaee" }
+border   = { fg = "#7FD6B0" }
 title    = {}
 value    = {}
 selected = { reversed = true }
 
 [select]
-border = { fg = "#8caaee" }
-active = { fg = "#8caaee" }
+border = { fg = "#7FD6B0" }
+active = { fg = "#7FD6B0" }
 inactive = {}
 
 [tasks]
-border  = { fg = "#8caaee" }
+border  = { fg = "#7FD6B0" }
 title   = {}
 hovered = { underline = true }
 
 [which]
-mask            = { bg = "#1e1e2e" }
-cand            = { fg = "#81c8be" }
-rest            = { fg = "#45475a" }
-desc            = { fg = "#8caaee" }
+mask            = { bg = "#0E1A22" }
+cand            = { fg = "#6CCFCB" }
+rest            = { fg = "#1F313D" }
+desc            = { fg = "#7FD6B0" }
 separator       = "  "
-separator_style = { fg = "#45475a" }
+separator_style = { fg = "#1F313D" }
 
 [help]
-on      = { fg = "#81c8be" }
-run     = { fg = "#8caaee" }
-desc    = { fg = "#45475a" }
-hovered = { bg = "#45475a", bold = true }
-footer  = { fg = "#cdd6f4", bg = "#45475a" }
+on      = { fg = "#6CCFCB" }
+run     = { fg = "#7FD6B0" }
+desc    = { fg = "#1F313D" }
+hovered = { bg = "#1F313D", bold = true }
+footer  = { fg = "#DCE7EC", bg = "#1F313D" }

@@ -7,13 +7,13 @@
 }
 
 window#waybar {
-    background-color: @background;
-    color: @foreground;
+    background-color: @base;
+    color: @text;
 }
 
 #workspaces button {
     padding: 0 8px;
-    color: @foreground;
+    color: @text;
 }
 
 #workspaces button.active {
@@ -29,9 +29,9 @@ window#waybar {
 }
 
 #battery.warning {
-    color: @yellow;
+    color: @warning;
 }
 
 #battery.critical {
-    color: @red;
+    color: @error;
 }

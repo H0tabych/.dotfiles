@@ -1,70 +1,68 @@
-# Сгенерировано theme/gen/generate.sh из theme/palette.toml — не редактируйте руками.
-
 [manager]
-cwd = { fg = "__accent__" }
+cwd = { fg = "${accent}" }
 
 hovered         = { reversed = true }
 preview_hovered = { underline = true }
 
-find_keyword  = { fg = "__yellow__", italic = true }
-find_position = { fg = "__magenta__", bg = "reset", italic = true }
+find_keyword  = { fg = "${warning}", italic = true }
+find_position = { fg = "${special}", bg = "reset", italic = true }
 
-marker_copied   = { fg = "__green__", bg = "__green__" }
-marker_cut      = { fg = "__red__", bg = "__red__" }
-marker_marked   = { fg = "__blue__", bg = "__blue__" }
-marker_selected = { fg = "__accent__", bg = "__accent__" }
+marker_copied   = { fg = "${success}", bg = "${success}" }
+marker_cut      = { fg = "${error}", bg = "${error}" }
+marker_marked   = { fg = "${info}", bg = "${info}" }
+marker_selected = { fg = "${accent}", bg = "${accent}" }
 
-tab_active   = { fg = "__background__", bg = "__accent__" }
-tab_inactive = { fg = "__foreground__", bg = "__black__" }
+tab_active   = { fg = "${base}", bg = "${accent}" }
+tab_inactive = { fg = "${text}", bg = "${surface1}" }
 
 border_symbol = "│"
-border_style  = { fg = "__black__" }
+border_style  = { fg = "${surface1}" }
 
 [status]
 separator_open  = ""
 separator_close = ""
 
-mode_normal = { fg = "__background__", bg = "__accent__", bold = true }
-mode_select = { fg = "__background__", bg = "__green__", bold = true }
-mode_unset  = { fg = "__background__", bg = "__magenta__", bold = true }
+mode_normal = { fg = "${base}", bg = "${accent}", bold = true }
+mode_select = { fg = "${base}", bg = "${success}", bold = true }
+mode_unset  = { fg = "${base}", bg = "${special}", bold = true }
 
-progress_label  = { fg = "__foreground__", bold = true }
-progress_normal = { fg = "__accent__", bg = "__black__" }
-progress_error  = { fg = "__red__", bg = "__black__" }
+progress_label  = { fg = "${text}", bold = true }
+progress_normal = { fg = "${accent}", bg = "${surface1}" }
+progress_error  = { fg = "${error}", bg = "${surface1}" }
 
-permissions_t = { fg = "__blue__" }
-permissions_r = { fg = "__yellow__" }
-permissions_w = { fg = "__red__" }
-permissions_x = { fg = "__green__" }
-permissions_s = { fg = "__black__" }
+permissions_t = { fg = "${info}" }
+permissions_r = { fg = "${warning}" }
+permissions_w = { fg = "${error}" }
+permissions_x = { fg = "${success}" }
+permissions_s = { fg = "${surface1}" }
 
 [input]
-border   = { fg = "__accent__" }
+border   = { fg = "${accent}" }
 title    = {}
 value    = {}
 selected = { reversed = true }
 
 [select]
-border = { fg = "__accent__" }
-active = { fg = "__accent__" }
+border = { fg = "${accent}" }
+active = { fg = "${accent}" }
 inactive = {}
 
 [tasks]
-border  = { fg = "__accent__" }
+border  = { fg = "${accent}" }
 title   = {}
 hovered = { underline = true }
 
 [which]
-mask            = { bg = "__background__" }
-cand            = { fg = "__cyan__" }
-rest            = { fg = "__black__" }
-desc            = { fg = "__accent__" }
+mask            = { bg = "${base}" }
+cand            = { fg = "${teal}" }
+rest            = { fg = "${surface1}" }
+desc            = { fg = "${accent}" }
 separator       = "  "
-separator_style = { fg = "__black__" }
+separator_style = { fg = "${surface1}" }
 
 [help]
-on      = { fg = "__cyan__" }
-run     = { fg = "__accent__" }
-desc    = { fg = "__black__" }
-hovered = { bg = "__black__", bold = true }
-footer  = { fg = "__foreground__", bg = "__black__" }
+on      = { fg = "${teal}" }
+run     = { fg = "${accent}" }
+desc    = { fg = "${surface1}" }
+hovered = { bg = "${surface1}", bold = true }
+footer  = { fg = "${text}", bg = "${surface1}" }

@@ -1,26 +1,25 @@
-# Сгенерировано theme/gen/generate.sh из theme/palette.toml (цвета) + статическая часть ниже.
-# Не редактируйте цвета здесь — правьте theme/palette.toml и перегенерируйте.
+# Сгенерировано theme/gen/gen.py из theme/palette.toml (вариант tree, профиль ac) — не редактируйте
+# Полная раскладка по зонам/уровням (L3/L5, критические уведомления) — DSN-S5.
 
 sort=-time
 layer=overlay
 anchor=top-right
-width=320
-height=120
+width=360
 margin=10
 padding=12
-border-size=2
-border-radius=8
-default-timeout=5000
+border-size=1
+border-radius=12
+default-timeout=6000
 ignore-timeout=false
 
-background-color=#1e1e2e
-text-color=#cdd6f4
-border-color=#8caaee
-progress-color=over #8caaee
+background-color=#0E1A22
+text-color=#DCE7EC
+border-color=#7FD6B0
+progress-color=over #7FD6B0
 
 [urgency=low]
-border-color=#45475a
+border-color=#4A6070
 
 [urgency=critical]
-border-color=#e78284
+border-color=#F0817F
 default-timeout=0

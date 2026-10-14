@@ -1,28 +1,94 @@
-# Единственный источник палитры (DOT-9).
-# Правьте значения здесь, затем выполните theme/gen/generate.sh —
-# он перегенерирует colors.* во всех каталогах приложений.
-# nixos-config читает только этот файл (без секции generated ниже).
+# theme/palette.toml — единственный источник дизайн-токенов (DOT-9, DSN-TOK-1).
+# Схема и генератор — docs/architecture/DESIGN_SYSTEM.md (Glass Tide),
+# Приложения S.1/S.2 в nixos-config. Правьте значения здесь, затем выполните
+# theme/gen/gen.py (без флагов — сгенерирует активный вариант, профиль ac;
+# --check — только проверки). Роли и пороги контраста — раздел 3 документа.
+schema = 2
+active = "tree"
 
-[colors]
-background      = "#1e1e2e"
-foreground      = "#cdd6f4"
-cursor          = "#f5e0dc"
-accent          = "#8caaee"
+[neutral]
+crust    = "#070D12"
+mantle   = "#0A141B"
+base     = "#0E1A22"
+surface0 = "#16252F"
+surface1 = "#1F313D"
+surface2 = "#2A3F4D"
+overlay0 = "#4A6070"
+overlay1 = "#839AA5"
+subtext0 = "#A6B7BF"
+subtext1 = "#BECAD0"
+text     = "#DCE7EC"
 
-black           = "#45475a"
-red             = "#e78284"
-green           = "#a6d189"
-yellow          = "#e5c890"
-blue            = "#8caaee"
-magenta         = "#f4b8e4"
-cyan            = "#81c8be"
-white           = "#b5bfe2"
+[semantic]
+success     = "#B5DB86"
+warning     = "#F0B86E"
+error       = "#F0817F"
+info        = "#7AAEEA"
+special     = "#B49AE8"
+teal        = "#6CCFCB"
+on_accent   = "#070D12"
+accent_warm = "#F2A988"
 
-bright_black    = "#626880"
-bright_red      = "#ea999c"
-bright_green    = "#c1e1a6"
-bright_yellow   = "#e9d6a4"
-bright_blue     = "#a5c8ff"
-bright_magenta  = "#f2bbe0"
-bright_cyan     = "#a4d8d1"
-bright_white    = "#c6cbf2"
+[ansi]
+regular = ["#1F313D", "#F0817F", "#B5DB86", "#F0B86E", "#7AAEEA", "#B49AE8", "#6CCFCB", "#BECAD0"]
+bright  = ["#839AA5", "#F79A97", "#C9E8A2", "#F6CC8E", "#98C3F2", "#C9B4F2", "#8EE0DB", "#DCE7EC"]
+
+[variant.tree]                         # обои «Дерево и планета»
+accent    = "#7FD6B0"
+icons     = "teal"
+wallpaper = { file = "tree-and-planet.jpg", sha256 = "e36c87f3f07224476280f02c7d7964331a5c98e7f1d1dc9a43eee187579d0f89" }
+# probe пересчитан theme/gen/probe.py по реальному файлу 2026-10-14 (реальные
+# значения близки к примеру из DESIGN_SYSTEM.md V.3 — тот же порядок величины)
+probe     = { screen = "#ABAB95", bar = "#0EA487", screen_sharp = "#FCFCDB", bar_sharp = "#0FFBCC" }
+
+[variant.forest]                       # обои «Лес и река»
+accent    = "#6CC6DD"
+icons     = "cyan"
+wallpaper = { file = "forest-river.jpg", sha256 = "f32b67d34ad952227182d8d7a93c6d47baaeb289318d8ebcbbe5225aec03f01b" }
+probe     = { screen = "#C6AE75", bar = "#0B1F31", screen_sharp = "#FCEDAD", bar_sharp = "#218D9E" }
+
+[glass]                                # тонировка уровней по профилям (DSN-MAT-2, раздел 9)
+# bar=0.82 вместо примерных 0.80 из DESIGN_SYSTEM.md V.1: на реальных обоях
+# (а не иллюстративном примере документа) overlay1 на полосе панели варианта
+# tree давал 4.46:1 при 0.80 (< 4.5:1, DSN-COL-4); пересчитано theme/gen/gen.py
+# --check по-настоящему, роль overlay1 не трогалась (DSN-P-1)
+ac      = { bar = 0.82, window = 0.88, popup = 0.90 }
+battery = { bar = 0.94, window = 1.00, popup = 0.94 }
+solid   = { bar = 1.00, window = 1.00, popup = 1.00 }
+game    = { bar = 0.94, window = 1.00, popup = 0.94 }
+rim     = 0.08
+
+[blur]
+ac = { enabled = true, size = 6, passes = 3, noise = 0.02, contrast = 0.9, brightness = 0.85, vibrancy = 0.15 }
+
+[font]
+ui      = "Inter"
+mono    = "JetBrains Mono"
+symbols = "Symbols Nerd Font Mono"
+size    = { sm = 10, md = 11, lg = 13, mono = 11, display = 72 }
+weight  = { body = 400, glass = 500, strong = 600 }
+line    = { ui = 1.4, mono = 1.0 }
+
+[shape]
+radius = { window = 12, control = 8, pill = 999 }
+gap    = { inner = 6, outer = 12 }
+border = { window = 2, rim = 1 }
+pad    = { term = [16, 12], notify = [12, 16], launcher = 12, pill = 8, item = [8, 12] }
+shadow = { range = 20, power = 3, active = 0.55, inactive = 0.30 }
+dim    = 0.08
+bar    = { width = 44, margin = [12, 0, 12, 8] }
+icon   = { bar = 16, list = 24 }
+cursor = 24
+
+[motion]
+curve = [0.22, 1.0, 0.36, 1.0]
+in_ms = 300
+out_ms = 180
+workspace_ms = 350
+fade_ms = 250
+battery_factor = 0.6
+
+[notify]
+width = 360
+max_visible = 3
+timeout_ms = 6000

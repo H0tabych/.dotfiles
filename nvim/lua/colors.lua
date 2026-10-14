@@ -1,23 +1,38 @@
--- Сгенерировано theme/gen/generate.sh из theme/palette.toml — не редактируйте руками.
+-- Сгенерировано theme/gen/gen.py из theme/palette.toml (вариант tree, профиль ac) — не редактируйте
 return {
-  background     = "#1e1e2e",
-  foreground     = "#cdd6f4",
-  cursor         = "#f5e0dc",
-  accent         = "#8caaee",
-  black          = "#45475a",
-  red            = "#e78284",
-  green          = "#a6d189",
-  yellow         = "#e5c890",
-  blue           = "#8caaee",
-  magenta        = "#f4b8e4",
-  cyan           = "#81c8be",
-  white          = "#b5bfe2",
-  bright_black   = "#626880",
-  bright_red     = "#ea999c",
-  bright_green   = "#c1e1a6",
-  bright_yellow  = "#e9d6a4",
-  bright_blue    = "#a5c8ff",
-  bright_magenta = "#f2bbe0",
-  bright_cyan    = "#a4d8d1",
-  bright_white   = "#c6cbf2",
+  crust    = "#070D12",
+  mantle   = "#0A141B",
+  base     = "#0E1A22",
+  surface0 = "#16252F",
+  surface1 = "#1F313D",
+  surface2 = "#2A3F4D",
+  overlay0 = "#4A6070",
+  overlay1 = "#839AA5",
+  subtext0 = "#A6B7BF",
+  subtext1 = "#BECAD0",
+  text     = "#DCE7EC",
+
+  accent      = "#7FD6B0",
+  accent_warm = "#F2A988",
+  on_accent   = "#070D12",
+
+  success = "#B5DB86",
+  warning = "#F0B86E",
+  error   = "#F0817F",
+  info    = "#7AAEEA",
+  special = "#B49AE8",
+  teal    = "#6CCFCB",
+
+  selection = "#2A3F4D",
+
+  ansi = {
+    regular = {
+      "#1F313D", "#F0817F", "#B5DB86", "#F0B86E",
+      "#7AAEEA", "#B49AE8", "#6CCFCB", "#BECAD0",
+    },
+    bright = {
+      "#839AA5", "#F79A97", "#C9E8A2", "#F6CC8E",
+      "#98C3F2", "#C9B4F2", "#8EE0DB", "#DCE7EC",
+    },
+  },
 }

@@ -1,12 +1,25 @@
-/* Сгенерировано theme/gen/generate.sh из theme/palette.toml — не редактируйте руками. */
-@define-color background #1e1e2e;
-@define-color foreground #cdd6f4;
-@define-color accent #8caaee;
-@define-color black #45475a;
-@define-color red #e78284;
-@define-color green #a6d189;
-@define-color yellow #e5c890;
-@define-color blue #8caaee;
-@define-color magenta #f4b8e4;
-@define-color cyan #81c8be;
-@define-color white #b5bfe2;
+/* Сгенерировано theme/gen/gen.py из theme/palette.toml (вариант tree, профиль ac) — не редактируйте */
+@define-color crust #070D12;
+@define-color mantle #0A141B;
+@define-color base #0E1A22;
+@define-color surface0 #16252F;
+@define-color surface1 #1F313D;
+@define-color surface2 #2A3F4D;
+@define-color overlay0 #4A6070;
+@define-color overlay1 #839AA5;
+@define-color subtext0 #A6B7BF;
+@define-color subtext1 #BECAD0;
+@define-color text #DCE7EC;
+
+@define-color accent #7FD6B0;
+@define-color accent_warm #F2A988;
+@define-color on_accent #070D12;
+
+@define-color success #B5DB86;
+@define-color warning #F0B86E;
+@define-color error #F0817F;
+@define-color info #7AAEEA;
+@define-color special #B49AE8;
+
+@define-color glass_bar alpha(@base, 0.82);
+@define-color glass_rim alpha(@text, 0.08);
