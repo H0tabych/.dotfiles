@@ -11,15 +11,20 @@ Python >= 3.11 (DESIGN_SYSTEM.md, Приложение S.2) — без внеш�
 
 Статус: DSN-S2 (R6.5) перенёс 7 существовавших потребителей; DSN-S4 (R6.7)
 добавил композитор (`hypr/theme.lua`, `hypr/effects.lua` — только профиль
-`ac`, PROFILE_EFFECTS). DSN-S5 (R6.8) добавил SwayOSD, обои (`hypr/theme.conf`,
-`hypr/hyprpaper.conf` — зависят только от варианта, не от профиля — L6/обои не
-тонируются по профилю, раздел 2.1) и per-profile файлы для waybar/rofi/swayosd
-(`theme-<профиль>.<ext>` + симлинк `theme.<ext>` без суффикса, PROFILED_DEST) —
-симлинк переставляет переключатель профиля DSN-S7 (R6.10), здесь генератор
-только создаёт начальный симлинк на профиль, который был сгенерирован. mako
-остаётся одним файлом без профильного суффикса (целиком, как и раньше) —
-переход `mako/config` на симлинк того же вида — тоже DSN-S7 (R6.10), когда
-появится сам переключатель и генерация остальных профилей.
+`ac`, PROFILE_EFFECTS). DSN-S5 (R6.8) добавил SwayOSD, `hypr/theme.conf`
+(роли цвета/шрифт для hyprlock — не зависит от профиля, L6 не тонируется,
+раздел 2.1) и per-profile файлы для waybar/rofi/swayosd (`theme-<профиль>.<ext>`
++ симлинк `theme.<ext>` без суффикса, PROFILED_DEST) — симлинк переставляет
+переключатель профиля DSN-S7 (R6.10), здесь генератор только создаёт начальный
+симлинк на профиль, который был сгенерирован. mako остаётся одним файлом без
+профильного суффикса (целиком, как и раньше) — переход `mako/config` на
+симлинк того же вида — тоже DSN-S7 (R6.10), когда появится сам переключатель
+и генерация остальных профилей.
+Обои (`hypr/hyprpaper.conf`, путь к файлу обоев) генератор НЕ пишет
+(исправление R6.8, 2026-10-15): hyprlang не резолвит необъявленную переменную
+как переменную окружения (ПРОВЕРЕНО на машине), абсолютный путь — факт
+установки (dotfiles.source пользователя), его собирает Nix
+(`modules/shell/dotfiles-link.nix` в nixos-config, machine.d/hypr-wallpaper.conf).
 Полная про-профильная генерация battery/solid/game и остальные потребители
 (starship, qt6ct, sddm-astronaut) — следующие шаги DSN-S6…DSN-S8 (R6.9–R6.11).
 """
@@ -49,17 +54,16 @@ GENERATED_HEADER = {
 # default for files without a recognised extension (mako config)
 DEFAULT_HEADER = "# Сгенерировано theme/gen/gen.py из theme/palette.toml (вариант {variant}, профиль {profile}) — не редактируйте\n"
 
-# tmpl filename -> путь назначения (не зависит от профиля: роли цвета, геометрия,
-# либо — hypr-theme-conf/hypr-hyprpaper-conf — обои варианта; L6 не тонируется
-# по профилю, раздел 2.1 DESIGN_SYSTEM.md, поэтому обои и экран блокировки вне
-# PROFILED_DEST).
+# tmpl filename -> путь назначения (не зависит от профиля: роли цвета, геометрия;
+# hypr-theme-conf — роли/шрифт для hyprlock, L6 не тонируется по профилю,
+# раздел 2.1 DESIGN_SYSTEM.md). Путь к файлу обоев сюда не входит — это факт
+# установки (dotfiles.source), его пишет Nix (modules/shell/dotfiles-link.nix).
 PLAIN_DEST = {
     "nvim-colors.lua.tmpl": "nvim/lua/colors.lua",
     "foot-colors.ini.tmpl": "foot/colors.ini",
     "hypr-theme.lua.tmpl": "hypr/theme.lua",
     "hypr-effects.lua.tmpl": "hypr/effects.lua",
     "hypr-theme-conf.tmpl": "hypr/theme.conf",
-    "hypr-hyprpaper-conf.tmpl": "hypr/hyprpaper.conf",
     "mako-config.tmpl": "mako/config",
     "yazi-theme.toml.tmpl": "yazi/theme.toml",
 }
@@ -453,11 +457,6 @@ def flatten_tokens(p: dict, variant_name: str, profile_name: str) -> dict[str, s
     tokens["glass_rim_alpha_hex"] = alpha_to_hex(p["glass"]["rim"])
 
     tokens["term_alpha"] = str(glass["window"])
-
-    # DSN-S5 (R6.8): обои активного варианта — для hypr/hyprpaper.conf и
-    # hypr/theme.conf ($wallpaper, читает hyprlock). L6/обои не зависят от
-    # профиля (раздел 2.1), поэтому здесь, а не в PROFILED_DEST.
-    tokens["wallpaper_file"] = variant["wallpaper"]["file"]
 
     # DSN-S4 (R6.7): fx.* для hypr/effects.lua — размытие из [blur] (как в
     # check_contrast: нет записи -> включено только у ac), остальное — из

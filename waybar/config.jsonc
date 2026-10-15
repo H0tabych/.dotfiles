@@ -23,9 +23,14 @@
         "tooltip-format": "Приложения",
         "on-click": "pgrep -x rofi >/dev/null && pkill rofi || rofi -show drun"
     },
+    // DSN-LAY-3: рабочие столы всегда на виду — 1..9,0 (10-я) закреплены,
+    // даже пустые (persistent-workspaces), числом, а не глифом (не зависит
+    // от покрытия шрифта; активный/пустой/срочный — цветом, style.css).
     "hyprland/workspaces": {
-        "format": "{icon}",
-        "format-icons": { "default": "", "active": "", "empty": "", "urgent": "" }
+        "format": "{id}",
+        "persistent-workspaces": {
+            "*": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+        }
     },
 
     // DSN-LAY-2 зона 2: индикаторы приватности (запись экрана, микрофон, камера).
@@ -64,14 +69,19 @@
         "return-type": "json",
         "interval": 15
     },
+    // DSN-LAY-10: SSID — переменный длинный текст, в панели только иконка;
+    // имя сети — в подсказке (иначе растягивает 44px колонку вширь).
     "network": {
-        "format-wifi": "{essid} ",
-        "format-ethernet": "eth ",
-        "format-disconnected": "offline "
+        "format-wifi": "",
+        "format-ethernet": "",
+        "format-disconnected": "",
+        "tooltip-format-wifi": "{essid} ({signalStrength}%)",
+        "tooltip-format-ethernet": "eth: {ifname}",
+        "tooltip-format-disconnected": "сеть недоступна"
     },
     "pulseaudio": {
-        "format": "{volume}% {icon}",
-        "format-muted": "muted ",
+        "format": "{icon}\n{volume}",
+        "format-muted": " muted",
         "format-icons": { "default": ["", "", ""] },
         "on-click": "swayosd-client --output-volume mute-toggle"
     },

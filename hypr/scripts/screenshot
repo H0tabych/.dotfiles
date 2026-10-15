@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+# hypr/scripts/screenshot (DESK-9, screenshot-grim.nix — DSN-CMP-9): выделение
+# области (по умолчанию) или весь экран (--full) в редактор swappy. Сохранение/
+# копирование — штатными сочетаниями клавиш swappy (Ctrl+S / Ctrl+C).
+set -euo pipefail
+
+if [ "${1:-}" = "--full" ]; then
+  grim - | swappy -f -
+else
+  region="$(slurp)"
+  [ -n "$region" ] || exit 0
+  grim -g "$region" - | swappy -f -
+fi

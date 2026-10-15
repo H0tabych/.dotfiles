@@ -8,6 +8,16 @@ window#waybar {
     padding: 4px 0;
 }
 
+/* DSN-LAY-7 workaround: GTK-кнопки (workspaces и custom-модули с on-click)
+   наследуют тему adw-gtk3-dark — подпись приглушена до hover/active, пока не
+   сброшена явно (иначе видно только при наведении мыши). */
+#waybar button {
+    background: transparent;
+    box-shadow: none;
+    border: none;
+    opacity: 1;
+}
+
 #custom-launcher,
 #workspaces button,
 #privacy,

@@ -93,10 +93,23 @@ hl.bind(mainMod .. " + Space",  hl.dsp.exec_cmd("rofi -show drun"))
 hl.bind(mainMod .. " + V",      hl.dsp.window.float({ action = "toggle" }))
 hl.bind(mainMod .. " + F",      hl.dsp.window.fullscreen())
 
-for i = 1, 4 do
+-- 10 рабочих столов, 1..9 затем 0 (DSN-LAY-3: всегда на виду, waybar —
+-- persistent-workspaces). Клавиша "0" -> стол 10, как на цифровом ряду клавиатуры.
+for i = 1, 9 do
   hl.bind(mainMod .. " + " .. i,         hl.dsp.focus({ workspace = i }))
   hl.bind(mainMod .. " + SHIFT + " .. i, hl.dsp.window.move({ workspace = i }))
 end
+hl.bind(mainMod .. " + 0",         hl.dsp.focus({ workspace = 10 }))
+hl.bind(mainMod .. " + SHIFT + 0", hl.dsp.window.move({ workspace = 10 }))
 
 hl.bind(mainMod .. " + mouse:272", hl.dsp.window.drag(),   { mouse = true })
 hl.bind(mainMod .. " + mouse:273", hl.dsp.window.resize(), { mouse = true })
+
+-- DSN-CMP-9 (screenshot-grim.nix): выделение области + редактор (swappy);
+-- Shift+Print — весь экран, тоже в редактор. ПРОВЕРИТЬ (новый пункт I.6,
+-- M18): запись без модификатора в hl.bind не сверена по исходникам (во всех
+-- остальных биндах этого файла — ровно один модификатор, mainMod); если не
+-- сработает — заменить на hyprlang-биндинг ("bind = , Print, exec, …") рядом,
+-- hyprlang в 0.55 всё ещё поддерживается (REGISTRY.md).
+hl.bind("Print",         hl.dsp.exec_cmd("~/.config/hypr/scripts/screenshot"))
+hl.bind("SHIFT + Print", hl.dsp.exec_cmd("~/.config/hypr/scripts/screenshot --full"))
