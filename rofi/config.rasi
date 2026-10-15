@@ -3,10 +3,14 @@
 // бинды), не отдельные modi.
 @import "theme.rasi"
 
+// configuration{}.font — опция ядра rofi (-font), требует буквальную строку,
+// не ссылку на переменную темы (ошибка на машине 2026-10-15: "Option: font
+// needs to be set with a string not a Reference"). Шрифт уже задан буквальной
+// строкой генератором в theme.rasi (* { font: "Inter 13"; } — DSN-TOK-8),
+// этого достаточно для всех виджетов; configuration.font не нужен.
 configuration {
     modi: "drun,window,emoji";
     show-icons: true;
-    font: @font;
 }
 
 window {
