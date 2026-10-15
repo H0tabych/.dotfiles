@@ -1,0 +1,47 @@
+-- require("theme") (DESIGN_SYSTEM.md P.3.1): роли цвета и геометрия для hyprland.lua.
+local M = {}
+
+M.c = {
+  crust       = "${crust_raw}",
+  mantle      = "${mantle_raw}",
+  base        = "${base_raw}",
+  surface0    = "${surface0_raw}",
+  surface1    = "${surface1_raw}",
+  surface2    = "${surface2_raw}",
+  overlay0    = "${overlay0_raw}",
+  overlay1    = "${overlay1_raw}",
+  subtext0    = "${subtext0_raw}",
+  subtext1    = "${subtext1_raw}",
+  text        = "${text_raw}",
+  accent      = "${accent_raw}",
+  accent_warm = "${accent_warm_raw}",
+  on_accent   = "${on_accent_raw}",
+  success     = "${success_raw}",
+  warning     = "${warning_raw}",
+  error       = "${error_raw}",
+  info        = "${info_raw}",
+  special     = "${special_raw}",
+  teal        = "${teal_raw}",
+}
+
+local function alpha_hex(a)
+  return string.format("%02x", math.floor(a * 255 + 0.5))
+end
+
+-- "rgba(RRGGBBAA)" — формат hyprlang-строки цвета (general.col.*, см. пример пакета).
+function M.rgba(role, a)
+  return "rgba(" .. M.c[role] .. alpha_hex(a) .. ")"
+end
+
+-- 0xAARRGGBB — целое число, формат decoration.shadow.color (см. example/hyprland.lua).
+function M.argb(role, a)
+  return tonumber(alpha_hex(a) .. M.c[role], 16)
+end
+
+M.gap = { inner = ${gap_inner}, outer = ${gap_outer} }
+M.border = { window = ${border_window}, rim = ${border_rim} }
+M.radius = { window = ${radius_window} }
+M.shadow = { range = ${shadow_range}, power = ${shadow_power}, active = ${shadow_active}, inactive = ${shadow_inactive} }
+M.dim = ${dim}
+
+return M

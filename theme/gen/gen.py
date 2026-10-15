@@ -9,11 +9,11 @@ Python >= 3.11 (DESIGN_SYSTEM.md, Приложение S.2) — без внеш�
     gen.py --variant forest сгенерировать для варианта forest
     gen.py --check          только проверки (DSN-A1/A2, Приложение S.3), без записи файлов
 
-Статус (DSN-S2, первый шаг ретрофита): генератор и проверки полные; из
-потребителей на этом шаге перенесены только 7 уже существовавших шаблонов
-(DSN-S2 в ROADMAP — R6.5). Про-профильная генерация (ac/battery/solid/game)
-и остальные потребители (Lua-композитор, starship, swayosd, qt6ct,
-sddm-astronaut) — шаги DSN-S3…DSN-S8 (R6.6–R6.11).
+Статус: DSN-S2 (R6.5) перенёс 7 существовавших потребителей; DSN-S4 (R6.7)
+добавил композитор (`hypr/theme.lua`, `hypr/effects.lua` — только профиль
+`ac`, PROFILE_EFFECTS). Полная про-профильная генерация (battery/solid/game,
+отдельные файлы на профиль) и остальные потребители (starship, swayosd,
+qt6ct, sddm-astronaut) — шаги DSN-S5…DSN-S8 (R6.8–R6.11).
 """
 from __future__ import annotations
 
@@ -48,9 +48,22 @@ DEST = {
     "foot-colors.ini.tmpl": "foot/colors.ini",
     "waybar-colors.css.tmpl": "waybar/colors.css",
     "rofi-colors.rasi.tmpl": "rofi/colors.rasi",
-    "hypr-colors.conf.tmpl": "hypr/colors.conf",
+    "hypr-theme.lua.tmpl": "hypr/theme.lua",
+    "hypr-effects.lua.tmpl": "hypr/effects.lua",
     "mako-config.tmpl": "mako/config",
     "yazi-theme.toml.tmpl": "yazi/theme.toml",
+}
+
+# DSN-S4 (R6.7): матрица поведения профилей — раздел 9 DESIGN_SYSTEM.md.
+# Это правило применения, не токен палитры (DSN-TOK-1 про цвета/размеры/движение),
+# поэтому живёт здесь, а не в palette.toml. "anim"/"k" — грубая аппроксимация
+# (у solid анимации выключены только для окон, не целиком) — уточнение раньше
+# времени не нужно: полноценное переключение профилей — DSN-S7 (R6.10).
+PROFILE_EFFECTS = {
+    "ac":      {"shadow": True,  "dim": True,  "anim": True,  "terminal_opaque": False},
+    "battery": {"shadow": False, "dim": True,  "anim": True,  "terminal_opaque": True},
+    "solid":   {"shadow": True,  "dim": True,  "anim": False, "terminal_opaque": True},
+    "game":    {"shadow": False, "dim": False, "anim": False, "terminal_opaque": False},
 }
 
 HEX_RE = re.compile(r"^#[0-9A-Fa-f]{6}$")
@@ -255,7 +268,9 @@ def check_hue(p: dict) -> list[str]:
 
 
 LITERAL_HEX_RE = re.compile(r"#[0-9A-Fa-f]{6}\b")
-LITERAL_RGB_RE = re.compile(r"\brgba?\(")
+# (?<![.\w]) исключает вызовы вида t.rgba(role, a)/t.argb(role, a) (theme.lua,
+# DSN-S4): это обращение к функции-токену, а не цветовой литерал.
+LITERAL_RGB_RE = re.compile(r"(?<![.\w])rgba?\(")
 
 
 def check_literals(p: dict) -> list[str]:
@@ -352,6 +367,11 @@ def flatten_tokens(p: dict, variant_name: str, profile_name: str) -> dict[str, s
     tokens["gap_outer"] = str(shape["gap"]["outer"])
     tokens["border_window"] = str(shape["border"]["window"])
     tokens["border_rim"] = str(shape["border"]["rim"])
+    tokens["dim"] = str(shape["dim"])
+    tokens["shadow_range"] = str(shape["shadow"]["range"])
+    tokens["shadow_power"] = str(shape["shadow"]["power"])
+    tokens["shadow_active"] = str(shape["shadow"]["active"])
+    tokens["shadow_inactive"] = str(shape["shadow"]["inactive"])
     tokens["bar_width"] = str(shape["bar"]["width"])
     tokens["icon_bar"] = str(shape["icon"]["bar"])
     tokens["icon_list"] = str(shape["icon"]["list"])
@@ -383,6 +403,29 @@ def flatten_tokens(p: dict, variant_name: str, profile_name: str) -> dict[str, s
     tokens["glass_rim"] = str(p["glass"]["rim"])
 
     tokens["term_alpha"] = str(glass["window"])
+
+    # DSN-S4 (R6.7): fx.* для hypr/effects.lua — размытие из [blur] (как в
+    # check_contrast: нет записи -> включено только у ac), остальное — из
+    # PROFILE_EFFECTS (раздел 9).
+    blur_cfg = p.get("blur", {}).get(profile_name, {})
+    blur_enabled = blur_cfg.get("enabled", profile_name == "ac")
+    fx = PROFILE_EFFECTS[profile_name]
+
+    def lua_bool(v: bool) -> str:
+        return "true" if v else "false"
+
+    tokens["fx_blur"] = lua_bool(blur_enabled)
+    tokens["blur_size"] = str(blur_cfg.get("size", 0))
+    tokens["blur_passes"] = str(blur_cfg.get("passes", 0))
+    tokens["blur_noise"] = str(blur_cfg.get("noise", 0))
+    tokens["blur_contrast"] = str(blur_cfg.get("contrast", 1))
+    tokens["blur_brightness"] = str(blur_cfg.get("brightness", 1))
+    tokens["blur_vibrancy"] = str(blur_cfg.get("vibrancy", 0))
+    tokens["fx_shadow"] = lua_bool(fx["shadow"])
+    tokens["fx_dim"] = lua_bool(fx["dim"])
+    tokens["fx_anim"] = lua_bool(fx["anim"])
+    tokens["fx_k"] = "1.0" if profile_name != "battery" else str(motion["battery_factor"])
+    tokens["fx_terminal_opaque"] = lua_bool(fx["terminal_opaque"])
 
     tokens["variant"] = variant_name
     tokens["profile"] = profile_name

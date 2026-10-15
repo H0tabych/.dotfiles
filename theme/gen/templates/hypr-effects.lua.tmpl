@@ -1,0 +1,17 @@
+-- require("effects") (DESIGN_SYSTEM.md P.3.1): переключатели эффектов текущего
+-- профиля. Пока только профиль ac (DSN-S4, R6.7) — переключение профилей на
+-- ходу (ac/battery/solid/game) добавит DSN-S7 (R6.10).
+return {
+  blur = ${fx_blur},
+  blur_size = ${blur_size},
+  blur_passes = ${blur_passes},
+  blur_noise = ${blur_noise},
+  blur_contrast = ${blur_contrast},
+  blur_brightness = ${blur_brightness},
+  blur_vibrancy = ${blur_vibrancy},
+  shadow = ${fx_shadow},
+  dim = ${fx_dim},
+  anim = ${fx_anim},
+  k = ${fx_k},
+  terminal_opaque = ${fx_terminal_opaque},
+}
