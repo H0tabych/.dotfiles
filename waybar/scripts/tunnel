@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+# custom/tunnel (DESK-9, DSN-LAY-3): состояние туннеля всегда на виду.
+# Режим M1 (vpn-client.nix): системный юнит tunnel-xray (tunnel-xray.nix).
+# ПРОВЕРИТЬ (новый пункт I.6): имя юнита в режиме M2 может отличаться
+# (killswitch/dns-resolver, VPN_SUBSYSTEM.md) — сверить при переходе на M2
+# (гейт 7.3 ещё не пройден, ADR-35).
+set -euo pipefail
+
+if systemctl is-active --quiet tunnel-xray; then
+  printf '{"text":"M1","class":"connected","tooltip":"Туннель: активен (режим M1)"}\n'
+else
+  printf '{"text":"off","class":"disconnected","tooltip":"Туннель: остановлен"}\n'
+fi

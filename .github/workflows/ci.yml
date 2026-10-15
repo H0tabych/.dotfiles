@@ -10,15 +10,18 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      # DSN-S5 (R6.8): скрипты оболочки (waybar/scripts/*, rofi/scripts/*) без
+      # расширения .sh (имена — по DESIGN_SYSTEM.md P.3.2/P.3.3), поэтому ищем
+      # и по пути, не только по расширению.
       - name: shellcheck
         run: |
-          for f in $(find . -name '*.sh' -not -path './.git/*'); do
+          for f in $(find . \( -name '*.sh' -o -path '*/scripts/*' \) -type f -not -path './.git/*'); do
             shellcheck "$f"
           done
 
       - name: bash syntax
         run: |
-          for f in $(find . -name '*.sh' -not -path './.git/*'); do
+          for f in $(find . \( -name '*.sh' -o -path '*/scripts/*' \) -type f -not -path './.git/*'); do
             bash -n "$f"
           done
 
@@ -31,5 +34,8 @@ jobs:
       - name: palette regenerated (DOT-9)
         run: |
           python3 theme/gen/gen.py
-          git diff --exit-code -- '*/colors.*' 'hypr/colors.conf' 'mako/config' '*/theme.toml' \
+          git diff --exit-code -- \
+            'nvim/lua/colors.lua' 'foot/colors.ini' 'hypr/theme.lua' 'hypr/effects.lua' \
+            'hypr/theme.conf' 'hypr/hyprpaper.conf' 'mako/config' 'yazi/theme.toml' \
+            'waybar/theme-*.css' 'rofi/theme-*.rasi' 'swayosd/theme-*.css' \
             || { echo 'сгенерированные файлы не соответствуют palette.toml — перегенерируйте и закоммитьте'; exit 1; }

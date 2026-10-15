@@ -1,0 +1,45 @@
+/* Сгенерировано theme/gen/gen.py из theme/palette.toml (вариант tree, профиль ac) — не редактируйте */
+/* Селекторы проверены по data/style/style.scss SwayOSD 0.3.1 (DESIGN_SYSTEM.md I.6):
+   window#osd, #container, image, label, progressbar/trough/progress. */
+@define-color crust #070D12;
+@define-color mantle #0A141B;
+@define-color base #0E1A22;
+@define-color surface0 #16252F;
+@define-color text #DCE7EC;
+@define-color accent #7FD6B0;
+@define-color warning #F0B86E;
+
+@define-color glass_popup alpha(@mantle, 0.9);
+@define-color glass_rim alpha(@text, 0.08);
+
+window#osd {
+    background-color: @glass_popup;
+    border: 1px solid @glass_rim;
+    border-radius: 999px;
+}
+
+#container {
+    padding: 12px 16px;
+}
+
+image, label {
+    color: @text;
+}
+
+progressbar trough {
+    background-color: alpha(@surface0, 0.88);
+    border-radius: 999px;
+}
+
+progressbar progress {
+    background-color: @accent;
+    border-radius: 999px;
+}
+
+/* DSN-CMP-7: при отключении звука/микрофона — иконка «выключено» + warning.
+   ПРОВЕРИТЬ (новый пункт I.6): имя класса/состояния GTK, которое SwayOSD 0.3.1
+   выставляет на `image`/`window#osd` при muted — не подтверждено по исходникам,
+   только по README/поведению. Пока — наиболее вероятный селектор. */
+window#osd.muted image {
+    color: @warning;
+}

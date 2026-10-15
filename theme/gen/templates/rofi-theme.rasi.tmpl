@@ -1,0 +1,33 @@
+* {
+    crust:    ${crust};
+    mantle:   ${mantle};
+    base:     ${base};
+    surface0: ${surface0};
+    surface1: ${surface1};
+    surface2: ${surface2};
+    overlay0: ${overlay0};
+    overlay1: ${overlay1};
+    subtext0: ${subtext0};
+    subtext1: ${subtext1};
+    text:     ${text};
+
+    accent:      ${accent};
+    accent-warm: ${accent_warm};
+    on-accent:   ${on_accent};
+
+    success: ${success};
+    warning: ${warning};
+    error:   ${error};
+
+    /* DSN-CMP-5 (L3): капсула стекла с альфой профиля — rasi не знает функцию
+       alpha() по токену (как GTK3 CSS, P.3.2), поэтому байт альфы считает
+       генератор (DSN-S5, R6.8). */
+    glass-popup: #${mantle_raw}${glass_popup_alpha_hex};
+    glass-rim:   #${text_raw}${glass_rim_alpha_hex};
+
+    font: "${font_ui} ${size_lg}";
+
+    radius-window:  ${radius_window}px;
+    radius-control: ${radius_control}px;
+    pad-launcher:   ${pad_launcher}px;
+}

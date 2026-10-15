@@ -12,6 +12,7 @@
 | waybar | `waybar/` | `waybar/` | — | `waybar -c config.jsonc -s style.css --log-level error` недолгий запуск |
 | rofi | `rofi/` | `rofi/` | — | `rofi -dump-config` после `-config config.rasi` |
 | mako | `mako/` | `mako/` | весь файл генерируется (цвета + статика вместе, см. `theme/gen/templates/mako-config.tmpl`) | `makoctl reload` при живой сессии |
+| swayosd | `swayosd/` | `swayosd/` | новая запись реестра (DSN-S5, R6.8); `style.css` — статика с `@import url("theme.css")`, сам `theme.css` — симлинк на профиль (генератор) | визуально при живой сессии (громкость/яркость/caps lock) |
 | yazi | `yazi/` | `yazi/` | — | `yazi --version` + ручной запуск |
 | mpv | `mpv/` | `mpv/` | — | `mpv --no-config --show-profile=default` не применимо; визуальная проверка |
 | git | `git/` | `git/` (файл `config`, не `gitconfig`) | identity — только через `machine.d/git-identity` (SEC-10) | `git config --list` без личной почты в выводе из репозитория |
@@ -35,11 +36,17 @@ ADR-36). `theme/palette.toml` — единственный источник то
 `gen.py`): запускается вручную при смене файла обоев в `theme/wallpapers/`,
 результат копируется в `palette.toml` руками.
 
-Статус (DSN-S2 дизайн-системы, 2026-10-14): генератор и 7 ранее существовавших
-потребителей переведены на новую схему токенов. Остальные потребители
-(Lua-композитор, starship, swayosd, qt6ct, sddm-astronaut) и про-профильная
-генерация (ac/battery/solid/game) — следующие шаги (DSN-S3…DSN-S8,
-DESIGN_SYSTEM.md Приложение I.4).
+Статус (DSN-S2, 2026-10-14): генератор и 7 ранее существовавших потребителей
+переведены на новую схему токенов. DSN-S4 (R6.7, 2026-10-15) добавил
+Lua-композитор (`hypr/theme.lua`, `hypr/effects.lua`, только профиль `ac`).
+DSN-S5 (R6.8): добавлены SwayOSD, `hypr/theme.conf` (роли для hyprlock) и
+`hypr/hyprpaper.conf` (обои варианта, не зависят от профиля — L6, раздел 2.1
+документа); waybar/rofi/swayosd теперь генерируют per-profile файл
+`theme-<профиль>.<ext>` + симлинк `theme.<ext>` без суффикса на только что
+сгенерированный профиль (переставляет его сам переключатель — DSN-S7/R6.10).
+Остальные потребители (starship, qt6ct — частично DSN-S3, sddm-astronaut) и
+полная про-профильная генерация (battery/solid/game) — следующие шаги
+(DSN-S6…DSN-S8, DESIGN_SYSTEM.md Приложение I.4).
 
 ## Машинный слой
 

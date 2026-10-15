@@ -19,4 +19,16 @@
     success: #B5DB86;
     warning: #F0B86E;
     error:   #F0817F;
+
+    /* DSN-CMP-5 (L3): капсула стекла с альфой профиля — rasi не знает функцию
+       alpha() по токену (как GTK3 CSS, P.3.2), поэтому байт альфы считает
+       генератор (DSN-S5, R6.8). */
+    glass-popup: #0A141BE6;
+    glass-rim:   #DCE7EC14;
+
+    font: "Inter 13";
+
+    radius-window:  12px;
+    radius-control: 8px;
+    pad-launcher:   12px;
 }

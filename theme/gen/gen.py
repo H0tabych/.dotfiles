@@ -11,9 +11,17 @@ Python >= 3.11 (DESIGN_SYSTEM.md, Приложение S.2) — без внеш�
 
 Статус: DSN-S2 (R6.5) перенёс 7 существовавших потребителей; DSN-S4 (R6.7)
 добавил композитор (`hypr/theme.lua`, `hypr/effects.lua` — только профиль
-`ac`, PROFILE_EFFECTS). Полная про-профильная генерация (battery/solid/game,
-отдельные файлы на профиль) и остальные потребители (starship, swayosd,
-qt6ct, sddm-astronaut) — шаги DSN-S5…DSN-S8 (R6.8–R6.11).
+`ac`, PROFILE_EFFECTS). DSN-S5 (R6.8) добавил SwayOSD, обои (`hypr/theme.conf`,
+`hypr/hyprpaper.conf` — зависят только от варианта, не от профиля — L6/обои не
+тонируются по профилю, раздел 2.1) и per-profile файлы для waybar/rofi/swayosd
+(`theme-<профиль>.<ext>` + симлинк `theme.<ext>` без суффикса, PROFILED_DEST) —
+симлинк переставляет переключатель профиля DSN-S7 (R6.10), здесь генератор
+только создаёт начальный симлинк на профиль, который был сгенерирован. mako
+остаётся одним файлом без профильного суффикса (целиком, как и раньше) —
+переход `mako/config` на симлинк того же вида — тоже DSN-S7 (R6.10), когда
+появится сам переключатель и генерация остальных профилей.
+Полная про-профильная генерация battery/solid/game и остальные потребители
+(starship, qt6ct, sddm-astronaut) — следующие шаги DSN-S6…DSN-S8 (R6.9–R6.11).
 """
 from __future__ import annotations
 
@@ -41,17 +49,31 @@ GENERATED_HEADER = {
 # default for files without a recognised extension (mako config)
 DEFAULT_HEADER = "# Сгенерировано theme/gen/gen.py из theme/palette.toml (вариант {variant}, профиль {profile}) — не редактируйте\n"
 
-# tmpl filename -> destination path relative to repo root (DSN-S2: перенос
-# 7 существующих потребителей; остальные консьюмеры S.2 — следующие шаги)
-DEST = {
+# tmpl filename -> путь назначения (не зависит от профиля: роли цвета, геометрия,
+# либо — hypr-theme-conf/hypr-hyprpaper-conf — обои варианта; L6 не тонируется
+# по профилю, раздел 2.1 DESIGN_SYSTEM.md, поэтому обои и экран блокировки вне
+# PROFILED_DEST).
+PLAIN_DEST = {
     "nvim-colors.lua.tmpl": "nvim/lua/colors.lua",
     "foot-colors.ini.tmpl": "foot/colors.ini",
-    "waybar-colors.css.tmpl": "waybar/colors.css",
-    "rofi-colors.rasi.tmpl": "rofi/colors.rasi",
     "hypr-theme.lua.tmpl": "hypr/theme.lua",
     "hypr-effects.lua.tmpl": "hypr/effects.lua",
+    "hypr-theme-conf.tmpl": "hypr/theme.conf",
+    "hypr-hyprpaper-conf.tmpl": "hypr/hyprpaper.conf",
     "mako-config.tmpl": "mako/config",
     "yazi-theme.toml.tmpl": "yazi/theme.toml",
+}
+
+PROFILES = ("ac", "battery", "solid", "game")
+
+# tmpl filename -> (каталог приложения, базовое имя, расширение). Реальный файл —
+# "<base>-<профиль><ext>"; симлинк без суффикса — производное состояние
+# переключателя профиля (P.3.1), в .gitignore, генератор создаёт/переставляет
+# его на только что сгенерированный профиль.
+PROFILED_DEST = {
+    "waybar-theme.css.tmpl": ("waybar", "theme", ".css"),
+    "rofi-theme.rasi.tmpl": ("rofi", "theme", ".rasi"),
+    "swayosd-theme.css.tmpl": ("swayosd", "theme", ".css"),
 }
 
 # DSN-S4 (R6.7): матрица поведения профилей — раздел 9 DESIGN_SYSTEM.md.
@@ -111,6 +133,11 @@ def blend(fg_alpha_hex: str, alpha: float, bg_hex: str) -> str:
     g = fg_ * alpha + bg__ * (1 - alpha)
     b = fb * alpha + bb * (1 - alpha)
     return f"#{round(r * 255):02X}{round(g * 255):02X}{round(b * 255):02X}"
+
+
+def alpha_to_hex(a: float) -> str:
+    """0.90 -> "E6" — байт альфы для форматов с #RRGGBBAA (mako, hyprlang, rasi)."""
+    return f"{round(a * 255):02X}"
 
 
 def hex_to_hue(hex_color: str) -> float:
@@ -273,10 +300,23 @@ LITERAL_HEX_RE = re.compile(r"#[0-9A-Fa-f]{6}\b")
 LITERAL_RGB_RE = re.compile(r"(?<![.\w])rgba?\(")
 
 
+def all_generated_paths() -> set[Path]:
+    """Пути, которые пишет render(): исключаются из поиска литералов (DSN-TOK-8).
+    Для PROFILED_DEST — симлинк без суффикса и файлы всех четырёх профилей
+    (даже ещё не сгенерированных — набор путей, а не список существующих файлов)."""
+    paths = {REPO_ROOT / dest for dest in PLAIN_DEST.values()}
+    for subdir, base, ext in PROFILED_DEST.values():
+        d = REPO_ROOT / subdir
+        paths.add(d / f"{base}{ext}")
+        for profile in PROFILES:
+            paths.add(d / f"{base}-{profile}{ext}")
+    return paths
+
+
 def check_literals(p: dict) -> list[str]:
     errs = []
     font_names = {v for v in p.get("font", {}).values() if isinstance(v, str)}
-    generated_files = {REPO_ROOT / dest for dest in DEST.values()}
+    generated_files = all_generated_paths()
     skip_dirs = {REPO_ROOT / "theme" / "gen", REPO_ROOT / ".git"}
     for path in REPO_ROOT.rglob("*"):
         if not path.is_file():
@@ -377,6 +417,9 @@ def flatten_tokens(p: dict, variant_name: str, profile_name: str) -> dict[str, s
     tokens["icon_list"] = str(shape["icon"]["list"])
     tokens["cursor_size"] = str(shape["cursor"])
     tokens["pad_term_x"], tokens["pad_term_y"] = (str(v) for v in shape["pad"]["term"])
+    tokens["pad_launcher"] = str(shape["pad"]["launcher"])
+    tokens["pad_pill"] = str(shape["pad"]["pill"])
+    tokens["pad_item_x"], tokens["pad_item_y"] = (str(v) for v in shape["pad"]["item"])
 
     tokens["font_ui"] = font["ui"]
     tokens["font_mono"] = font["mono"]
@@ -402,7 +445,19 @@ def flatten_tokens(p: dict, variant_name: str, profile_name: str) -> dict[str, s
     tokens["glass_popup"] = str(glass["popup"])
     tokens["glass_rim"] = str(p["glass"]["rim"])
 
+    # DSN-S5 (R6.8): байты альфы для форматов без функции alpha()/rgba() по
+    # токену — mako (#RRGGBBAA), hyprlang (rgba(RRGGBBAAhex)), rasi (#RRGGBBAA).
+    tokens["glass_bar_alpha_hex"] = alpha_to_hex(glass["bar"])
+    tokens["glass_window_alpha_hex"] = alpha_to_hex(glass["window"])
+    tokens["glass_popup_alpha_hex"] = alpha_to_hex(glass["popup"])
+    tokens["glass_rim_alpha_hex"] = alpha_to_hex(p["glass"]["rim"])
+
     tokens["term_alpha"] = str(glass["window"])
+
+    # DSN-S5 (R6.8): обои активного варианта — для hypr/hyprpaper.conf и
+    # hypr/theme.conf ($wallpaper, читает hyprlock). L6/обои не зависят от
+    # профиля (раздел 2.1), поэтому здесь, а не в PROFILED_DEST.
+    tokens["wallpaper_file"] = variant["wallpaper"]["file"]
 
     # DSN-S4 (R6.7): fx.* для hypr/effects.lua — размытие из [blur] (как в
     # check_contrast: нет записи -> включено только у ac), остальное — из
@@ -438,22 +493,37 @@ def header_for(dest: Path, variant: str, profile: str) -> str:
     return fmt.format(variant=variant, profile=profile)
 
 
+def write_rendered(tmpl_name: str, dest_path: Path, tokens: dict, variant_name: str, profile_name: str) -> None:
+    tmpl_path = TEMPLATES_DIR / tmpl_name
+    content = Template(tmpl_path.read_text()).substitute(tokens)
+    dest_path.parent.mkdir(parents=True, exist_ok=True)
+    header = header_for(dest_path, variant_name, profile_name)
+    dest_path.write_text(header + content)
+    print(f"generated {dest_path.relative_to(REPO_ROOT)}")
+
+
 def render(p: dict, variant_name: str, profile_name: str) -> None:
     tokens = flatten_tokens(p, variant_name, profile_name)
-    for tmpl_name, dest_rel in DEST.items():
-        tmpl_path = TEMPLATES_DIR / tmpl_name
-        dest_path = REPO_ROOT / dest_rel
-        content = Template(tmpl_path.read_text()).substitute(tokens)
-        dest_path.parent.mkdir(parents=True, exist_ok=True)
-        header = header_for(dest_path, variant_name, profile_name)
-        dest_path.write_text(header + content)
-        print(f"generated {dest_rel}")
+
+    for tmpl_name, dest_rel in PLAIN_DEST.items():
+        write_rendered(tmpl_name, REPO_ROOT / dest_rel, tokens, variant_name, profile_name)
+
+    for tmpl_name, (subdir, base, ext) in PROFILED_DEST.items():
+        dest_dir = REPO_ROOT / subdir
+        real_path = dest_dir / f"{base}-{profile_name}{ext}"
+        write_rendered(tmpl_name, real_path, tokens, variant_name, profile_name)
+
+        link_path = dest_dir / f"{base}{ext}"
+        if link_path.is_symlink() or link_path.exists():
+            link_path.unlink()
+        link_path.symlink_to(real_path.name)
+        print(f"linked {link_path.relative_to(REPO_ROOT)} -> {real_path.name}")
 
 
 def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--variant", default=None, help="вариант (по умолчанию — active из palette.toml)")
-    ap.add_argument("--profile", default="ac", choices=["ac", "battery", "solid", "game"])
+    ap.add_argument("--profile", default="ac", choices=list(PROFILES))
     ap.add_argument("--check", action="store_true", help="только проверки S.3, без записи файлов")
     a = ap.parse_args()
 

@@ -23,3 +23,11 @@
 
 @define-color glass_bar alpha(@base, 0.82);
 @define-color glass_rim alpha(@text, 0.08);
+
+/* DSN-CMP-4: шрифт UI md/500 — здесь, а не в style.css (DSN-TOK-8 запрещает
+   имя шрифта вне сгенерированных файлов). */
+* {
+    font-family: "Inter";
+    font-size: 11px;
+    font-weight: 500;
+}

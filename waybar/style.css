@@ -1,18 +1,31 @@
-@import url("colors.css");
+@import url("theme.css");
 
-* {
-    font-family: monospace;
-    font-size: 13px;
-    min-height: 0;
-}
-
+/* DSN-LAY-1/DSN-CMP-4 (L1): панель — одна стеклянная капсула на весь столбец. */
 window#waybar {
-    background-color: @base;
-    color: @text;
+    background-color: @glass_bar;
+    border: 1px solid @glass_rim;
+    border-radius: 999px;
+    padding: 4px 0;
 }
 
-#workspaces button {
-    padding: 0 8px;
+#custom-launcher,
+#workspaces button,
+#privacy,
+#custom-dnd,
+#idle_inhibitor,
+#mpris,
+#language,
+#custom-tunnel,
+#network,
+#pulseaudio,
+#battery,
+#custom-more,
+#backlight,
+#bluetooth,
+#tray,
+#clock,
+#custom-power {
+    padding: 8px 0;
     color: @text;
 }
 
@@ -20,18 +33,34 @@ window#waybar {
     color: @accent;
 }
 
-#clock,
-#battery,
-#network,
-#pulseaudio,
-#tray {
-    padding: 0 10px;
+#workspaces button.urgent {
+    color: @error;
 }
 
-#battery.warning {
+#battery.warning,
+#backlight.warning {
     color: @warning;
 }
 
+/* DSN-LAY-5: критично — капсула с фоном error и текстом on_accent. */
 #battery.critical {
+    color: @on_accent;
+    background-color: @error;
+    border-radius: 999px;
+}
+
+#custom-dnd.active {
+    color: @accent;
+}
+
+#custom-tunnel.connected {
+    color: @text;
+}
+
+#custom-tunnel.disconnected {
     color: @error;
+}
+
+#idle_inhibitor.activated {
+    color: @accent;
 }

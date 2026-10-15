@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+# custom/dnd (DESK-9, DSN-LAY-2 зона 2): режим «не беспокоить» mako —
+# только при включённом режиме (DSN-LAY-3). Клик — on-click в config.jsonc
+# переключает режим через makoctl.
+set -euo pipefail
+
+if makoctl mode | grep -qx do-not-disturb; then
+  printf '{"text":"DND","class":"active","tooltip":"Режим «не беспокоить» включён"}\n'
+else
+  printf '{"text":"","class":"inactive","tooltip":"Режим «не беспокоить» выключен"}\n'
+fi

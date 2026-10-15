@@ -1,39 +1,43 @@
-// Портативный конфиг rofi (DOT-3).
-@import "colors.rasi"
+// Портативный конфиг rofi (DOT-3). L3, режимы drun/window/emoji (DSN-S5, R6.8);
+// буфер обмена и питание — отдельные команды (см. REGISTRY.md / hyprland.lua
+// бинды), не отдельные modi.
+@import "theme.rasi"
 
 configuration {
-    modi: "drun,run,window";
+    modi: "drun,window,emoji";
     show-icons: true;
-    font: "monospace 12";
+    font: @font;
 }
 
 window {
-    background-color: @mantle;
-    text-color: @text;
-    border: 2px;
-    border-color: @accent;
-    border-radius: 6px;
-    width: 40%;
+    width: 560px;
+    padding: @pad-launcher;
+    border: 1px;
+    border-color: @glass-rim;
+    border-radius: @radius-window;
+    background-color: @glass-popup;
 }
 
 mainbox {
-    background-color: @mantle;
+    background-color: transparent;
 }
 
 inputbar {
+    border-radius: @radius-control;
     background-color: @surface0;
     text-color: @text;
     padding: 8px;
 }
 
 listview {
-    background-color: @mantle;
+    background-color: transparent;
     lines: 8;
 }
 
 element {
     padding: 6px;
     text-color: @text;
+    border-radius: @radius-control;
 }
 
 element selected {

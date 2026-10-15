@@ -1,38 +1,113 @@
-// Портативный конфиг waybar (DOT-3). Батарея/мониторы — автоопределение waybar,
-// машинный слой не требуется (DOT-5: include нужен только там, где без него нельзя).
+// Портативный конфиг waybar (DOT-3). Вертикальная панель, зоны 6.1 DESIGN_SYSTEM.md
+// (DSN-S5, R6.8). Батарея/мониторы — автоопределение waybar, машинный слой не
+// требуется (DOT-5: include нужен только там, где без него нельзя).
 {
     "layer": "top",
-    "position": "top",
-    "height": 30,
-    "spacing": 4,
+    "position": "left",
+    "width": 44,
+    "margin": "12 0 12 8",
+    "spacing": 6,
 
-    "modules-left": ["hyprland/workspaces"],
-    "modules-center": ["clock"],
-    "modules-right": ["pulseaudio", "network", "battery", "tray"],
+    // Зона 1 (Навигация) — всегда видна (DSN-LAY-3).
+    "modules-left": ["custom/launcher", "hyprland/workspaces"],
+    // Зона 2 (Внимание) — только при активном событии/режиме.
+    "modules-center": ["privacy", "custom/dnd", "idle_inhibitor", "mpris"],
+    // Зона 3 (Состояние, всегда кроме капсулы «ещё») + зона 4 (Время и питание).
+    "modules-right": [
+        "hyprland/language", "custom/tunnel", "network", "pulseaudio", "battery",
+        "group/more", "clock", "custom/power"
+    ],
 
+    "custom/launcher": {
+        "format": "",
+        "tooltip-format": "Приложения",
+        "on-click": "pgrep -x rofi >/dev/null && pkill rofi || rofi -show drun"
+    },
     "hyprland/workspaces": {
         "format": "{icon}",
-        "format-icons": { "default": "", "active": "" }
+        "format-icons": { "default": "", "active": "", "empty": "", "urgent": "" }
     },
-    "clock": {
-        "format": "{:%H:%M  %d.%m.%Y}"
+
+    // DSN-LAY-2 зона 2: индикаторы приватности (запись экрана, микрофон, камера).
+    "privacy": {
+        "icon-spacing": 4,
+        "icon-size": 16,
+        "transition-duration": 250,
+        "modules": [
+            { "type": "screenshare" },
+            { "type": "audio-in" }
+        ]
     },
-    "battery": {
-        "format": "{capacity}% {icon}",
-        "format-icons": ["", "", "", "", ""],
-        "format-charging": "{capacity}% "
+    "custom/dnd": {
+        "exec": "~/.config/waybar/scripts/dnd",
+        "return-type": "json",
+        "interval": 5,
+        "hide-empty-text": true,
+        "on-click": "makoctl mode -t do-not-disturb"
+    },
+    "idle_inhibitor": {
+        "format": "{icon}",
+        "format-icons": { "activated": "", "deactivated": "" }
+    },
+    "mpris": {
+        "format": "{player_icon} {dynamic}",
+        "format-paused": "{status_icon} {dynamic}",
+        "player-icons": { "default": "" },
+        "status-icons": { "paused": "" },
+        "max-length": 0
+    },
+
+    // DSN-LAY-2 зона 3: раскладка/туннель/сеть/звук/батарея — всегда; «ещё» — по наведению.
+    "hyprland/language": { "format-en": "EN", "format-ru": "RU" },
+    "custom/tunnel": {
+        "exec": "~/.config/waybar/scripts/tunnel",
+        "return-type": "json",
+        "interval": 15
     },
     "network": {
         "format-wifi": "{essid} ",
         "format-ethernet": "eth ",
-        "format-disconnected": "disconnected"
+        "format-disconnected": "offline "
     },
     "pulseaudio": {
         "format": "{volume}% {icon}",
-        "format-muted": "muted",
-        "format-icons": { "default": ["", "", ""] }
+        "format-muted": "muted ",
+        "format-icons": { "default": ["", "", ""] },
+        "on-click": "swayosd-client --output-volume mute-toggle"
     },
-    "tray": {
-        "spacing": 8
+    "battery": {
+        "states": { "warning": 25, "critical": 10 },
+        "format": "{icon}\n{capacity}",
+        "format-icons": ["", "", "", "", ""]
+    },
+    "group/more": {
+        "orientation": "inherit",
+        "drawer": { "transition-duration": 250 },
+        "modules": ["custom/more", "backlight", "bluetooth", "tray"]
+    },
+    "custom/more": {
+        "format": "",
+        "tooltip-format": "Ещё: яркость, Bluetooth, трей"
+    },
+    "backlight": {
+        "format": "{icon}\n{percent}",
+        "format-icons": ["", "", "", "", ""]
+    },
+    "bluetooth": {
+        "format": "",
+        "format-disabled": "",
+        "format-connected": ""
+    },
+    "tray": { "spacing": 8 },
+
+    // Зона 4: время и питание — всегда.
+    "clock": {
+        "format": "{:%H\n%M}",
+        "tooltip-format": "<tt>{calendar}</tt>"
+    },
+    "custom/power": {
+        "format": "",
+        "tooltip-format": "Меню питания",
+        "on-click": "~/.config/rofi/scripts/power"
     }
 }

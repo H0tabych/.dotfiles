@@ -1,24 +1,37 @@
 # Полная раскладка по зонам/уровням (L3/L5, критические уведомления) — DSN-S5.
+# Проверено по mako(5) 1.11.0: критерии одной секции — логическое И; при
+# нескольких совпадающих секциях побеждает последняя (DESIGN_SYSTEM.md I.6).
 
+font=${font_ui} ${size_md}
 sort=-time
 layer=overlay
 anchor=top-right
 width=${notify_width}
 margin=10
-padding=12
+padding=12,16
 border-size=${border_rim}
 border-radius=${radius_window}
+max-visible=${notify_max_visible}
 default-timeout=${notify_timeout}
 ignore-timeout=false
+group-by=app-name
 
-background-color=${base}
+background-color=#${mantle_raw}${glass_popup_alpha_hex}
 text-color=${text}
-border-color=${accent}
+border-color=#${text_raw}${glass_rim_alpha_hex}
 progress-color=over ${accent}
 
 [urgency=low]
 border-color=${overlay0}
 
 [urgency=critical]
+background-color=${mantle}FF
+border-size=2
 border-color=${error}
 default-timeout=0
+
+[mode=do-not-disturb]
+invisible=1
+
+[mode=do-not-disturb urgency=critical]
+invisible=0

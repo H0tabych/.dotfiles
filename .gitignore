@@ -2,3 +2,14 @@
 __pycache__/
 *.pyc
 .zcompdump
+
+# Симлинки на активный профиль (P.3.1, DSN-S5/R6.8) — производное состояние
+# переключателя профиля (DSN-S7/R6.10), не коммитится; начальный симлинк на
+# ac создаёт theme/gen/gen.py.
+/waybar/theme.css
+/rofi/theme.rasi
+/swayosd/theme.css
+
+# Hyprland сам пишет этот stub-файл при поиске конфига, если не находит
+# hyprland.lua (пример из example/hyprland.lua апстрима, не наш файл; DSN-S4).
+/hypr/hyprland.conf

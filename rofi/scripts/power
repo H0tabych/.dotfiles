@@ -1,0 +1,27 @@
+#!/usr/bin/env bash
+# rofi/scripts/power (DSN-LAY-11): меню питания. Разрушительные пункты
+# (выход, перезагрузка, выключение) требуют подтверждения отдельным запросом
+# rofi в стиле confirm (L5, DSN-CMP-8/DSN-LAY-11).
+set -euo pipefail
+
+options="Блокировка\nВыход\nСон\nГибернация\nПерезагрузка\nВыключение"
+destructive="Выход\nПерезагрузка\nВыключение"
+
+choice="$(printf '%b' "$options" | rofi -dmenu -i -p "Питание")"
+[ -n "$choice" ] || exit 0
+
+if printf '%b' "$destructive" | grep -qxF "$choice"; then
+  confirm="$(printf 'Нет\nДа, %s' "$choice" | rofi -dmenu -i -p "Подтвердите")"
+  [ "$confirm" = "Да, $choice" ] || exit 0
+fi
+
+case "$choice" in
+  Блокировка)    hyprlock ;;
+  # ПРОВЕРИТЬ (новый пункт I.6): точная команда остановки сессии UWSM
+  # (session-hyprland.nix) — не сверено по исходникам uwsm, только по --help.
+  Выход)         uwsm stop ;;
+  Сон)           systemctl suspend ;;
+  Гибернация)    systemctl hibernate ;;
+  Перезагрузка)  systemctl reboot ;;
+  Выключение)    systemctl poweroff ;;
+esac

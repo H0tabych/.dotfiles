@@ -1,0 +1,17 @@
+# source = ~/.config/hypr/theme.conf (P.3.4): роли цвета и шрифт для hyprlock
+# (hyprlang). Не зависит от профиля — L6 не тонируется (раздел 2.1).
+# string.Template (gen.py) использует знак доллара для своих плейсхолдеров
+# (двойной — литерал), поэтому имена переменных hyprlang ниже экранированы.
+$$accent = rgba(${accent_raw}FF)
+$$text = rgba(${text_raw}FF)
+$$error = rgba(${error_raw}FF)
+$$glass_popup = rgba(${mantle_raw}${glass_popup_alpha_hex})
+$$font_ui = ${font_ui}
+
+# ПРОВЕРИТЬ (новый пункт I.6, M14): hyprlang резолвит необъявленную переменную
+# как переменную окружения процесса (распространённая практика
+# community-конфигов Hyprland), не сверено по исходникам ConfigManager.
+# Абсолютный путь не коммитится с именем пользователя: домашний каталог
+# подставляется в момент чтения конфига процессом hyprlock/hyprpaper, а не
+# генератором.
+$$wallpaper = $$HOME/.dotfiles/theme/wallpapers/${wallpaper_file}
