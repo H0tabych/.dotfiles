@@ -31,3 +31,11 @@
     font-size: 11px;
     font-weight: 500;
 }
+
+/* Скругление панели — radius.window (shape), то же значение, что у окон
+   Hyprland (hyprland.lua: decoration.rounding) и rofi (theme.rasi:
+   radius-window). Раньше style.css задавал 999px (капсула) буквально —
+   визуально сильнее скруглено, чем окна (замечание на машине 2026-10-15). */
+window#waybar {
+    border-radius: 12px;
+}

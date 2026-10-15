@@ -1,10 +1,12 @@
 @import url("theme.css");
 
-/* DSN-LAY-1/DSN-CMP-4 (L1): панель — одна стеклянная капсула на весь столбец. */
+/* DSN-LAY-1/DSN-CMP-4 (L1): панель — одна стеклянная капсула на весь столбец.
+   Скругление — radius.window из theme.css (генератор, DSN-TOK-8): раньше
+   999px буквально здесь — сильнее скруглено, чем окна Hyprland (замечание
+   на машине 2026-10-15), не переопределяем. */
 window#waybar {
     background-color: @glass_bar;
     border: 1px solid @glass_rim;
-    border-radius: 999px;
     padding: 4px 0;
 }
 
@@ -31,7 +33,6 @@ window#waybar {
 #battery,
 #custom-more,
 #backlight,
-#bluetooth,
 #tray,
 #clock,
 #custom-power {
@@ -73,4 +74,14 @@ window#waybar {
 
 #idle_inhibitor.activated {
     color: @accent;
+}
+
+#pulseaudio.muted {
+    color: @error;
+}
+
+/* ПРОВЕРЕНО: класс "low" (не "high") — states у pulseaudio срабатывает при
+   value <= порога, см. комментарий в config.jsonc. */
+#pulseaudio.low {
+    color: @subtext0;
 }

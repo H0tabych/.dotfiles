@@ -80,35 +80,49 @@
         "tooltip-format-ethernet": "eth: {ifname}",
         "tooltip-format-disconnected": "сеть недоступна"
     },
+    // Значение — только в подсказке (наведение), в панели — одна цветная
+    // иконка: подпись цифрой рядом с иконкой дублировала её и забивала узкую
+    // 44px колонку (замечание на машине 2026-10-15). Цвет — по states
+    // (DSN-S5): ПРОВЕРЕНО на живой панели — порог срабатывает при value <= N
+    // (а не >=, как мог бы предполагать man waybar-states; выставлял volume
+    // 5%/95% — класс срабатывал ровно наоборот задуманному), поэтому класс
+    // назван "low" и красит тихий звук, не громкий. .muted — отдельный класс
+    // модуля (встроенный, не из states).
     "pulseaudio": {
-        "format": "{icon}\n{volume}",
-        "format-muted": " muted",
-        "format-icons": { "default": ["", "", ""] },
+        "format": "{icon}",
+        "format-muted": "{icon}",
+        "format-icons": {
+            "default": ["", "", ""],
+            "default-muted": ""
+        },
+        "states": { "low": 20 },
+        "tooltip-format": "{volume}%",
         "on-click": "swayosd-client --output-volume mute-toggle"
     },
     "battery": {
         "states": { "warning": 25, "critical": 10 },
-        "format": "{icon}\n{capacity}",
-        "format-icons": ["", "", "", "", ""]
+        "format": "{icon}",
+        "format-icons": ["", "", "", "", ""],
+        "tooltip-format": "{capacity}%"
     },
     "group/more": {
         "orientation": "inherit",
         "drawer": { "transition-duration": 250 },
-        "modules": ["custom/more", "backlight", "bluetooth", "tray"]
+        "modules": ["custom/more", "backlight", "tray"]
     },
     "custom/more": {
         "format": "",
-        "tooltip-format": "Ещё: яркость, Bluetooth, трей"
+        "tooltip-format": "Ещё: яркость, трей"
     },
     "backlight": {
         "format": "{icon}\n{percent}",
         "format-icons": [""]
     },
-    "bluetooth": {
-        "format": "",
-        "format-disabled": "",
-        "format-connected": ""
-    },
+    // bluetooth (DSN-S5, R6.8, исправление): отдельного модуля "bluetooth"
+    // здесь больше нет — дублировал значок трея (bluetooth-manager-blueman.nix:
+    // аплет blueman уже кладёт свою иконку в #tray, по замыслу самой фичи —
+    // "значок в трее отображает существующий модуль tray"; на машине
+    // 2026-10-15 оба значка оказались рядом одновременно).
     "tray": { "spacing": 8 },
 
     // Зона 4: время и питание — всегда.
