@@ -1,4 +1,4 @@
--- Сгенерировано theme/gen/gen.py из theme/palette.toml (вариант tree, профиль ac) — не редактируйте
+-- Сгенерировано theme/gen/gen.py из theme/palette.toml (вариант forest, профиль ac) — не редактируйте
 -- require("theme") (DESIGN_SYSTEM.md P.3.1): роли цвета и геометрия для hyprland.lua.
 local M = {}
 
@@ -14,7 +14,7 @@ M.c = {
   subtext0    = "A6B7BF",
   subtext1    = "BECAD0",
   text        = "DCE7EC",
-  accent      = "7FD6B0",
+  accent      = "6CC6DD",
   accent_warm = "F2A988",
   on_accent   = "070D12",
   success     = "B5DB86",

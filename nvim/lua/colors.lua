@@ -1,4 +1,4 @@
--- Сгенерировано theme/gen/gen.py из theme/palette.toml (вариант tree, профиль ac) — не редактируйте
+-- Сгенерировано theme/gen/gen.py из theme/palette.toml (вариант forest, профиль ac) — не редактируйте
 return {
   crust    = "#070D12",
   mantle   = "#0A141B",
@@ -12,7 +12,7 @@ return {
   subtext1 = "#BECAD0",
   text     = "#DCE7EC",
 
-  accent      = "#7FD6B0",
+  accent      = "#6CC6DD",
   accent_warm = "#F2A988",
   on_accent   = "#070D12",
 

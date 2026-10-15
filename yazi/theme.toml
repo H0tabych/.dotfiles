@@ -1,6 +1,6 @@
-# Сгенерировано theme/gen/gen.py из theme/palette.toml (вариант tree, профиль ac) — не редактируйте
+# Сгенерировано theme/gen/gen.py из theme/palette.toml (вариант forest, профиль ac) — не редактируйте
 [manager]
-cwd = { fg = "#7FD6B0" }
+cwd = { fg = "#6CC6DD" }
 
 hovered         = { reversed = true }
 preview_hovered = { underline = true }
@@ -11,9 +11,9 @@ find_position = { fg = "#B49AE8", bg = "reset", italic = true }
 marker_copied   = { fg = "#B5DB86", bg = "#B5DB86" }
 marker_cut      = { fg = "#F0817F", bg = "#F0817F" }
 marker_marked   = { fg = "#7AAEEA", bg = "#7AAEEA" }
-marker_selected = { fg = "#7FD6B0", bg = "#7FD6B0" }
+marker_selected = { fg = "#6CC6DD", bg = "#6CC6DD" }
 
-tab_active   = { fg = "#0E1A22", bg = "#7FD6B0" }
+tab_active   = { fg = "#0E1A22", bg = "#6CC6DD" }
 tab_inactive = { fg = "#DCE7EC", bg = "#1F313D" }
 
 border_symbol = "│"
@@ -23,12 +23,12 @@ border_style  = { fg = "#1F313D" }
 separator_open  = ""
 separator_close = ""
 
-mode_normal = { fg = "#0E1A22", bg = "#7FD6B0", bold = true }
+mode_normal = { fg = "#0E1A22", bg = "#6CC6DD", bold = true }
 mode_select = { fg = "#0E1A22", bg = "#B5DB86", bold = true }
 mode_unset  = { fg = "#0E1A22", bg = "#B49AE8", bold = true }
 
 progress_label  = { fg = "#DCE7EC", bold = true }
-progress_normal = { fg = "#7FD6B0", bg = "#1F313D" }
+progress_normal = { fg = "#6CC6DD", bg = "#1F313D" }
 progress_error  = { fg = "#F0817F", bg = "#1F313D" }
 
 permissions_t = { fg = "#7AAEEA" }
@@ -38,18 +38,18 @@ permissions_x = { fg = "#B5DB86" }
 permissions_s = { fg = "#1F313D" }
 
 [input]
-border   = { fg = "#7FD6B0" }
+border   = { fg = "#6CC6DD" }
 title    = {}
 value    = {}
 selected = { reversed = true }
 
 [select]
-border = { fg = "#7FD6B0" }
-active = { fg = "#7FD6B0" }
+border = { fg = "#6CC6DD" }
+active = { fg = "#6CC6DD" }
 inactive = {}
 
 [tasks]
-border  = { fg = "#7FD6B0" }
+border  = { fg = "#6CC6DD" }
 title   = {}
 hovered = { underline = true }
 
@@ -57,13 +57,13 @@ hovered = { underline = true }
 mask            = { bg = "#0E1A22" }
 cand            = { fg = "#6CCFCB" }
 rest            = { fg = "#1F313D" }
-desc            = { fg = "#7FD6B0" }
+desc            = { fg = "#6CC6DD" }
 separator       = "  "
 separator_style = { fg = "#1F313D" }
 
 [help]
 on      = { fg = "#6CCFCB" }
-run     = { fg = "#7FD6B0" }
+run     = { fg = "#6CC6DD" }
 desc    = { fg = "#1F313D" }
 hovered = { bg = "#1F313D", bold = true }
 footer  = { fg = "#DCE7EC", bg = "#1F313D" }

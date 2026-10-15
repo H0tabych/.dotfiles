@@ -1,4 +1,4 @@
-# Сгенерировано theme/gen/gen.py из theme/palette.toml (вариант tree, профиль ac) — не редактируйте
+# Сгенерировано theme/gen/gen.py из theme/palette.toml (вариант forest, профиль ac) — не редактируйте
 # Полная раскладка по зонам/уровням (L3/L5, критические уведомления) — DSN-S5.
 # Проверено по mako(5) 1.11.0: критерии одной секции — логическое И; при
 # нескольких совпадающих секциях побеждает последняя (DESIGN_SYSTEM.md I.6).
@@ -20,7 +20,7 @@ group-by=app-name
 background-color=#0A141BE6
 text-color=#DCE7EC
 border-color=#DCE7EC14
-progress-color=over #7FD6B0
+progress-color=over #6CC6DD
 
 [urgency=low]
 border-color=#4A6070

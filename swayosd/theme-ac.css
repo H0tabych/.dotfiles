@@ -1,4 +1,4 @@
-/* Сгенерировано theme/gen/gen.py из theme/palette.toml (вариант tree, профиль ac) — не редактируйте */
+/* Сгенерировано theme/gen/gen.py из theme/palette.toml (вариант forest, профиль ac) — не редактируйте */
 /* Селекторы проверены по data/style/style.scss SwayOSD 0.3.1 (DESIGN_SYSTEM.md I.6):
    window#osd, #container, image, label, progressbar/trough/progress. */
 @define-color crust #070D12;
@@ -6,7 +6,7 @@
 @define-color base #0E1A22;
 @define-color surface0 #16252F;
 @define-color text #DCE7EC;
-@define-color accent #7FD6B0;
+@define-color accent #6CC6DD;
 @define-color warning #F0B86E;
 
 @define-color glass_popup alpha(@mantle, 0.9);

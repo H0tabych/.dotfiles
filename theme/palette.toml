@@ -4,7 +4,7 @@
 # theme/gen/gen.py (без флагов — сгенерирует активный вариант, профиль ac;
 # --check — только проверки). Роли и пороги контраста — раздел 3 документа.
 schema = 2
-active = "tree"
+active = "forest"
 
 [neutral]
 crust    = "#070D12"

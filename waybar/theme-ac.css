@@ -1,4 +1,4 @@
-/* Сгенерировано theme/gen/gen.py из theme/palette.toml (вариант tree, профиль ac) — не редактируйте */
+/* Сгенерировано theme/gen/gen.py из theme/palette.toml (вариант forest, профиль ac) — не редактируйте */
 @define-color crust #070D12;
 @define-color mantle #0A141B;
 @define-color base #0E1A22;
@@ -11,7 +11,7 @@
 @define-color subtext1 #BECAD0;
 @define-color text #DCE7EC;
 
-@define-color accent #7FD6B0;
+@define-color accent #6CC6DD;
 @define-color accent_warm #F2A988;
 @define-color on_accent #070D12;
 
