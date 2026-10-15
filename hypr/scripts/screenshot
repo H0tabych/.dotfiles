@@ -1,13 +1,23 @@
 #!/usr/bin/env bash
 # hypr/scripts/screenshot (DESK-9, screenshot-grim.nix — DSN-CMP-9): выделение
-# области (по умолчанию) или весь экран (--full) в редактор swappy. Сохранение/
-# копирование — штатными сочетаниями клавиш swappy (Ctrl+S / Ctrl+C).
+# области (по умолчанию) или весь экран (--full). Снимок всегда сохраняется в
+# $XDG_PICTURES_DIR/Screenshots (DOT-3-независимый, из user-dirs.dirs) — не
+# полагаемся на то, что пользователь сам сохранит из swappy (Ctrl+S); swappy
+# поверх сохранённого файла открывается для аннотации, его правки — отдельным
+# Ctrl+S поверх. Уведомление (DSN-LAY-6) — с путём файла.
 set -euo pipefail
 
+dir="${XDG_PICTURES_DIR:-$HOME/Pictures}/Screenshots"
+mkdir -p "$dir"
+file="$dir/$(date +%Y-%m-%d_%H-%M-%S).png"
+
 if [ "${1:-}" = "--full" ]; then
-  grim - | swappy -f -
+  grim "$file"
 else
   region="$(slurp)"
   [ -n "$region" ] || exit 0
-  grim -g "$region" - | swappy -f -
+  grim -g "$region" "$file"
 fi
+
+notify-send -a screenshot "Скриншот сохранён" "$file"
+swappy -f "$file" -o "$file" &

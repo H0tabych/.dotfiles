@@ -1,6 +1,9 @@
 // Портативный конфиг waybar (DOT-3). Вертикальная панель, зоны 6.1 DESIGN_SYSTEM.md
 // (DSN-S5, R6.8). Батарея/мониторы — автоопределение waybar, машинный слой не
 // требуется (DOT-5: include нужен только там, где без него нельзя).
+// Иконки — через \uXXXX (набор Font Awesome, в шрифте символов — font.symbols
+// в palette.toml), а не буквальным символом: при прямой вставке глиф терялся
+// и поле уходило пустым (найдено на машине 2026-10-15 — "сеть пропала с панели").
 {
     "layer": "top",
     "position": "left",
@@ -19,18 +22,16 @@
     ],
 
     "custom/launcher": {
-        "format": "",
+        "format": "",
         "tooltip-format": "Приложения",
         "on-click": "pgrep -x rofi >/dev/null && pkill rofi || rofi -show drun"
     },
-    // DSN-LAY-3: рабочие столы всегда на виду — 1..9,0 (10-я) закреплены,
-    // даже пустые (persistent-workspaces), числом, а не глифом (не зависит
-    // от покрытия шрифта; активный/пустой/срочный — цветом, style.css).
+    // DSN-LAY-3: рабочие столы на виду, пока в них что-то есть/активны —
+    // штатное поведение модуля (persistent-workspaces снят: раньше показывал
+    // все 10 постоянно и, по живой проверке, терял интерактивность у
+    // непосещённых столов). Числом, не глифом — не зависит от покрытия шрифта.
     "hyprland/workspaces": {
-        "format": "{id}",
-        "persistent-workspaces": {
-            "*": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
-        }
+        "format": "{id}"
     },
 
     // DSN-LAY-2 зона 2: индикаторы приватности (запись экрана, микрофон, камера).
@@ -52,13 +53,13 @@
     },
     "idle_inhibitor": {
         "format": "{icon}",
-        "format-icons": { "activated": "", "deactivated": "" }
+        "format-icons": { "activated": "", "deactivated": "" }
     },
     "mpris": {
         "format": "{player_icon} {dynamic}",
         "format-paused": "{status_icon} {dynamic}",
-        "player-icons": { "default": "" },
-        "status-icons": { "paused": "" },
+        "player-icons": { "default": "" },
+        "status-icons": { "paused": "" },
         "max-length": 0
     },
 
@@ -72,23 +73,23 @@
     // DSN-LAY-10: SSID — переменный длинный текст, в панели только иконка;
     // имя сети — в подсказке (иначе растягивает 44px колонку вширь).
     "network": {
-        "format-wifi": "",
-        "format-ethernet": "",
-        "format-disconnected": "",
+        "format-wifi": "",
+        "format-ethernet": "",
+        "format-disconnected": "",
         "tooltip-format-wifi": "{essid} ({signalStrength}%)",
         "tooltip-format-ethernet": "eth: {ifname}",
         "tooltip-format-disconnected": "сеть недоступна"
     },
     "pulseaudio": {
         "format": "{icon}\n{volume}",
-        "format-muted": " muted",
-        "format-icons": { "default": ["", "", ""] },
+        "format-muted": " muted",
+        "format-icons": { "default": ["", "", ""] },
         "on-click": "swayosd-client --output-volume mute-toggle"
     },
     "battery": {
         "states": { "warning": 25, "critical": 10 },
         "format": "{icon}\n{capacity}",
-        "format-icons": ["", "", "", "", ""]
+        "format-icons": ["", "", "", "", ""]
     },
     "group/more": {
         "orientation": "inherit",
@@ -96,17 +97,17 @@
         "modules": ["custom/more", "backlight", "bluetooth", "tray"]
     },
     "custom/more": {
-        "format": "",
+        "format": "",
         "tooltip-format": "Ещё: яркость, Bluetooth, трей"
     },
     "backlight": {
         "format": "{icon}\n{percent}",
-        "format-icons": ["", "", "", "", ""]
+        "format-icons": [""]
     },
     "bluetooth": {
-        "format": "",
-        "format-disabled": "",
-        "format-connected": ""
+        "format": "",
+        "format-disabled": "",
+        "format-connected": ""
     },
     "tray": { "spacing": 8 },
 
@@ -116,7 +117,7 @@
         "tooltip-format": "<tt>{calendar}</tt>"
     },
     "custom/power": {
-        "format": "",
+        "format": "",
         "tooltip-format": "Меню питания",
         "on-click": "~/.config/rofi/scripts/power"
     }
