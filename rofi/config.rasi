@@ -40,11 +40,29 @@ listview {
 
 element {
     padding: 6px;
+    background-color: transparent;
     text-color: @text;
     border-radius: @radius-control;
 }
 
-element selected {
+/* element { background-color: transparent; } выше не действует на реальные
+   строки: rofi 2.0.0 применяет более специфичные "element normal.normal" /
+   "element alternate.normal" из встроенной Solarized-темы (var(lightbg) —
+   кремовый), которые перебивают общий блок element (сверено `rofi -dump-theme`,
+   DSN-S5/R6.8 — исправление). Перекрываем явно все normal/alternate-состояния. */
+element normal.normal, element alternate.normal {
+    background-color: transparent;
+    text-color: @text;
+}
+element normal.urgent, element alternate.urgent {
+    background-color: transparent;
+    text-color: @error;
+}
+element normal.active, element alternate.active {
+    background-color: transparent;
+    text-color: @accent;
+}
+element selected, element selected.normal, element selected.urgent, element selected.active {
     background-color: @accent;
     text-color: @on-accent;
 }
