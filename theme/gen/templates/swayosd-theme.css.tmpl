@@ -36,9 +36,12 @@ progressbar progress {
 }
 
 /* DSN-CMP-7: при отключении звука/микрофона — иконка «выключено» + warning.
-   ПРОВЕРИТЬ (новый пункт I.6): имя класса/состояния GTK, которое SwayOSD 0.3.1
-   выставляет на `image`/`window#osd` при muted — не подтверждено по исходникам,
-   только по README/поведению. Пока — наиболее вероятный селектор. */
-window#osd.muted image {
-    color: @warning;
+   Сверено по исходнику SwayOSD 0.3.1 (src/server/osd_window.rs, M16):
+   класса `.muted` нет ни на window#osd, ни на image — changed_volume() при
+   mute меняет только имя иконки (*-volume-muted-symbolic) и переводит
+   gtk::ProgressBar в состояние insensitive (progress.set_sensitive(!mute)).
+   Единственный реально доступный CSS-селектор — :disabled прогресс-бара. */
+progressbar:disabled trough,
+progressbar:disabled progress {
+    background-color: @warning;
 }
