@@ -113,3 +113,16 @@ hl.bind(mainMod .. " + mouse:273", hl.dsp.window.resize(), { mouse = true })
 -- hyprlang в 0.55 всё ещё поддерживается (REGISTRY.md).
 hl.bind("Print",         hl.dsp.exec_cmd("~/.config/hypr/scripts/screenshot"))
 hl.bind("SHIFT + Print", hl.dsp.exec_cmd("~/.config/hypr/scripts/screenshot --full"))
+
+-- Клавиши громкости (DSN-S5/R6.8, M28): с клавиатуры звук не регулировался —
+-- swayosd-libinput-backend ловит только CapsLock/NumLock/ScrollLock (README
+-- SwayOSD 0.3.1, раздел "LibInput Backend (Optional)"), громкость он не
+-- трогает вовсе; клик по иконке waybar работал отдельно, через свой on-click.
+-- Нужны явные биндинги на swayosd-client (как в примерах README для Sway/
+-- Hyprland). repeating — повтор при удержании; locked — работает и при
+-- активном input-инхибиторе (экран блокировки).
+local volOpts = { repeating = true, locked = true }
+hl.bind("XF86AudioRaiseVolume", hl.dsp.exec_cmd("swayosd-client --output-volume raise"), volOpts)
+hl.bind("XF86AudioLowerVolume", hl.dsp.exec_cmd("swayosd-client --output-volume lower"), volOpts)
+hl.bind("XF86AudioMute",        hl.dsp.exec_cmd("swayosd-client --output-volume mute-toggle"), volOpts)
+hl.bind("XF86AudioMicMute",     hl.dsp.exec_cmd("swayosd-client --input-volume mute-toggle"), volOpts)
