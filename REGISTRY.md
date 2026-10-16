@@ -7,6 +7,7 @@
 |---|---|---|---|---|
 | neovim | `nvim/` | `nvim/` | без менеджера плагинов пока (lock-файл — после первой реальной настройки, DOT-11) | `nvim --headless -c 'quit'` без ошибок |
 | zsh | `zsh/` | `zsh/` (требует `ZDOTDIR=~/.config/zsh`, задаёт Nix) | — | `zsh -n .zshrc` |
+| starship | `starship/` | `starship/` (требует `STARSHIP_CONFIG=~/.config/starship/starship.toml`, задаёт Nix — DOT-12) | новая запись реестра (DSN-S6, R6.9); целевая версия 1.25; `starship-lite.toml` — без статуса VCS, подключается `.envrc` репозитория для больших деревьев (DESIGN_SYSTEM.md Приложение I.7) | `starship --version` + `starship explain` с принятым конфигом |
 | foot | `foot/` | `foot/` | `include=` в `foot.ini` — foot ≥ 1.14 | `foot --check-config` |
 | hypr | `hypr/` | `hypr/` | Hyprland ≥ 0.55: основной конфиг — Lua (`hyprland.lua`, `theme.lua`, `effects.lua`), hyprlang ещё поддерживается; тег `pre-lua` перед переходом (DSN-S4) | `hyprctl` при живой сессии (ручная проверка) |
 | waybar | `waybar/` | `waybar/` | — | `waybar -c config.jsonc -s style.css --log-level error` недолгий запуск |
@@ -44,9 +45,14 @@ DSN-S5 (R6.8): добавлены SwayOSD, `hypr/theme.conf` (роли для hy
 документа); waybar/rofi/swayosd теперь генерируют per-profile файл
 `theme-<профиль>.<ext>` + симлинк `theme.<ext>` без суффикса на только что
 сгенерированный профиль (переставляет его сам переключатель — DSN-S7/R6.10).
-Остальные потребители (starship, qt6ct — частично DSN-S3, sddm-astronaut) и
-полная про-профильная генерация (battery/solid/game) — следующие шаги
-(DSN-S6…DSN-S8, DESIGN_SYSTEM.md Приложение I.4).
+DSN-S6 (R6.9): добавлен starship (`starship/starship.toml`,
+`starship/starship-lite.toml` — без профильного варианта, см. запись выше) и
+исправлены секции `yazi/theme.toml` под 26.5.6 (`[mgr]`/`[indicator]`/
+`[tabs]`/`[mode]` вместо `[manager]` с вложенными `tab_*`/`mode_*` —
+`[cmp]`/`[notify]`/`[filetype]`/`[icon]` не добавлены, схема полей не
+подтверждена, ПРОВЕРИТЬ визуально). Остальные потребители (qt6ct — частично
+DSN-S3, sddm-astronaut) и полная про-профильная генерация (battery/solid/game)
+— следующие шаги (DSN-S7…DSN-S8, DESIGN_SYSTEM.md Приложение I.4).
 
 ## Машинный слой
 

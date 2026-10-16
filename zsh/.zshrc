@@ -17,3 +17,9 @@ source "$ZDOTDIR/aliases.zsh"
 PROMPT='%F{blue}%~%f %# '
 
 [ -f "$HOME/.config/machine.d/zsh-env" ] && source "$HOME/.config/machine.d/zsh-env"
+
+# Промпт — starship (DSN-S6, R6.9): STARSHIP_CONFIG задаёт Nix (DOT-12).
+# В tty без Nerd Font ($TERM=linux) остаётся простой PROMPT выше (DSN-CMP-12).
+if [ "$TERM" != "linux" ] && command -v starship >/dev/null 2>&1; then
+  eval "$(starship init zsh)"
+fi

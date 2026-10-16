@@ -37,5 +37,6 @@ jobs:
           git diff --exit-code -- \
             'nvim/lua/colors.lua' 'foot/colors.ini' 'hypr/theme.lua' 'hypr/effects.lua' \
             'hypr/theme.conf' 'hypr/hyprpaper.conf' 'mako/config' 'yazi/theme.toml' \
+            'starship/starship.toml' 'starship/starship-lite.toml' \
             'waybar/theme-*.css' 'rofi/theme-*.rasi' 'swayosd/theme-*.css' \
             || { echo 'сгенерированные файлы не соответствуют palette.toml — перегенерируйте и закоммитьте'; exit 1; }

@@ -26,7 +26,21 @@ Python >= 3.11 (DESIGN_SYSTEM.md, Приложение S.2) — без внеш�
 установки (dotfiles.source пользователя), его собирает Nix
 (`modules/shell/dotfiles-link.nix` в nixos-config, machine.d/hypr-wallpaper.conf).
 Полная про-профильная генерация battery/solid/game и остальные потребители
-(starship, qt6ct, sddm-astronaut) — следующие шаги DSN-S6…DSN-S8 (R6.9–R6.11).
+(qt6ct, sddm-astronaut) — следующие шаги DSN-S7…DSN-S8 (R6.10–R6.11).
+DSN-S6 (R6.9) добавил starship (`starship/starship.toml`,
+`starship/starship-lite.toml` — без `$git_status` в `format`, без
+профильного варианта: палитра промпта не зависит от профиля эффектов) и
+перевёл `yazi/theme.toml` на разбивку секций DESIGN_SYSTEM.md P.3.5:
+`[mgr]`/`[indicator]`/`[tabs]`/`[mode]` вместо `[manager]` с вложенными
+`tab_*`/`mode_*`. ПРОВЕРЕНО на машине (yazi 26.5.6): имена TOML-таблиц
+верхнего уровня должны быть kebab-case — `[snake_case]` падает с ошибкой
+"must be a kebab-cased string", `[kebab-case]` и вложенные snake_case-поля
+(`find_keyword`, `border_style` и т. п.) парсятся без ошибок. Само наличие
+секций `[mgr]`/`[indicator]`/`[tabs]`/`[mode]` и реальный эффект их полей
+живой проверкой не подтверждены — yazi молча игнорирует нераспознанные
+TOML-таблицы и поля (кебаб-проверка — единственное, что даёт ошибку
+синтаксиса); `[cmp]`/`[notify]`/`[filetype]`/`[icon]` не добавлены вовсе —
+схема их полей неизвестна, ПРОВЕРИТЬ визуально на живой системе.
 """
 from __future__ import annotations
 
@@ -66,6 +80,8 @@ PLAIN_DEST = {
     "hypr-theme-conf.tmpl": "hypr/theme.conf",
     "mako-config.tmpl": "mako/config",
     "yazi-theme.toml.tmpl": "yazi/theme.toml",
+    "starship-toml.tmpl": "starship/starship.toml",
+    "starship-lite-toml.tmpl": "starship/starship-lite.toml",
 }
 
 PROFILES = ("ac", "battery", "solid", "game")

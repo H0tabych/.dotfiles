@@ -1,4 +1,4 @@
-[manager]
+[mgr]
 cwd = { fg = "${accent}" }
 
 hovered         = { reversed = true }
@@ -12,19 +12,34 @@ marker_cut      = { fg = "${error}", bg = "${error}" }
 marker_marked   = { fg = "${info}", bg = "${info}" }
 marker_selected = { fg = "${accent}", bg = "${accent}" }
 
-tab_active   = { fg = "${base}", bg = "${accent}" }
-tab_inactive = { fg = "${text}", bg = "${surface1}" }
+# ПРОВЕРИТЬ: имена count_* — по аналогии с marker_* (DESIGN_SYSTEM.md P.3.5
+# упоминает только группу "count_*", без точных имён), не подтверждено живым
+# запуском.
+count_copied   = { fg = "${base}", bg = "${success}" }
+count_cut      = { fg = "${base}", bg = "${error}" }
+count_selected = { fg = "${base}", bg = "${accent}" }
 
 border_symbol = "│"
 border_style  = { fg = "${surface1}" }
 
+[indicator]
+# DSN-S6 (R6.9): строка под курсором — bg = surface2 (DESIGN_SYSTEM.md P.3.5).
+current = { bg = "${surface2}" }
+parent  = {}
+preview = {}
+
+[tabs]
+active   = { fg = "${base}", bg = "${accent}" }
+inactive = { fg = "${text}", bg = "${surface1}" }
+
+[mode]
+normal = { fg = "${base}", bg = "${accent}", bold = true }
+select = { fg = "${base}", bg = "${success}", bold = true }
+unset  = { fg = "${base}", bg = "${special}", bold = true }
+
 [status]
 separator_open  = ""
 separator_close = ""
-
-mode_normal = { fg = "${base}", bg = "${accent}", bold = true }
-mode_select = { fg = "${base}", bg = "${success}", bold = true }
-mode_unset  = { fg = "${base}", bg = "${special}", bold = true }
 
 progress_label  = { fg = "${text}", bold = true }
 progress_normal = { fg = "${accent}", bg = "${surface1}" }
@@ -66,3 +81,7 @@ run     = { fg = "${accent}" }
 desc    = { fg = "${surface1}" }
 hovered = { bg = "${surface1}", bold = true }
 footer  = { fg = "${text}", bg = "${surface1}" }
+
+# [cmp], [notify], [filetype], [icon] — секции упомянуты DESIGN_SYSTEM.md
+# P.3.5 как существующие в 26.5.6, но схема их полей не подтверждена; не
+# заданы — yazi применяет собственные умолчания. ПРОВЕРИТЬ на живой системе.
