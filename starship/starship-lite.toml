@@ -8,7 +8,6 @@ command_timeout = 50
 scan_timeout = 10
 
 [palettes.glass_tide]
-surface1 = "#1F313D"
 text = "#DCE7EC"
 subtext0 = "#A6B7BF"
 accent_warm = "#F2A988"
@@ -17,19 +16,18 @@ info = "#7AAEEA"
 warning = "#F0B86E"
 error = "#F0817F"
 success = "#B5DB86"
-on_accent = "#070D12"
 
 [directory]
-format = "[](fg:surface1)[$path]($style)[$read_only]($read_only_style)[](fg:surface1) "
-style = "fg:text bg:surface1"
+format = "[$path]($style)[$read_only]($read_only_style) "
+style = "fg:text bold"
 read_only = " ro"
-read_only_style = "fg:error bg:surface1"
+read_only_style = "fg:error"
 truncation_length = 3
 truncate_to_repo = true
 
 [git_branch]
-format = "[](fg:accent_warm)[$branch]($style)[](fg:accent_warm) "
-style = "fg:on_accent bg:accent_warm"
+format = "on [$branch]($style) "
+style = "fg:accent_warm"
 
 [git_state]
 format = "[$state( $progress_current/$progress_total)]($style) "
@@ -47,13 +45,13 @@ error_symbol = "[❯](bold fg:error)"
 
 [cmd_duration]
 min_time = 2000
-format = "[](fg:special)[$duration]($style)[](fg:special) "
-style = "fg:on_accent bg:special"
+format = "[$duration]($style) "
+style = "fg:special"
 
 [status]
 disabled = false
-format = "[](fg:error)[$status]($style)[](fg:error) "
-style = "fg:on_accent bg:error"
+format = "[$status]($style) "
+style = "fg:error"
 
 [nix_shell]
 format = "[nix:$state]($style) "
