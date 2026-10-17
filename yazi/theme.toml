@@ -23,12 +23,6 @@ count_selected = { fg = "#0E1A22", bg = "#6CC6DD" }
 border_symbol = "│"
 border_style  = { fg = "#1F313D" }
 
-[indicator]
-# DSN-S6 (R6.9): строка под курсором — bg = surface2 (DESIGN_SYSTEM.md P.3.5).
-current = { bg = "#2A3F4D" }
-parent  = {}
-preview = {}
-
 [tabs]
 active   = { fg = "#0E1A22", bg = "#6CC6DD" }
 inactive = { fg = "#DCE7EC", bg = "#1F313D" }
@@ -86,3 +80,8 @@ footer  = { fg = "#DCE7EC", bg = "#1F313D" }
 # [cmp], [notify], [filetype], [icon] — секции упомянуты DESIGN_SYSTEM.md
 # P.3.5 как существующие в 26.5.6, но схема их полей не подтверждена; не
 # заданы — yazi применяет собственные умолчания. ПРОВЕРИТЬ на живой системе.
+#
+# [indicator] убран (был добавлен в R6.9, снят в тот же день): current с
+# bg = surface2 рисовал тёмный полукруг поверх значка текущей строки —
+# подтверждено пользователем на живой системе. Штатная подсветка текущей
+# строки у yazi (светлая, mgr.hovered) и так работает без этой настройки.
