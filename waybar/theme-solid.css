@@ -1,0 +1,41 @@
+/* Сгенерировано theme/gen/gen.py из theme/palette.toml (вариант forest, профиль solid) — не редактируйте */
+@define-color crust #070D12;
+@define-color mantle #0A141B;
+@define-color base #0E1A22;
+@define-color surface0 #16252F;
+@define-color surface1 #1F313D;
+@define-color surface2 #2A3F4D;
+@define-color overlay0 #4A6070;
+@define-color overlay1 #839AA5;
+@define-color subtext0 #A6B7BF;
+@define-color subtext1 #BECAD0;
+@define-color text #DCE7EC;
+
+@define-color accent #6CC6DD;
+@define-color accent_warm #F2A988;
+@define-color on_accent #070D12;
+
+@define-color success #B5DB86;
+@define-color warning #F0B86E;
+@define-color error #F0817F;
+@define-color info #7AAEEA;
+@define-color special #B49AE8;
+
+@define-color glass_bar alpha(@base, 1.0);
+@define-color glass_rim alpha(@text, 0.08);
+
+/* DSN-CMP-4: шрифт UI md/500 — здесь, а не в style.css (DSN-TOK-8 запрещает
+   имя шрифта вне сгенерированных файлов). */
+* {
+    font-family: "Inter";
+    font-size: 11px;
+    font-weight: 500;
+}
+
+/* Скругление панели — radius.window (shape), то же значение, что у окон
+   Hyprland (hyprland.lua: decoration.rounding) и rofi (theme.rasi:
+   radius-window). Раньше style.css задавал 999px (капсула) буквально —
+   визуально сильнее скруглено, чем окна (замечание на машине 2026-10-15). */
+window#waybar {
+    border-radius: 12px;
+}

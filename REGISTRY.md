@@ -9,11 +9,11 @@
 | zsh | `zsh/` | `zsh/` (требует `ZDOTDIR=~/.config/zsh`, задаёт Nix) | — | `zsh -n .zshrc` |
 | starship | `starship/` | `starship/` (требует `STARSHIP_CONFIG=~/.config/starship/starship.toml`, задаёт Nix — DOT-12) | новая запись реестра (DSN-S6, R6.9); целевая версия 1.25; `starship-lite.toml` — без статуса VCS, подключается `.envrc` репозитория для больших деревьев (DESIGN_SYSTEM.md Приложение I.7) | `starship --version` + `starship explain` с принятым конфигом |
 | foot | `foot/` | `foot/` | `include=` в `foot.ini` — foot ≥ 1.14 | `foot --check-config` |
-| hypr | `hypr/` | `hypr/` | Hyprland ≥ 0.55: основной конфиг — Lua (`hyprland.lua`, `theme.lua`, `effects.lua`), hyprlang ещё поддерживается; тег `pre-lua` перед переходом (DSN-S4) | `hyprctl` при живой сессии (ручная проверка) |
+| hypr | `hypr/` | `hypr/` | Hyprland ≥ 0.55: основной конфиг — Lua (`hyprland.lua`, `theme.lua`, `effects.lua`), hyprlang ещё поддерживается; тег `pre-lua` перед переходом (DSN-S4); `effects.lua` — симлинк на профиль (DSN-S7, R6.10), переставляет `hypr/scripts/profile` | `hyprctl` при живой сессии (ручная проверка) |
 | waybar | `waybar/` | `waybar/` | — | `waybar -c config.jsonc -s style.css --log-level error` недолгий запуск |
 | rofi | `rofi/` | `rofi/` | — | `rofi -dump-config` после `-config config.rasi` |
-| mako | `mako/` | `mako/` | весь файл генерируется (цвета + статика вместе, см. `theme/gen/templates/mako-config.tmpl`) | `makoctl reload` при живой сессии |
-| swayosd | `swayosd/` | `swayosd/` | новая запись реестра (DSN-S5, R6.8); `style.css` — статика с `@import url("theme.css")`, сам `theme.css` — симлинк на профиль (генератор) | визуально при живой сессии (громкость/яркость/caps lock) |
+| mako | `mako/` | `mako/` | цвета + статика вместе (`theme/gen/templates/mako-config.tmpl`); `config` — симлинк на профиль (DSN-S7, R6.10), переставляет `hypr/scripts/profile` | `makoctl reload` при живой сессии |
+| swayosd | `swayosd/` | `swayosd/` | новая запись реестра (DSN-S5, R6.8); `style.css` — статика с `@import url("theme.css")`, сам `theme.css` — симлинк на профиль (генератор/переключатель) | визуально при живой сессии (громкость/яркость/caps lock) |
 | yazi | `yazi/` | `yazi/` | — | `yazi --version` + ручной запуск |
 | mpv | `mpv/` | `mpv/` | — | `mpv --no-config --show-profile=default` не применимо; визуальная проверка |
 | git | `git/` | `git/` (файл `config`, не `gitconfig`) | identity — только через `machine.d/git-identity` (SEC-10) | `git config --list` без личной почты в выводе из репозитория |
@@ -50,9 +50,15 @@ DSN-S6 (R6.9): добавлен starship (`starship/starship.toml`,
 исправлены секции `yazi/theme.toml` под 26.5.6 (`[mgr]`/`[indicator]`/
 `[tabs]`/`[mode]` вместо `[manager]` с вложенными `tab_*`/`mode_*` —
 `[cmp]`/`[notify]`/`[filetype]`/`[icon]` не добавлены, схема полей не
-подтверждена, ПРОВЕРИТЬ визуально). Остальные потребители (qt6ct — частично
-DSN-S3, sddm-astronaut) и полная про-профильная генерация (battery/solid/game)
-— следующие шаги (DSN-S7…DSN-S8, DESIGN_SYSTEM.md Приложение I.4).
+подтверждена, ПРОВЕРИТЬ визуально). DSN-S7 (R6.10): `hypr/effects.lua` и
+`mako/config` тоже переведены на per-profile файл + симлинк (как
+waybar/rofi/swayosd); генератор пишет файлы всех четырёх профилей
+(`ac`/`battery`/`solid`/`game`) за один прогон; появился сам переключатель —
+скрипт `hypr/scripts/profile` (DESK-9), переставляющий все пять симлинков и
+перезагружающий компоненты (`hyprctl reload`, `pkill -SIGUSR2 waybar`,
+`makoctl reload`); состояние — `$XDG_STATE_HOME/glass-tide/profile`
+(DSN-PWR-7). Остальные потребители (qt6ct — частично DSN-S3, sddm-astronaut)
+— следующий шаг (DSN-S8, DESIGN_SYSTEM.md Приложение I.4).
 
 ## Машинный слой
 

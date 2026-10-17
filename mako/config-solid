@@ -1,0 +1,38 @@
+# Сгенерировано theme/gen/gen.py из theme/palette.toml (вариант forest, профиль solid) — не редактируйте
+# Полная раскладка по зонам/уровням (L3/L5, критические уведомления) — DSN-S5.
+# Проверено по mako(5) 1.11.0: критерии одной секции — логическое И; при
+# нескольких совпадающих секциях побеждает последняя (DESIGN_SYSTEM.md I.6).
+
+font=Inter 11
+sort=-time
+layer=overlay
+anchor=top-right
+width=360
+margin=10
+padding=12,16
+border-size=1
+border-radius=12
+max-visible=3
+default-timeout=6000
+ignore-timeout=false
+group-by=app-name
+
+background-color=#0A141BFF
+text-color=#DCE7EC
+border-color=#DCE7EC14
+progress-color=over #6CC6DD
+
+[urgency=low]
+border-color=#4A6070
+
+[urgency=critical]
+background-color=#0A141BFF
+border-size=2
+border-color=#F0817F
+default-timeout=0
+
+[mode=do-not-disturb]
+invisible=1
+
+[mode=do-not-disturb urgency=critical]
+invisible=0

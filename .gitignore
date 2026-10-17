@@ -9,6 +9,8 @@ __pycache__/
 /waybar/theme.css
 /rofi/theme.rasi
 /swayosd/theme.css
+/hypr/effects.lua
+/mako/config
 
 # Hyprland сам пишет этот stub-файл при поиске конфига, если не находит
 # hyprland.lua (пример из example/hyprland.lua апстрима, не наш файл; DSN-S4).

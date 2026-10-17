@@ -14,19 +14,18 @@ Python >= 3.11 (DESIGN_SYSTEM.md, Приложение S.2) — без внеш�
 `ac`, PROFILE_EFFECTS). DSN-S5 (R6.8) добавил SwayOSD, `hypr/theme.conf`
 (роли цвета/шрифт для hyprlock — не зависит от профиля, L6 не тонируется,
 раздел 2.1) и per-profile файлы для waybar/rofi/swayosd (`theme-<профиль>.<ext>`
-+ симлинк `theme.<ext>` без суффикса, PROFILED_DEST) — симлинк переставляет
-переключатель профиля DSN-S7 (R6.10), здесь генератор только создаёт начальный
-симлинк на профиль, который был сгенерирован. mako остаётся одним файлом без
-профильного суффикса (целиком, как и раньше) — переход `mako/config` на
-симлинк того же вида — тоже DSN-S7 (R6.10), когда появится сам переключатель
-и генерация остальных профилей.
++ симлинк `theme.<ext>` без суффикса, PROFILED_DEST).
+DSN-S7 (R6.10): `hypr/effects.lua` и `mako/config` переведены в PROFILED_DEST
+(`effects-<профиль>.lua`, `config-<профиль>`); `render()` пишет файлы **всех**
+PROFILES за один прогон (переключателю `hypr/scripts/profile` нужны файлы
+всех четырёх сразу) и создаёт симлинк только при первом прогоне (его ещё
+нет) — на уже переключённом профиле симлинк не трогается, им владеет сам
+переключатель.
 Обои (`hypr/hyprpaper.conf`, путь к файлу обоев) генератор НЕ пишет
 (исправление R6.8, 2026-10-15): hyprlang не резолвит необъявленную переменную
 как переменную окружения (ПРОВЕРЕНО на машине), абсолютный путь — факт
 установки (dotfiles.source пользователя), его собирает Nix
 (`modules/shell/dotfiles-link.nix` в nixos-config, machine.d/hypr-wallpaper.conf).
-Полная про-профильная генерация battery/solid/game и остальные потребители
-(qt6ct, sddm-astronaut) — следующие шаги DSN-S7…DSN-S8 (R6.10–R6.11).
 DSN-S6 (R6.9) добавил starship (`starship/starship.toml`,
 `starship/starship-lite.toml` — без `$git_status` в `format`, без
 профильного варианта: палитра промпта не зависит от профиля эффектов) и
@@ -76,9 +75,7 @@ PLAIN_DEST = {
     "nvim-colors.lua.tmpl": "nvim/lua/colors.lua",
     "foot-colors.ini.tmpl": "foot/colors.ini",
     "hypr-theme.lua.tmpl": "hypr/theme.lua",
-    "hypr-effects.lua.tmpl": "hypr/effects.lua",
     "hypr-theme-conf.tmpl": "hypr/theme.conf",
-    "mako-config.tmpl": "mako/config",
     "yazi-theme.toml.tmpl": "yazi/theme.toml",
     "starship-toml.tmpl": "starship/starship.toml",
     "starship-lite-toml.tmpl": "starship/starship-lite.toml",
@@ -87,13 +84,18 @@ PLAIN_DEST = {
 PROFILES = ("ac", "battery", "solid", "game")
 
 # tmpl filename -> (каталог приложения, базовое имя, расширение). Реальный файл —
-# "<base>-<профиль><ext>"; симлинк без суффикса — производное состояние
-# переключателя профиля (P.3.1), в .gitignore, генератор создаёт/переставляет
-# его на только что сгенерированный профиль.
+# "<base>-<профиль><ext>" для КАЖДОГО профиля (генератор пишет все четыре за
+# один прогон — переключателю DSN-S7/R6.10 нужны файлы всех профилей сразу,
+# не только активного); симлинк без суффикса — производное состояние
+# переключателя (P.3.1), в .gitignore. Генератор переставляет симлинк только
+# при первом прогоне (его ещё нет) — на уже переключённом профиле он не
+# трогается (не затирает состояние переключателя правкой palette.toml).
 PROFILED_DEST = {
     "waybar-theme.css.tmpl": ("waybar", "theme", ".css"),
     "rofi-theme.rasi.tmpl": ("rofi", "theme", ".rasi"),
     "swayosd-theme.css.tmpl": ("swayosd", "theme", ".css"),
+    "hypr-effects.lua.tmpl": ("hypr", "effects", ".lua"),
+    "mako-config.tmpl": ("mako", "config", ""),
 }
 
 # DSN-S4 (R6.7): матрица поведения профилей — раздел 9 DESIGN_SYSTEM.md.
@@ -525,14 +527,24 @@ def render(p: dict, variant_name: str, profile_name: str) -> None:
 
     for tmpl_name, (subdir, base, ext) in PROFILED_DEST.items():
         dest_dir = REPO_ROOT / subdir
-        real_path = dest_dir / f"{base}-{profile_name}{ext}"
-        write_rendered(tmpl_name, real_path, tokens, variant_name, profile_name)
-
         link_path = dest_dir / f"{base}{ext}"
-        if link_path.is_symlink() or link_path.exists():
-            link_path.unlink()
-        link_path.symlink_to(real_path.name)
-        print(f"linked {link_path.relative_to(REPO_ROOT)} -> {real_path.name}")
+        had_link = link_path.is_symlink()
+
+        for profile in PROFILES:
+            profile_tokens = tokens if profile == profile_name else flatten_tokens(p, variant_name, profile)
+            real_path = dest_dir / f"{base}-{profile}{ext}"
+            write_rendered(tmpl_name, real_path, profile_tokens, variant_name, profile)
+
+        # Начальный симлинк (DSN-PWR-7: без состояния действует ac) — только
+        # если его ещё нет; дальше симлинком владеет hypr/scripts/profile.
+        # Обычный файл на месте будущего симлинка (первый переход на профили,
+        # напр. hypr/effects.lua/mako/config до DSN-S7) заменяется один раз.
+        if not had_link:
+            if link_path.exists():
+                link_path.unlink()
+            default_real = dest_dir / f"{base}-{profile_name}{ext}"
+            link_path.symlink_to(default_real.name)
+            print(f"linked {link_path.relative_to(REPO_ROOT)} -> {default_real.name} (начальный)")
 
 
 def main() -> int:

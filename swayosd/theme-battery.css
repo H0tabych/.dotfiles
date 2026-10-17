@@ -1,0 +1,48 @@
+/* Сгенерировано theme/gen/gen.py из theme/palette.toml (вариант forest, профиль battery) — не редактируйте */
+/* Селекторы проверены по data/style/style.scss SwayOSD 0.3.1 (DESIGN_SYSTEM.md I.6):
+   window#osd, #container, image, label, progressbar/trough/progress. */
+@define-color crust #070D12;
+@define-color mantle #0A141B;
+@define-color base #0E1A22;
+@define-color surface0 #16252F;
+@define-color text #DCE7EC;
+@define-color accent #6CC6DD;
+@define-color warning #F0B86E;
+
+@define-color glass_popup alpha(@mantle, 0.94);
+@define-color glass_rim alpha(@text, 0.08);
+
+window#osd {
+    background-color: @glass_popup;
+    border: 1px solid @glass_rim;
+    border-radius: 999px;
+}
+
+#container {
+    padding: 12px 16px;
+}
+
+image, label {
+    color: @text;
+}
+
+progressbar trough {
+    background-color: alpha(@surface0, 1.0);
+    border-radius: 999px;
+}
+
+progressbar progress {
+    background-color: @accent;
+    border-radius: 999px;
+}
+
+/* DSN-CMP-7: при отключении звука/микрофона — иконка «выключено» + warning.
+   Сверено по исходнику SwayOSD 0.3.1 (src/server/osd_window.rs, M16):
+   класса `.muted` нет ни на window#osd, ни на image — changed_volume() при
+   mute меняет только имя иконки (*-volume-muted-symbolic) и переводит
+   gtk::ProgressBar в состояние insensitive (progress.set_sensitive(!mute)).
+   Единственный реально доступный CSS-селектор — :disabled прогресс-бара. */
+progressbar:disabled trough,
+progressbar:disabled progress {
+    background-color: @warning;
+}

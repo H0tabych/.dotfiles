@@ -1,0 +1,34 @@
+/* Сгенерировано theme/gen/gen.py из theme/palette.toml (вариант forest, профиль game) — не редактируйте */
+* {
+    crust:    #070D12;
+    mantle:   #0A141B;
+    base:     #0E1A22;
+    surface0: #16252F;
+    surface1: #1F313D;
+    surface2: #2A3F4D;
+    overlay0: #4A6070;
+    overlay1: #839AA5;
+    subtext0: #A6B7BF;
+    subtext1: #BECAD0;
+    text:     #DCE7EC;
+
+    accent:      #6CC6DD;
+    accent-warm: #F2A988;
+    on-accent:   #070D12;
+
+    success: #B5DB86;
+    warning: #F0B86E;
+    error:   #F0817F;
+
+    /* DSN-CMP-5 (L3): капсула стекла с альфой профиля — rasi не знает функцию
+       alpha() по токену (как GTK3 CSS, P.3.2), поэтому байт альфы считает
+       генератор (DSN-S5, R6.8). */
+    glass-popup: #0A141BF0;
+    glass-rim:   #DCE7EC14;
+
+    font: "Inter 13";
+
+    radius-window:  12px;
+    radius-control: 8px;
+    pad-launcher:   12px;
+}

@@ -1,0 +1,54 @@
+#!/usr/bin/env bash
+# hypr/scripts/profile <ac|battery|solid|game> (DESK-9, effects-profile.nix —
+# DSN-S7/R6.10): переключатель профиля эффектов Glass Tide (DESIGN_SYSTEM.md,
+# раздел 9). Без аргумента — печатает текущий профиль. Идемпотентен: запрос
+# уже активного профиля не трогает симлинки и не перезагружает компоненты
+# (DSN-PWR-3, ≤ 2 с). Автопереключение ac/battery вызывает этот скрипт из
+# effects-profile.nix (следит за источником питания); сочетания клавиш для
+# solid/game — биндинги в hyprland.lua.
+set -euo pipefail
+
+profiles=(ac battery solid game)
+state_dir="${XDG_STATE_HOME:-$HOME/.local/state}/glass-tide"
+state_file="$state_dir/profile"
+
+current="$(cat "$state_file" 2>/dev/null || true)"
+current="${current:-ac}"
+
+if [ $# -eq 0 ]; then
+  echo "$current"
+  exit 0
+fi
+
+profile="$1"
+known=0
+for p in "${profiles[@]}"; do
+  [ "$p" = "$profile" ] && known=1
+done
+if [ "$known" -ne 1 ]; then
+  echo "profile: неизвестный профиль '$profile' (ac|battery|solid|game)" >&2
+  exit 1
+fi
+
+# Идемпотентно: уже на этом профиле — ничего не делать (DSN-PWR-3).
+[ "$profile" = "$current" ] && exit 0
+
+mkdir -p "$state_dir"
+printf '%s\n' "$profile" >"$state_file"
+
+# Относительные симлинки в каталогах самих приложений (P.3.1, DOT-1) — не
+# абсолютный путь. readlink -f резолвит и ~/.config/hypr (symlink на рабочую
+# копию dotfiles, dotfiles-link.nix), поэтому dotfiles_dir — реальный путь.
+hypr_dir="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"
+hypr_dir="$(dirname "$hypr_dir")"
+dotfiles_dir="$(dirname "$hypr_dir")"
+
+ln -sf "effects-$profile.lua" "$hypr_dir/effects.lua"
+ln -sf "theme-$profile.css" "$dotfiles_dir/waybar/theme.css"
+ln -sf "theme-$profile.rasi" "$dotfiles_dir/rofi/theme.rasi"
+ln -sf "theme-$profile.css" "$dotfiles_dir/swayosd/theme.css"
+ln -sf "config-$profile" "$dotfiles_dir/mako/config"
+
+hyprctl reload >/dev/null
+pkill -SIGUSR2 waybar 2>/dev/null || true
+makoctl reload >/dev/null 2>&1 || true

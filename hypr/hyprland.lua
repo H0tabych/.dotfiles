@@ -93,6 +93,12 @@ hl.bind(mainMod .. " + Space",  hl.dsp.exec_cmd("rofi -show drun"))
 hl.bind(mainMod .. " + V",      hl.dsp.window.float({ action = "toggle" }))
 hl.bind(mainMod .. " + F",      hl.dsp.window.fullscreen())
 
+-- DSN-PWR-2 (раздел 9, DSN-S7/R6.10): ручной выбор профиля эффектов solid/game;
+-- ac/battery переключаются автоматически (effects-profile.nix). Скрипт
+-- идемпотентен — повторное нажатие на уже активном профиле ничего не делает.
+hl.bind(mainMod .. " + SHIFT + S", hl.dsp.exec_cmd("~/.config/hypr/scripts/profile solid"))
+hl.bind(mainMod .. " + SHIFT + G", hl.dsp.exec_cmd("~/.config/hypr/scripts/profile game"))
+
 -- 10 рабочих столов, 1..9 затем 0 (DSN-LAY-3: всегда на виду, waybar —
 -- persistent-workspaces). Клавиша "0" -> стол 10, как на цифровом ряду клавиатуры.
 for i = 1, 9 do
