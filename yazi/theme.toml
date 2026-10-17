@@ -2,7 +2,11 @@
 [mgr]
 cwd = { fg = "#6CC6DD" }
 
-hovered         = { reversed = true }
+# R6.9, ПРОВЕРИТЬ: было reversed = true — инверсия цвета конфликтовала с
+# вылезающим краем иконки (overflowing-glyphs=yes, умолчание foot) и давала
+# полукруг поверх значка текущей строки; прямой bg — попытка обойти это
+# без глобального твика foot (который калечит иконки сильнее).
+hovered         = { bg = "#1F313D" }
 preview_hovered = { underline = true }
 
 find_keyword  = { fg = "#F0B86E", italic = true }
