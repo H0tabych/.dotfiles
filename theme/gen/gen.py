@@ -40,6 +40,15 @@ DSN-S6 (R6.9) добавил starship (`starship/starship.toml`,
 TOML-таблицы и поля (кебаб-проверка — единственное, что даёт ошибку
 синтаксиса); `[cmp]`/`[notify]`/`[filetype]`/`[icon]` не добавлены вовсе —
 схема их полей неизвестна, ПРОВЕРИТЬ визуально на живой системе.
+
+DSN-S9/R7.1 добавил `zathura/zathurarc` (PLAIN_DEST — не зависит от профиля
+эффектов, DSN-CMP-18) и упаковку `theme/export/glass-tide-<вариант>.tdesktop-
+theme` — ZIP с единственным файлом `colors.tdesktop-theme` (формат Telegram
+Desktop), собирается отдельной функцией `render_tdesktop_theme()` в обход
+`PLAIN_DEST` (там только текстовые файлы с подстановкой Template; здесь текст
+сначала рендерится, потом упаковывается). Имена ключей `.tdesktop-theme` —
+ПРОВЕРИТЬ вживую (Приложение I.6, M5 DESIGN_SYSTEM.md); импорт в Telegram —
+разовое ручное действие (DSN-CMP-17), не автоматизируется.
 """
 from __future__ import annotations
 
@@ -48,6 +57,7 @@ import hashlib
 import re
 import sys
 import tomllib
+import zipfile
 from pathlib import Path
 from string import Template
 
@@ -55,6 +65,7 @@ REPO_ROOT = Path(__file__).resolve().parents[2]
 PALETTE_PATH = REPO_ROOT / "theme" / "palette.toml"
 TEMPLATES_DIR = REPO_ROOT / "theme" / "gen" / "templates"
 WALLPAPERS_DIR = REPO_ROOT / "theme" / "wallpapers"
+EXPORT_DIR = REPO_ROOT / "theme" / "export"
 
 GENERATED_HEADER = {
     ".lua": "-- Сгенерировано theme/gen/gen.py из theme/palette.toml (вариант {variant}, профиль {profile}) — не редактируйте\n",
@@ -79,6 +90,7 @@ PLAIN_DEST = {
     "yazi-theme.toml.tmpl": "yazi/theme.toml",
     "starship-toml.tmpl": "starship/starship.toml",
     "starship-lite-toml.tmpl": "starship/starship-lite.toml",
+    "zathurarc.tmpl": "zathura/zathurarc",
 }
 
 PROFILES = ("ac", "battery", "solid", "game")
@@ -322,7 +334,7 @@ LITERAL_HEX_RE = re.compile(r"#[0-9A-Fa-f]{6}\b")
 LITERAL_RGB_RE = re.compile(r"(?<![.\w])rgba?\(")
 
 
-def all_generated_paths() -> set[Path]:
+def all_generated_paths(p: dict) -> set[Path]:
     """Пути, которые пишет render(): исключаются из поиска литералов (DSN-TOK-8).
     Для PROFILED_DEST — симлинк без суффикса и файлы всех четырёх профилей
     (даже ещё не сгенерированных — набор путей, а не список существующих файлов)."""
@@ -332,13 +344,15 @@ def all_generated_paths() -> set[Path]:
         paths.add(d / f"{base}{ext}")
         for profile in PROFILES:
             paths.add(d / f"{base}-{profile}{ext}")
+    for variant in p["variant"]:
+        paths.add(EXPORT_DIR / f"glass-tide-{variant}.tdesktop-theme")
     return paths
 
 
 def check_literals(p: dict) -> list[str]:
     errs = []
     font_names = {v for v in p.get("font", {}).values() if isinstance(v, str)}
-    generated_files = all_generated_paths()
+    generated_files = all_generated_paths(p)
     skip_dirs = {REPO_ROOT / "theme" / "gen", REPO_ROOT / ".git"}
     for path in REPO_ROOT.rglob("*"):
         if not path.is_file():
@@ -519,11 +533,28 @@ def write_rendered(tmpl_name: str, dest_path: Path, tokens: dict, variant_name: 
     print(f"generated {dest_path.relative_to(REPO_ROOT)}")
 
 
+def render_tdesktop_theme(tokens: dict, variant_name: str) -> None:
+    """colors.tdesktop-theme — не зависит от профиля эффектов (DSN-CMP-17,
+    как и остальной PLAIN_DEST); упаковывается в ZIP (формат Telegram Desktop
+    для импорта темы), а не пишется как текстовый файл — отдельно от
+    write_rendered(). date_time фиксирован (DOT-9: детерминированный вывод,
+    иначе git diff видел бы изменение при каждом перегенерировании)."""
+    content = Template((TEMPLATES_DIR / "tdesktop-colors.tmpl").read_text()).substitute(tokens)
+    EXPORT_DIR.mkdir(parents=True, exist_ok=True)
+    dest = EXPORT_DIR / f"glass-tide-{variant_name}.tdesktop-theme"
+    with zipfile.ZipFile(dest, "w", compression=zipfile.ZIP_DEFLATED, compresslevel=9) as zf:
+        info = zipfile.ZipInfo("colors.tdesktop-theme", date_time=(1980, 1, 1, 0, 0, 0))
+        zf.writestr(info, content)
+    print(f"generated {dest.relative_to(REPO_ROOT)}")
+
+
 def render(p: dict, variant_name: str, profile_name: str) -> None:
     tokens = flatten_tokens(p, variant_name, profile_name)
 
     for tmpl_name, dest_rel in PLAIN_DEST.items():
         write_rendered(tmpl_name, REPO_ROOT / dest_rel, tokens, variant_name, profile_name)
+
+    render_tdesktop_theme(tokens, variant_name)
 
     for tmpl_name, (subdir, base, ext) in PROFILED_DEST.items():
         dest_dir = REPO_ROOT / subdir

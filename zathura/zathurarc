@@ -1,0 +1,50 @@
+# Сгенерировано theme/gen/gen.py из theme/palette.toml (вариант forest, профиль ac) — не редактируйте
+# DSN-CMP-18: тёмный интерфейс, страница документа без перекраски по
+# умолчанию; recolor (base/text) переключается клавишей R.
+
+set font "Inter 11"
+
+set default-bg "#0E1A22"
+set default-fg "#DCE7EC"
+
+set statusbar-bg "#16252F"
+set statusbar-fg "#DCE7EC"
+set statusbar-h-padding 8
+set statusbar-v-padding 4
+
+set inputbar-bg "#16252F"
+set inputbar-fg "#DCE7EC"
+
+set completion-bg "#16252F"
+set completion-fg "#BECAD0"
+set completion-group-bg "#1F313D"
+set completion-group-fg "#A6B7BF"
+set completion-highlight-bg "#6CC6DD"
+set completion-highlight-fg "#070D12"
+
+set notification-bg "#16252F"
+set notification-fg "#DCE7EC"
+set notification-error-bg "#F0817F"
+set notification-error-fg "#070D12"
+set notification-warning-bg "#F0B86E"
+set notification-warning-fg "#070D12"
+
+set index-bg "#16252F"
+set index-fg "#DCE7EC"
+set index-active-bg "#6CC6DD"
+set index-active-fg "#070D12"
+
+set highlight-color "#6CC6DD"
+set highlight-active-color "#F0B86E"
+
+set render-loading true
+set render-loading-bg "#0E1A22"
+set render-loading-fg "#DCE7EC"
+
+# Страница — как в документе; переключение в base/text по клавише (MAY).
+set recolor false
+set recolor-lightcolor "#0E1A22"
+set recolor-darkcolor "#DCE7EC"
+set recolor-keephue false
+
+map R recolor

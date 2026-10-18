@@ -18,6 +18,7 @@
 | mpv | `mpv/` | `mpv/` | — | `mpv --no-config --show-profile=default` не применимо; визуальная проверка |
 | git | `git/` | `git/` (файл `config`, не `gitconfig`) | identity — только через `machine.d/git-identity` (SEC-10) | `git config --list` без личной почты в выводе из репозитория |
 | mangohud | `mangohud/` | **`MangoHud/`** (нестандартный регистр каталога у самого приложения) | — | `mangohud --dlsym true glxgears` (ручная проверка) |
+| zathura | `zathura/` | `zathura/` | новая запись реестра (DSN-S9, R7.1); `zathurarc` — цвета из генератора, не зависит от профиля эффектов (DSN-CMP-18); `recolor` выключен по умолчанию, клавиша `R` переключает | `zathura --version` + визуальная проверка (тёмный UI, белая страница, `R` перекрашивает) |
 
 ## Палитра
 
@@ -58,7 +59,11 @@ waybar/rofi/swayosd); генератор пишет файлы всех четы
 перезагружающий компоненты (`hyprctl reload`, `pkill -SIGUSR2 waybar`,
 `makoctl reload`); состояние — `$XDG_STATE_HOME/glass-tide/profile`
 (DSN-PWR-7). Остальные потребители (qt6ct — частично DSN-S3, sddm-astronaut)
-— следующий шаг (DSN-S8, DESIGN_SYSTEM.md Приложение I.4).
+— следующий шаг (DSN-S8, DESIGN_SYSTEM.md Приложение I.4). DSN-S9/R7.1:
+добавлены `zathura/zathurarc` (PLAIN_DEST, см. запись выше) и
+`theme/export/glass-tide-<вариант>.tdesktop-theme` — ZIP для разового
+ручного импорта в Telegram Desktop (DSN-CMP-17), имена ключей палитры
+Telegram — `ПРОВЕРИТЬ` вживую (Приложение I.6, M5).
 
 ## Машинный слой
 

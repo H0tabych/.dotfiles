@@ -1,0 +1,49 @@
+# DSN-CMP-18: тёмный интерфейс, страница документа без перекраски по
+# умолчанию; recolor (base/text) переключается клавишей R.
+
+set font "${font_ui} ${size_md}"
+
+set default-bg "${base}"
+set default-fg "${text}"
+
+set statusbar-bg "${surface0}"
+set statusbar-fg "${text}"
+set statusbar-h-padding 8
+set statusbar-v-padding 4
+
+set inputbar-bg "${surface0}"
+set inputbar-fg "${text}"
+
+set completion-bg "${surface0}"
+set completion-fg "${subtext1}"
+set completion-group-bg "${surface1}"
+set completion-group-fg "${subtext0}"
+set completion-highlight-bg "${accent}"
+set completion-highlight-fg "${on_accent}"
+
+set notification-bg "${surface0}"
+set notification-fg "${text}"
+set notification-error-bg "${error}"
+set notification-error-fg "${on_accent}"
+set notification-warning-bg "${warning}"
+set notification-warning-fg "${on_accent}"
+
+set index-bg "${surface0}"
+set index-fg "${text}"
+set index-active-bg "${accent}"
+set index-active-fg "${on_accent}"
+
+set highlight-color "${accent}"
+set highlight-active-color "${warning}"
+
+set render-loading true
+set render-loading-bg "${base}"
+set render-loading-fg "${text}"
+
+# Страница — как в документе; переключение в base/text по клавише (MAY).
+set recolor false
+set recolor-lightcolor "${base}"
+set recolor-darkcolor "${text}"
+set recolor-keephue false
+
+map R recolor
