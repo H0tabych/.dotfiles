@@ -59,7 +59,7 @@ DSN-S9/R7.3 добавил `mangohud/MangoHud.conf` (PLAIN_DEST — не зав�
 в шаблоне — литерал 0.6 (DSN-CMP-20), как и у MangoHud сам формат (десятичная
 дробь, не hex-байт как `osd_back_alpha_hex` у mpv) — отдельный токен не нужен.
 Шрифт — встроенный MangoHud, не из палитры: кастомный шрифт принимает только
-абсолютный путь к `.ttf` (`font_file`), а dotfiles не хранят пути `/nix/store`
+абсолютный путь к `.ttf` (`font_file`), а dotfiles не хранят пути nix-хранилища
 (переносимость, DOT-8).
 """
 from __future__ import annotations
