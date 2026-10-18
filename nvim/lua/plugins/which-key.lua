@@ -7,5 +7,10 @@ return {
   event = "VeryLazy",
   opts = {
     preset = "modern",
+    -- R6.15: явная группа для <leader>d (debug) — без этого which-key
+    -- показывает клавиши россыпью, без заголовка подменю.
+    spec = {
+      { "<leader>d", group = "Debug" },
+    },
   },
 }
