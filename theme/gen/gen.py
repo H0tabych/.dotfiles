@@ -67,6 +67,9 @@ R6.12 добавил `btop/themes/glass-tide.theme` (PLAIN_DEST — не зав�
 с `lazygit --config`, lazygit 0.61.1). `color_theme`/`theme_background` btop
 и остальные поля `gui.*` lazygit — статика вне генератора (не токены палитры,
 DOT-3 для приложения реестра).
+R6.13 добавил `fzf/theme.zsh` (PLAIN_DEST — не зависит от профиля эффектов;
+`--color`/COLSPEC сверены живьём с `fzf --help`/man, fzf 0.72.0). Подключение
+(`FZF_DEFAULT_COMMAND` и остальное без токенов палитры) — статика `fzf/config.zsh`.
 """
 from __future__ import annotations
 
@@ -113,6 +116,7 @@ PLAIN_DEST = {
     "mangohud-theme-conf.tmpl": "mangohud/MangoHud.conf",
     "btop-theme.theme.tmpl": "btop/themes/glass-tide.theme",
     "lazygit-config.yml.tmpl": "lazygit/config.yml",
+    "fzf-theme.zsh.tmpl": "fzf/theme.zsh",
 }
 
 PROFILES = ("ac", "battery", "solid", "game")

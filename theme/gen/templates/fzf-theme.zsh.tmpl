@@ -1,0 +1,9 @@
+# Тема fzf (DESIGN_SYSTEM.md П.3.5: --color из ролей, bg:-1 — прозрачность
+# терминала, как у nvim Normal/foot/btop main_bg). Подключается статикой
+# fzf/config.zsh, не .zshrc напрямую (DOT-3: нетокенная часть — отдельно).
+export FZF_DEFAULT_OPTS="\
+--color=fg:${text},fg+:${text},bg:-1,bg+:${selection} \
+--color=hl:${accent},hl+:${accent} \
+--color=info:${info},border:${surface1},prompt:${accent} \
+--color=pointer:${special},marker:${accent_warm},spinner:${info} \
+--color=header:${overlay1}"
