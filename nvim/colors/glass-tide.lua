@@ -37,6 +37,45 @@ hl("IncSearch", { fg = colors.base, bg = colors.accent })
 
 hl("Comment", { fg = colors.overlay1, italic = true })
 
+-- Синтаксис кода (R6.13, ПРОВЕРЕНО живьём: без этого блока treesitter/regex
+-- подсветка исправно работает, но берёт цвета встроенной темы Neovim по
+-- умолчанию, не из палитры — classic-группы ниже покрывают оба механизма:
+-- `@capture` линкуются на них по умолчанию (`@keyword` -> Keyword и т. п.,
+-- ПРОВЕРЕНО `nvim_get_hl`), поэтому отдельные `@`-группы не нужны.
+hl("Keyword", { fg = colors.accent, bold = true })
+hl("Statement", { fg = colors.accent, bold = true })
+hl("Conditional", { fg = colors.accent })
+hl("Repeat", { fg = colors.accent })
+hl("Label", { fg = colors.accent })
+hl("Exception", { fg = colors.accent, bold = true })
+
+hl("String", { fg = colors.success })
+hl("Character", { fg = colors.success })
+
+hl("Number", { fg = colors.accent_warm })
+hl("Float", { fg = colors.accent_warm })
+hl("Boolean", { fg = colors.accent_warm, bold = true })
+
+hl("Function", { fg = colors.info })
+hl("Identifier", { fg = colors.text })
+hl("Variable", { fg = colors.text })
+
+hl("Type", { fg = colors.teal })
+hl("StorageClass", { fg = colors.teal })
+hl("Structure", { fg = colors.teal })
+
+hl("Constant", { fg = colors.special })
+hl("Operator", { fg = colors.subtext1 })
+hl("Delimiter", { fg = colors.subtext1 })
+hl("Special", { fg = colors.special })
+
+hl("PreProc", { fg = colors.warning })
+hl("Macro", { fg = colors.warning })
+hl("Define", { fg = colors.warning })
+
+hl("Todo", { fg = colors.warning, bold = true })
+hl("Error", { fg = colors.error, bold = true })
+
 hl("WinSeparator", { fg = colors.surface1 })
 hl("StatusLine", { fg = colors.text, bg = colors.surface1 })
 hl("StatusLineNC", { fg = colors.overlay1, bg = colors.surface0 })
