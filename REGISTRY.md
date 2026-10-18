@@ -5,7 +5,7 @@
 
 | Приложение | Каталог | Целевой путь (`~/.config/...`) | Версия/заметка | Проверка |
 |---|---|---|---|---|
-| neovim | `nvim/` | `nvim/` | без менеджера плагинов пока (lock-файл — после первой реальной настройки, DOT-11) | `nvim --headless -c 'quit'` без ошибок |
+| neovim | `nvim/` | `nvim/` | R6.12: lazy.nvim (`nvim/lua/plugins/`, lock-файл `nvim/lazy-lock.json`, DOT-11) — treesitter, nvim-lspconfig (на LSP из `lsp-global.nix`), blink.cmp, nvim-dap/nvim-dap-ui (адаптеры `debugpy-adapter`/`lldb-dap`, оба из `lsp-global.nix`) | `nvim --headless -c 'quit'` без ошибок; ПРОВЕРЕНО headless-прогоном с сетью и `gcc` в PATH — плагины клонируются, парсеры treesitter компилируются |
 | zsh | `zsh/` | `zsh/` (требует `ZDOTDIR=~/.config/zsh`, задаёт Nix) | — | `zsh -n .zshrc` |
 | starship | `starship/` | `starship/` (требует `STARSHIP_CONFIG=~/.config/starship/starship.toml`, задаёт Nix — DOT-12) | новая запись реестра (DSN-S6, R6.9); целевая версия 1.25; `starship-lite.toml` — без статуса VCS, подключается `.envrc` репозитория для больших деревьев (DESIGN_SYSTEM.md Приложение I.7) | `starship --version` + `starship explain` с принятым конфигом |
 | foot | `foot/` | `foot/` | `include=` в `foot.ini` — foot ≥ 1.14 | `foot --check-config` |
@@ -19,6 +19,8 @@
 | git | `git/` | `git/` (файл `config`, не `gitconfig`) | identity — только через `machine.d/git-identity` (SEC-10) | `git config --list` без личной почты в выводе из репозитория |
 | mangohud | `mangohud/` | **`MangoHud/`** (нестандартный регистр каталога у самого приложения) | — | `mangohud --dlsym true glxgears` (ручная проверка) |
 | zathura | `zathura/` | `zathura/` | новая запись реестра (DSN-S9, R7.1); `zathurarc` — цвета из генератора, не зависит от профиля эффектов (DSN-CMP-18); `recolor` выключен по умолчанию, клавиша `R` переключает | `zathura --version` + визуальная проверка (тёмный UI, белая страница, `R` перекрашивает) |
+| lazygit | `lazygit/` | `lazygit/` | новая запись реестра (DSN П.3.5, R6.12); `config.yml` целиком из генератора (`theme/gen/templates/lazygit-config.yml.tmpl`) — только `gui.theme`, остальные поля lazygit — умолчания | ПРОВЕРЕНО: `lazygit --use-config-file=lazygit/config.yml` на тестовом репозитории — конфиг парсится (ошибка только про отсутствие tty в headless-среде) |
+| btop | `btop/` | `btop/` | новая запись реестра (DSN П.3.5, R6.12); `btop.conf` — статика (`color_theme`/`theme_background=false`), `themes/glass-tide.theme` — из генератора (`theme/gen/templates/btop-theme.theme.tmpl`); при первом живом запуске btop сам дописывает в `btop.conf` остальные ключи-умолчания (штатное поведение) | ПРОВЕРЕНО: `btop --default-config` сверил формат ключей; живой визуальный прогон — на пользователе (нужен реальный tty) |
 
 ## Палитра
 

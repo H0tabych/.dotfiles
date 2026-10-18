@@ -1,0 +1,96 @@
+# Сгенерировано theme/gen/gen.py из theme/palette.toml (вариант forest, профиль ac) — не редактируйте
+#Glass Tide
+#ПРОВЕРЕНО полями: формат и ключи сверены с btop 1.4.7 (share/btop/themes/*.theme,
+#nixpkgs). Порядок gradient start/mid/end для free/available — инвертирован
+#относительно cpu/temp/used (низкое свободное место — плохо, используется
+#error -> success), как у штатных тем btop.
+
+# Main background, empty for terminal default, need to be empty if you want transparent background
+theme[main_bg]=""
+
+# Main text color
+theme[main_fg]="#DCE7EC"
+
+# Title color for boxes
+theme[title]="#DCE7EC"
+
+# Highlight color for keyboard shortcuts
+theme[hi_fg]="#6CC6DD"
+
+# Background color of selected item in processes box
+theme[selected_bg]="#2A3F4D"
+
+# Foreground color of selected item in processes box
+theme[selected_fg]="#DCE7EC"
+
+# Color of inactive/disabled text
+theme[inactive_fg]="#4A6070"
+
+# Color of text appearing on top of graphs, i.e uptime and current network graph scaling
+theme[graph_text]="#DCE7EC"
+
+# Background color of the percentage meters
+theme[meter_bg]="#16252F"
+
+# Misc colors for processes box including mini cpu graphs, details memory graph and details status text
+theme[proc_misc]="#7AAEEA"
+
+# Cpu box outline color
+theme[cpu_box]="#1F313D"
+
+# Memory/disks box outline color
+theme[mem_box]="#1F313D"
+
+# Net up/down box outline color
+theme[net_box]="#1F313D"
+
+# Processes box outline color
+theme[proc_box]="#1F313D"
+
+# Box divider line and small boxes line color
+theme[div_line]="#1F313D"
+
+# Temperature graph colors
+theme[temp_start]="#B5DB86"
+theme[temp_mid]="#F0B86E"
+theme[temp_end]="#F0817F"
+
+# CPU graph colors
+theme[cpu_start]="#B5DB86"
+theme[cpu_mid]="#F0B86E"
+theme[cpu_end]="#F0817F"
+
+# Mem/Disk free meter
+theme[free_start]="#F0817F"
+theme[free_mid]="#F0B86E"
+theme[free_end]="#B5DB86"
+
+# Mem/Disk cached meter
+theme[cached_start]="#B5DB86"
+theme[cached_mid]="#F0B86E"
+theme[cached_end]="#F0817F"
+
+# Mem/Disk available meter
+theme[available_start]="#F0817F"
+theme[available_mid]="#F0B86E"
+theme[available_end]="#B5DB86"
+
+# Mem/Disk used meter
+theme[used_start]="#B5DB86"
+theme[used_mid]="#F0B86E"
+theme[used_end]="#F0817F"
+
+# Download graph colors
+theme[download_start]="#B5DB86"
+theme[download_mid]="#F0B86E"
+theme[download_end]="#F0817F"
+
+# Upload graph colors
+theme[upload_start]="#B5DB86"
+theme[upload_mid]="#F0B86E"
+theme[upload_end]="#F0817F"
+
+# Process box color gradient for threads, mem and cpu usage
+theme[process_start]="#7AAEEA"
+theme[process_mid]="#6CC6DD"
+theme[process_end]="#B49AE8"

@@ -1,0 +1,33 @@
+# Схема gui.theme сверена живьём: `lazygit --config` (lazygit 0.61.1, nixpkgs) —
+# полный дефолтный конфиг, секция gui.theme скопирована структурно, значения
+# цвета заменены на роли DESIGN_SYSTEM.md П.3.5 (activeBorderColor/
+# selectedLineBgColor — явно названы документом, остальные поля той же
+# секции — по аналогии, тем же набором ролей, что и в nvim/colors.lua).
+gui:
+  theme:
+    activeBorderColor:
+      - "${accent}"
+      - bold
+    inactiveBorderColor:
+      - "${overlay0}"
+    searchingActiveBorderColor:
+      - "${warning}"
+      - bold
+    optionsTextColor:
+      - "${info}"
+    selectedLineBgColor:
+      - "${selection}"
+    inactiveViewSelectedLineBgColor:
+      - "${surface1}"
+    cherryPickedCommitFgColor:
+      - "${base}"
+    cherryPickedCommitBgColor:
+      - "${accent}"
+    markedBaseCommitFgColor:
+      - "${base}"
+    markedBaseCommitBgColor:
+      - "${special}"
+    unstagedChangesColor:
+      - "${error}"
+    defaultFgColor:
+      - "${text}"

@@ -61,6 +61,12 @@ DSN-S9/R7.3 добавил `mangohud/MangoHud.conf` (PLAIN_DEST — не зав�
 Шрифт — встроенный MangoHud, не из палитры: кастомный шрифт принимает только
 абсолютный путь к `.ttf` (`font_file`), а dotfiles не хранят пути nix-хранилища
 (переносимость, DOT-8).
+R6.12 добавил `btop/themes/glass-tide.theme` (PLAIN_DEST — не зависит от
+профиля эффектов; формат и ключи сверены живьём с btop 1.4.7, nixpkgs) и
+`lazygit/config.yml` (PLAIN_DEST, секция `gui.theme` — схема сверена живьём
+с `lazygit --config`, lazygit 0.61.1). `color_theme`/`theme_background` btop
+и остальные поля `gui.*` lazygit — статика вне генератора (не токены палитры,
+DOT-3 для приложения реестра).
 """
 from __future__ import annotations
 
@@ -105,6 +111,8 @@ PLAIN_DEST = {
     "zathurarc.tmpl": "zathura/zathurarc",
     "mpv-theme-conf.tmpl": "mpv/theme.conf",
     "mangohud-theme-conf.tmpl": "mangohud/MangoHud.conf",
+    "btop-theme.theme.tmpl": "btop/themes/glass-tide.theme",
+    "lazygit-config.yml.tmpl": "lazygit/config.yml",
 }
 
 PROFILES = ("ac", "battery", "solid", "game")

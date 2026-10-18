@@ -1,0 +1,95 @@
+#Glass Tide
+#ПРОВЕРЕНО полями: формат и ключи сверены с btop 1.4.7 (share/btop/themes/*.theme,
+#nixpkgs). Порядок gradient start/mid/end для free/available — инвертирован
+#относительно cpu/temp/used (низкое свободное место — плохо, используется
+#error -> success), как у штатных тем btop.
+
+# Main background, empty for terminal default, need to be empty if you want transparent background
+theme[main_bg]=""
+
+# Main text color
+theme[main_fg]="${text}"
+
+# Title color for boxes
+theme[title]="${text}"
+
+# Highlight color for keyboard shortcuts
+theme[hi_fg]="${accent}"
+
+# Background color of selected item in processes box
+theme[selected_bg]="${selection}"
+
+# Foreground color of selected item in processes box
+theme[selected_fg]="${text}"
+
+# Color of inactive/disabled text
+theme[inactive_fg]="${overlay0}"
+
+# Color of text appearing on top of graphs, i.e uptime and current network graph scaling
+theme[graph_text]="${text}"
+
+# Background color of the percentage meters
+theme[meter_bg]="${surface0}"
+
+# Misc colors for processes box including mini cpu graphs, details memory graph and details status text
+theme[proc_misc]="${info}"
+
+# Cpu box outline color
+theme[cpu_box]="${surface1}"
+
+# Memory/disks box outline color
+theme[mem_box]="${surface1}"
+
+# Net up/down box outline color
+theme[net_box]="${surface1}"
+
+# Processes box outline color
+theme[proc_box]="${surface1}"
+
+# Box divider line and small boxes line color
+theme[div_line]="${surface1}"
+
+# Temperature graph colors
+theme[temp_start]="${success}"
+theme[temp_mid]="${warning}"
+theme[temp_end]="${error}"
+
+# CPU graph colors
+theme[cpu_start]="${success}"
+theme[cpu_mid]="${warning}"
+theme[cpu_end]="${error}"
+
+# Mem/Disk free meter
+theme[free_start]="${error}"
+theme[free_mid]="${warning}"
+theme[free_end]="${success}"
+
+# Mem/Disk cached meter
+theme[cached_start]="${success}"
+theme[cached_mid]="${warning}"
+theme[cached_end]="${error}"
+
+# Mem/Disk available meter
+theme[available_start]="${error}"
+theme[available_mid]="${warning}"
+theme[available_end]="${success}"
+
+# Mem/Disk used meter
+theme[used_start]="${success}"
+theme[used_mid]="${warning}"
+theme[used_end]="${error}"
+
+# Download graph colors
+theme[download_start]="${success}"
+theme[download_mid]="${warning}"
+theme[download_end]="${error}"
+
+# Upload graph colors
+theme[upload_start]="${success}"
+theme[upload_mid]="${warning}"
+theme[upload_end]="${error}"
+
+# Process box color gradient for threads, mem and cpu usage
+theme[process_start]="${info}"
+theme[process_mid]="${accent}"
+theme[process_end]="${special}"
