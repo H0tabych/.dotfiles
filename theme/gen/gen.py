@@ -54,6 +54,13 @@ DSN-S9/R7.2 добавил `mpv/theme.conf` (PLAIN_DEST — как zathurarc, н
 `osd_back_alpha_hex` — фиксированная альфа фона OSD (0.90, порог DSN-CMP-19
 >= 0.85), не из `palette.toml`: это константа применения правила, а не токен
 палитры (как PROFILE_EFFECTS выше), поэтому вычисляется здесь.
+DSN-S9/R7.3 добавил `mangohud/MangoHud.conf` (PLAIN_DEST — не зависит от
+профиля, DSN-CMP-20: оверлей всегда сплошной, DSN-EXC-2). `background_alpha`
+в шаблоне — литерал 0.6 (DSN-CMP-20), как и у MangoHud сам формат (десятичная
+дробь, не hex-байт как `osd_back_alpha_hex` у mpv) — отдельный токен не нужен.
+Шрифт — встроенный MangoHud, не из палитры: кастомный шрифт принимает только
+абсолютный путь к `.ttf` (`font_file`), а dotfiles не хранят пути `/nix/store`
+(переносимость, DOT-8).
 """
 from __future__ import annotations
 
@@ -97,6 +104,7 @@ PLAIN_DEST = {
     "starship-lite-toml.tmpl": "starship/starship-lite.toml",
     "zathurarc.tmpl": "zathura/zathurarc",
     "mpv-theme-conf.tmpl": "mpv/theme.conf",
+    "mangohud-theme-conf.tmpl": "mangohud/MangoHud.conf",
 }
 
 PROFILES = ("ac", "battery", "solid", "game")
