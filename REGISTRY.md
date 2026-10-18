@@ -15,7 +15,7 @@
 | mako | `mako/` | `mako/` | цвета + статика вместе (`theme/gen/templates/mako-config.tmpl`); `config` — симлинк на профиль (DSN-S7, R6.10), переставляет `hypr/scripts/profile` | `makoctl reload` при живой сессии |
 | swayosd | `swayosd/` | `swayosd/` | новая запись реестра (DSN-S5, R6.8); `style.css` — статика с `@import url("theme.css")`, сам `theme.css` — симлинк на профиль (генератор/переключатель) | визуально при живой сессии (громкость/яркость/caps lock) |
 | yazi | `yazi/` | `yazi/` | — | `yazi --version` + ручной запуск |
-| mpv | `mpv/` | `mpv/` | — | `mpv --no-config --show-profile=default` не применимо; визуальная проверка |
+| mpv | `mpv/` | `mpv/` | тема (DSN-CMP-19, R7.2): `theme.conf` из генератора, `include=` в `mpv.conf`; `hwdec=vaapi`/`vaapi-device` на iGPU (APP-3) — в nixos-config (`video-player-mpv`) | `mpv --no-config --show-profile=default` не применимо; визуальная проверка (OSD в цвете `accent`, фон `mantle`) |
 | git | `git/` | `git/` (файл `config`, не `gitconfig`) | identity — только через `machine.d/git-identity` (SEC-10) | `git config --list` без личной почты в выводе из репозитория |
 | mangohud | `mangohud/` | **`MangoHud/`** (нестандартный регистр каталога у самого приложения) | — | `mangohud --dlsym true glxgears` (ручная проверка) |
 | zathura | `zathura/` | `zathura/` | новая запись реестра (DSN-S9, R7.1); `zathurarc` — цвета из генератора, не зависит от профиля эффектов (DSN-CMP-18); `recolor` выключен по умолчанию, клавиша `R` переключает | `zathura --version` + визуальная проверка (тёмный UI, белая страница, `R` перекрашивает) |
@@ -63,7 +63,9 @@ waybar/rofi/swayosd); генератор пишет файлы всех четы
 добавлены `zathura/zathurarc` (PLAIN_DEST, см. запись выше) и
 `theme/export/glass-tide-<вариант>.tdesktop-theme` — ZIP для разового
 ручного импорта в Telegram Desktop (DSN-CMP-17), имена ключей палитры
-Telegram — `ПРОВЕРИТЬ` вживую (Приложение I.6, M5).
+Telegram — `ПРОВЕРИТЬ` вживую (Приложение I.6, M5). DSN-S9/R7.2: добавлен
+`mpv/theme.conf` (PLAIN_DEST, см. запись выше) — альфа фона OSD фиксирована
+генератором (0.90), не хранится в `palette.toml`.
 
 ## Машинный слой
 

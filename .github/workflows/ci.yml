@@ -40,5 +40,6 @@ jobs:
             'starship/starship.toml' 'starship/starship-lite.toml' \
             'waybar/theme-*.css' 'rofi/theme-*.rasi' 'swayosd/theme-*.css' \
             'hypr/effects-*.lua' 'mako/config-*' 'zathura/zathurarc' \
+            'mpv/theme.conf' \
             'theme/export/glass-tide-*.tdesktop-theme' \
             || { echo 'сгенерированные файлы не соответствуют palette.toml — перегенерируйте и закоммитьте'; exit 1; }

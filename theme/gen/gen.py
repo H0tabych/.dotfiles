@@ -49,6 +49,11 @@ Desktop), собирается отдельной функцией `render_tdesk
 сначала рендерится, потом упаковывается). Имена ключей `.tdesktop-theme` —
 ПРОВЕРИТЬ вживую (Приложение I.6, M5 DESIGN_SYSTEM.md); импорт в Telegram —
 разовое ручное действие (DSN-CMP-17), не автоматизируется.
+DSN-S9/R7.2 добавил `mpv/theme.conf` (PLAIN_DEST — как zathurarc, не зависит
+от профиля эффектов: DSN-EXC-1, окно видео сплошное). Токен
+`osd_back_alpha_hex` — фиксированная альфа фона OSD (0.90, порог DSN-CMP-19
+>= 0.85), не из `palette.toml`: это константа применения правила, а не токен
+палитры (как PROFILE_EFFECTS выше), поэтому вычисляется здесь.
 """
 from __future__ import annotations
 
@@ -91,6 +96,7 @@ PLAIN_DEST = {
     "starship-toml.tmpl": "starship/starship.toml",
     "starship-lite-toml.tmpl": "starship/starship-lite.toml",
     "zathurarc.tmpl": "zathura/zathurarc",
+    "mpv-theme-conf.tmpl": "mpv/theme.conf",
 }
 
 PROFILES = ("ac", "battery", "solid", "game")
@@ -489,6 +495,11 @@ def flatten_tokens(p: dict, variant_name: str, profile_name: str) -> dict[str, s
     tokens["glass_rim_alpha_hex"] = alpha_to_hex(p["glass"]["rim"])
 
     tokens["term_alpha"] = str(glass["window"])
+
+    # DSN-CMP-19 (R7.2): альфа фона OSD mpv — фиксированная константа
+    # применения правила (>= 0.85), не зависит от профиля эффектов (DSN-EXC-1:
+    # окно видео сплошное) и не хранится в palette.toml.
+    tokens["osd_back_alpha_hex"] = alpha_to_hex(0.90)
 
     # DSN-S4 (R6.7): fx.* для hypr/effects.lua — размытие из [blur] (как в
     # check_contrast: нет записи -> включено только у ac), остальное — из
