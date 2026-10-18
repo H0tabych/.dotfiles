@@ -10,7 +10,7 @@
 @define-color warning #F0B86E;
 
 @define-color glass_popup alpha(@mantle, 0.9);
-@define-color glass_rim alpha(@text, 0.08);
+@define-color glass_rim alpha(@text, 0.1);
 
 window#osd {
     background-color: @glass_popup;
@@ -27,7 +27,7 @@ image, label {
 }
 
 progressbar trough {
-    background-color: alpha(@surface0, 0.88);
+    background-color: alpha(@surface0, 0.85);
     border-radius: 999px;
 }
 

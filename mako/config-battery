@@ -19,7 +19,7 @@ group-by=app-name
 
 background-color=#0A141BF0
 text-color=#DCE7EC
-border-color=#DCE7EC14
+border-color=#DCE7EC1A
 progress-color=over #6CC6DD
 
 [urgency=low]

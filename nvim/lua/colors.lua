@@ -19,20 +19,20 @@ return {
   success = "#B5DB86",
   warning = "#F0B86E",
   error   = "#F0817F",
-  info    = "#7AAEEA",
+  info    = "#91A4ED",
   special = "#B49AE8",
-  teal    = "#6CCFCB",
+  teal    = "#6CD09E",
 
   selection = "#2A3F4D",
 
   ansi = {
     regular = {
       "#1F313D", "#F0817F", "#B5DB86", "#F0B86E",
-      "#7AAEEA", "#B49AE8", "#6CCFCB", "#BECAD0",
+      "#91A4ED", "#B49AE8", "#6CD09E", "#BECAD0",
     },
     bright = {
       "#839AA5", "#F79A97", "#C9E8A2", "#F6CC8E",
-      "#98C3F2", "#C9B4F2", "#8EE0DB", "#DCE7EC",
+      "#AFBEF5", "#C9B4F2", "#86DFB3", "#DCE7EC",
     },
   },
 }

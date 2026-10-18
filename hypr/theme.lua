@@ -20,9 +20,9 @@ M.c = {
   success     = "B5DB86",
   warning     = "F0B86E",
   error       = "F0817F",
-  info        = "7AAEEA",
+  info        = "91A4ED",
   special     = "B49AE8",
-  teal        = "6CCFCB",
+  teal        = "6CD09E",
 }
 
 local function alpha_hex(a)

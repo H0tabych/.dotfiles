@@ -19,19 +19,28 @@ subtext0 = "#A6B7BF"
 subtext1 = "#BECAD0"
 text     = "#DCE7EC"
 
+# info и teal развёрнуты по тону (живая проверка 2026-10-18: было 212°/178°
+# — в 8-26° от base 204° и от variant.accent обоих вариантов 154°/192°,
+# сливались с фоном и друг с другом на экране редактора). Теперь 228°/150°:
+# info — по другую сторону base от special, teal — в зелёной зоне подальше
+# от success 87°, base 204° и обоих variant.accent (см. mind-зазор в
+# nvim/colors/glass-tide.lua — Keyword/Function/Type/Constant разведены
+# по ролям special/info/teal/accent_warm, ни одна не завязана на accent,
+# чтобы подсветка не менялась между вариантами обоев). Контраст к base не
+# хуже прежнего — DSN-COL-4 проверен gen.py --check для обоих вариантов.
 [semantic]
 success     = "#B5DB86"
 warning     = "#F0B86E"
 error       = "#F0817F"
-info        = "#7AAEEA"
+info        = "#91A4ED"
 special     = "#B49AE8"
-teal        = "#6CCFCB"
+teal        = "#6CD09E"
 on_accent   = "#070D12"
 accent_warm = "#F2A988"
 
 [ansi]
-regular = ["#1F313D", "#F0817F", "#B5DB86", "#F0B86E", "#7AAEEA", "#B49AE8", "#6CCFCB", "#BECAD0"]
-bright  = ["#839AA5", "#F79A97", "#C9E8A2", "#F6CC8E", "#98C3F2", "#C9B4F2", "#8EE0DB", "#DCE7EC"]
+regular = ["#1F313D", "#F0817F", "#B5DB86", "#F0B86E", "#91A4ED", "#B49AE8", "#6CD09E", "#BECAD0"]
+bright  = ["#839AA5", "#F79A97", "#C9E8A2", "#F6CC8E", "#AFBEF5", "#C9B4F2", "#86DFB3", "#DCE7EC"]
 
 [variant.tree]                         # обои «Дерево и планета»
 accent    = "#7FD6B0"
@@ -52,14 +61,24 @@ probe     = { screen = "#C6AE75", bar = "#0B1F31", screen_sharp = "#FCEDAD", bar
 # (а не иллюстративном примере документа) overlay1 на полосе панели варианта
 # tree давал 4.46:1 при 0.80 (< 4.5:1, DSN-COL-4); пересчитано theme/gen/gen.py
 # --check по-настоящему, роль overlay1 не трогалась (DSN-P-1)
-ac      = { bar = 0.82, window = 0.88, popup = 0.90 }
+# window=0.85 вместо 0.88 (живая проверка 2026-10-18: эффект стекла был почти
+# не виден — терминал почти всегда перекрывает тёмную часть обоев, похожую
+# по тону на base) — опущено ровно до пола DSN-MAT-2 для поверхности с
+# приглушённым текстом (комментарии кода); ниже нельзя. rim 0.08->0.10 —
+# верхняя граница DSN-MAT-6, чётче видна граница стекла. Пороги DSN-COL-4
+# для обоих вариантов — gen.py --check (ниже).
+ac      = { bar = 0.82, window = 0.85, popup = 0.90 }
 battery = { bar = 0.94, window = 1.00, popup = 0.94 }
 solid   = { bar = 1.00, window = 1.00, popup = 1.00 }
 game    = { bar = 0.94, window = 1.00, popup = 0.94 }
-rim     = 0.08
+rim     = 0.10
 
 [blur]
-ac = { enabled = true, size = 6, passes = 3, noise = 0.02, contrast = 0.9, brightness = 0.85, vibrancy = 0.15 }
+# brightness 0.85->0.90 — верхняя граница DSN-MAT-5 (?0.9 от исходной
+# яркости); vibrancy 0.15->0.25 — не ограничено правилами (только
+# "неразличимость деталей", не насыщенность), больше цвета подложки
+# просвечивает сквозь размытие без потери DSN-MAT-5.
+ac = { enabled = true, size = 6, passes = 3, noise = 0.02, contrast = 0.9, brightness = 0.90, vibrancy = 0.25 }
 
 [font]
 ui      = "Inter"

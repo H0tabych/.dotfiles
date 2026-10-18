@@ -33,7 +33,7 @@ theme[graph_text]="#DCE7EC"
 theme[meter_bg]="#16252F"
 
 # Misc colors for processes box including mini cpu graphs, details memory graph and details status text
-theme[proc_misc]="#7AAEEA"
+theme[proc_misc]="#91A4ED"
 
 # Cpu box outline color
 theme[cpu_box]="#1F313D"
@@ -91,6 +91,6 @@ theme[upload_mid]="#F0B86E"
 theme[upload_end]="#F0817F"
 
 # Process box color gradient for threads, mem and cpu usage
-theme[process_start]="#7AAEEA"
+theme[process_start]="#91A4ED"
 theme[process_mid]="#6CC6DD"
 theme[process_end]="#B49AE8"

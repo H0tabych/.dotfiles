@@ -24,7 +24,7 @@
        alpha() по токену (как GTK3 CSS, P.3.2), поэтому байт альфы считает
        генератор (DSN-S5, R6.8). */
     glass-popup: #0A141BFF;
-    glass-rim:   #DCE7EC14;
+    glass-rim:   #DCE7EC1A;
 
     font: "Inter 13";
 

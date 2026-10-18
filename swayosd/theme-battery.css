@@ -10,7 +10,7 @@
 @define-color warning #F0B86E;
 
 @define-color glass_popup alpha(@mantle, 0.94);
-@define-color glass_rim alpha(@text, 0.08);
+@define-color glass_rim alpha(@text, 0.1);
 
 window#osd {
     background-color: @glass_popup;

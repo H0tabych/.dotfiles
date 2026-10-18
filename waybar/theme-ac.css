@@ -18,11 +18,11 @@
 @define-color success #B5DB86;
 @define-color warning #F0B86E;
 @define-color error #F0817F;
-@define-color info #7AAEEA;
+@define-color info #91A4ED;
 @define-color special #B49AE8;
 
 @define-color glass_bar alpha(@base, 0.82);
-@define-color glass_rim alpha(@text, 0.08);
+@define-color glass_rim alpha(@text, 0.1);
 
 /* DSN-CMP-4: шрифт UI md/500 — здесь, а не в style.css (DSN-TOK-8 запрещает
    имя шрифта вне сгенерированных файлов). */

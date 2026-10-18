@@ -42,12 +42,18 @@ hl("Comment", { fg = colors.overlay1, italic = true })
 -- умолчанию, не из палитры — classic-группы ниже покрывают оба механизма:
 -- `@capture` линкуются на них по умолчанию (`@keyword` -> Keyword и т. п.,
 -- ПРОВЕРЕНО `nvim_get_hl`), поэтому отдельные `@`-группы не нужны.
-hl("Keyword", { fg = colors.accent, bold = true })
-hl("Statement", { fg = colors.accent, bold = true })
-hl("Conditional", { fg = colors.accent })
-hl("Repeat", { fg = colors.accent })
-hl("Label", { fg = colors.accent })
-hl("Exception", { fg = colors.accent, bold = true })
+-- Keyword/Function/Type/Constant разведены по ролям special/info/teal/
+-- accent_warm, ни одна не на `accent` (живая проверка 2026-10-18: accent/
+-- teal/info сидели в одном сине-циановом семействе с base — keyword и type
+-- сливались с фоном; palette.toml разнёс info/teal по тону, здесь Keyword
+-- ушёл с accent на special, Constant — с special на accent_warm, чтобы
+-- подсветка не плавала между вариантами обоев, раз accent от них зависит).
+hl("Keyword", { fg = colors.special, bold = true })
+hl("Statement", { fg = colors.special, bold = true })
+hl("Conditional", { fg = colors.special })
+hl("Repeat", { fg = colors.special })
+hl("Label", { fg = colors.special })
+hl("Exception", { fg = colors.special, bold = true })
 
 hl("String", { fg = colors.success })
 hl("Character", { fg = colors.success })
@@ -64,7 +70,7 @@ hl("Type", { fg = colors.teal })
 hl("StorageClass", { fg = colors.teal })
 hl("Structure", { fg = colors.teal })
 
-hl("Constant", { fg = colors.special })
+hl("Constant", { fg = colors.accent_warm })
 hl("Operator", { fg = colors.subtext1 })
 hl("Delimiter", { fg = colors.subtext1 })
 hl("Special", { fg = colors.special })
