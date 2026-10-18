@@ -9,3 +9,9 @@ osd-font="${font_ui}"
 osd-color="#FF${accent_raw}"
 osd-selected-color="#FF${accent_raw}"
 osd-back-color="#${osd_back_alpha_hex}${mantle_raw}"
+# ПРОВЕРЕНО на машине: без osd-border-style=background-box mpv рисует OSD
+# стилем по умолчанию outline-and-shadow — osd-back-color там не плашка, а
+# цвет мягкой тени, фона не видно. background-box даёт именно непрозрачную
+# плашку (DSN-CMP-19: "фон mantle"), поэтому идёт в паре с osd-back-color —
+# без него последний не используется (DSN-EXC-1: контент сплошной).
+osd-border-style=background-box
