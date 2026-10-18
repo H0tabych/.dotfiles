@@ -1,9 +1,11 @@
 // Портативный конфиг waybar (DOT-3). Вертикальная панель, зоны 6.1 DESIGN_SYSTEM.md
 // (DSN-S5, R6.8). Батарея/мониторы — автоопределение waybar, машинный слой не
 // требуется (DOT-5: include нужен только там, где без него нельзя).
-// Иконки — через \uXXXX (набор Font Awesome, в шрифте символов — font.symbols
-// в palette.toml), а не буквальным символом: при прямой вставке глиф терялся
-// и поле уходило пустым (найдено на машине 2026-10-15 — "сеть пропала с панели").
+// Иконки — через \uXXXX, а не буквальным символом: при прямой вставке глиф
+// терялся и поле уходило пустым (найдено на машине 2026-10-15 — "сеть пропала
+// с панели"). Набор смешанный (Font Awesome, Material Design, Font Logos) —
+// всё в одном шрифте символов (font.symbols в palette.toml, Nerd Fonts Symbols
+// Only уже включает все наборы разом).
 {
     "layer": "top",
     "position": "left",
@@ -16,13 +18,29 @@
     // Зона 2 (Внимание) — только при активном событии/режиме.
     "modules-center": ["privacy", "custom/dnd", "idle_inhibitor", "mpris"],
     // Зона 3 (Состояние, всегда кроме капсулы «ещё») + зона 4 (Время и питание).
+    // Две смысловые пары — каждая в одной капсуле (style.css): net-status
+    // (язык/туннель/сеть/заряд — «где я и насколько жив») и sound-light
+    // (звук/яркость — настройки вывода). group/more — своя капсула, по
+    // наведению; остальное (launcher/privacy/dnd/idle/mpris/clock/power) —
+    // по одному, см. style.css.
     "modules-right": [
-        "hyprland/language", "custom/tunnel", "network", "pulseaudio", "battery",
-        "group/more", "clock", "custom/power"
+        "group/net-status", "group/sound-light", "group/more", "clock", "custom/power"
     ],
+    // Без "drawer" — это не капсула «ещё» (не прячет содержимое), просто общий
+    // фон для нескольких модулей; CSS-id группы — имя после "group/" (#net-
+    // status, #sound-light), а не "group/…" целиком (ПРОВЕРЕНО исходником
+    // Waybar, src/bar.cpp: Group(id_name, …) → box.set_name(id_name)).
+    "group/net-status": {
+        "orientation": "inherit",
+        "modules": ["hyprland/language", "custom/tunnel", "network", "battery"]
+    },
+    "group/sound-light": {
+        "orientation": "inherit",
+        "modules": ["backlight", "pulseaudio"]
+    },
 
     "custom/launcher": {
-        "format": "",
+        "format": "",
         "tooltip-format": "Приложения",
         "on-click": "pgrep -x rofi >/dev/null && pkill rofi || rofi -show drun"
     },
@@ -30,14 +48,31 @@
     // штатное поведение модуля (persistent-workspaces снят: раньше показывал
     // все 10 постоянно и, по живой проверке, терял интерактивность у
     // непосещённых столов). Числом, не глифом — не зависит от покрытия шрифта.
+    // {windows} — реальные иконки приложений темы (workspace-taskbar), не
+    // глифы по regex (window-rewrite): не нужно вручную сопоставлять класс
+    // окна с иконкой. orientation: vertical — иначе ряд иконок растягивает
+    // 44px колонку вширь (тот же принцип, что и у network/pulseaudio ниже,
+    // DSN-LAY-10); max-icons — предохранитель от разрастания столбца вниз,
+    // если в одном воркспейсе открыто много окон. format-window-separator —
+    // пустым: по умолчанию "  " (пробел) — man waybar(5) утверждает, что в
+    // режиме workspace-taskbar он игнорируется, но живой исходник (ПРОВЕРЕНО,
+    // src/modules/hyprland/workspace.cpp) вставляет его между иконками
+    // безусловно — без явного "" между иконками были лишние пустые строки.
     "hyprland/workspaces": {
-        "format": "{id}"
+        "format": "{id}\n{windows}",
+        "format-window-separator": "",
+        "workspace-taskbar": {
+            "enable": true,
+            "orientation": "vertical",
+            "icon-size": 18,
+            "max-icons": 5
+        }
     },
 
     // DSN-LAY-2 зона 2: индикаторы приватности (запись экрана, микрофон, камера).
     "privacy": {
         "icon-spacing": 4,
-        "icon-size": 16,
+        "icon-size": 18,
         "transition-duration": 250,
         "modules": [
             { "type": "screenshare" },
@@ -63,7 +98,7 @@
         "max-length": 0
     },
 
-    // DSN-LAY-2 зона 3: раскладка/туннель/сеть/звук/батарея — всегда; «ещё» — по наведению.
+    // DSN-LAY-2 зона 3: раскладка/туннель/сеть/яркость/звук/батарея — всегда; «ещё» — по наведению.
     "hyprland/language": { "format-en": "EN", "format-ru": "RU" },
     "custom/tunnel": {
         "exec": "~/.config/waybar/scripts/tunnel",
@@ -80,43 +115,74 @@
         "tooltip-format-ethernet": "eth: {ifname}",
         "tooltip-format-disconnected": "сеть недоступна"
     },
+    // Иконка — 7 ступеней яркости (format-icons без alt, та же индексация
+    // getIcon, что у pulseaudio); значение — только в подсказке, не подписью
+    // под иконкой (как было раньше с "{icon}\n{percent}" — занимало строку в
+    // узкой 44px колонке). 5 states (s20..s100) — не для текста, а под плавный
+    // градиент цвета серый→жёлтый в style.css (чем мельче шаг states, тем
+    // меньше скачок цвета между соседними уровнями). ПРОВЕРЕНО исходником
+    // Waybar (src/modules/backlight.cpp вызывает getState(percent) без
+    // lesser=true) — направление порога тут обратное battery/pulseaudio:
+    // срабатывает при value >= N, "s100" — верхний порог; см. style.css.
+    "backlight": {
+        "states": { "s20": 20, "s40": 40, "s60": 60, "s80": 80, "s100": 100 },
+        "format": "{icon}",
+        "format-icons": ["󰃚", "󰃛", "󰃜", "󰃝", "󰃞", "󰃟", "󰃠"],
+        "tooltip-format": "{percent}%"
+    },
     // Значение — только в подсказке (наведение), в панели — одна цветная
-    // иконка: подпись цифрой рядом с иконкой дублировала её и забивала узкую
-    // 44px колонку (замечание на машине 2026-10-15). Цвет — по states
-    // (DSN-S5): ПРОВЕРЕНО на живой панели — порог срабатывает при value <= N
-    // (а не >=, как мог бы предполагать man waybar-states; выставлял volume
-    // 5%/95% — класс срабатывал ровно наоборот задуманному), поэтому класс
-    // назван "low" и красит тихий звук, не громкий. .muted — отдельный класс
-    // модуля (встроенный, не из states).
+    // иконка (3 ступени громкости — встроенное авто-индексирование format-icons
+    // по percentage, см. исходник Waybar ALabel::getIcon; подпись цифрой рядом
+    // с иконкой дублировала её и забивала узкую 44px колонку, замечание на
+    // машине 2026-10-15). Цвет — по states (DSN-S5): ПРОВЕРЕНО исходником
+    // Waybar (src/modules/pulseaudio.cpp вызывает getState(volume, true)) —
+    // порог срабатывает при value <= N (а не >=, как мог бы предполагать man
+    // waybar-states), поэтому "low"/"medium" красят тихий/средний звук, а
+    // громкий (выше "medium") остаётся без класса — цвет для него в style.css.
+    // .muted — отдельный класс модуля (встроенный, не из states).
     "pulseaudio": {
         "format": "{icon}",
         "format-muted": "{icon}",
         "format-icons": {
-            "default": ["", "", ""],
-            "default-muted": ""
+            "default": ["", "", ""],
+            "default-muted": ""
         },
-        "states": { "low": 20 },
+        "states": { "low": 20, "medium": 60 },
         "tooltip-format": "{volume}%",
         "on-click": "swayosd-client --output-volume mute-toggle"
     },
+    // Иконка — по уровню заряда (ПРОВЕРЕНО исходником Waybar, ALabel::getIcon:
+    // индекс массива растёт от 0 при 0% к последнему при 100%, т.е. порядок
+    // "default" — от пустой до полной, а не наоборот, как было раньше).
+    // Ключи charging/plugged/"not charging"/full — статусы, которые battery.cpp
+    // лопает в нижний регистр и подставляет как ключ format-icons (ПРОВЕРЕНО
+    // исходником, src/modules/battery.cpp); на этой машине при полной зарядке
+    // от сети статус — буквально "Full" (живая проверка: cat
+    // /sys/class/power_supply/BAT1/status), без этого ключа он выглядел бы
+    // так же, как разряжающийся акб на 100% — отсюда и жалоба "не видно
+    // разницы". Массив с молнией одинаков для всех четырёх — у JSON нет
+    // якорей/ссылок (копия, не ошибка). Цвет иконки — те же классы
+    // critical/warning/good, что и без сети (см. style.css).
     "battery": {
-        "states": { "warning": 25, "critical": 10 },
+        "states": { "critical": 10, "warning": 25, "good": 100 },
         "format": "{icon}",
-        "format-icons": ["", "", "", "", ""],
+        "format-icons": {
+            "charging": ["󰢜", "󰂆", "󰂇", "󰂈", "󰢝", "󰂉", "󰢞", "󰂊", "󰂋", "󰂅"],
+            "plugged": ["󰢜", "󰂆", "󰂇", "󰂈", "󰢝", "󰂉", "󰢞", "󰂊", "󰂋", "󰂅"],
+            "not charging": ["󰢜", "󰂆", "󰂇", "󰂈", "󰢝", "󰂉", "󰢞", "󰂊", "󰂋", "󰂅"],
+            "full": ["󰢜", "󰂆", "󰂇", "󰂈", "󰢝", "󰂉", "󰢞", "󰂊", "󰂋", "󰂅"],
+            "default": ["󰂎", "󰁺", "󰁻", "󰁼", "󰁽", "󰁾", "󰁿", "󰂀", "󰂁", "󰁹"]
+        },
         "tooltip-format": "{capacity}%"
     },
     "group/more": {
         "orientation": "inherit",
         "drawer": { "transition-duration": 250 },
-        "modules": ["custom/more", "backlight", "tray"]
+        "modules": ["custom/more", "tray"]
     },
     "custom/more": {
         "format": "",
-        "tooltip-format": "Ещё: яркость, трей"
-    },
-    "backlight": {
-        "format": "{icon}\n{percent}",
-        "format-icons": [""]
+        "tooltip-format": "Ещё: трей"
     },
     // bluetooth (DSN-S5, R6.8, исправление): отдельного модуля "bluetooth"
     // здесь больше нет — дублировал значок трея (bluetooth-manager-blueman.nix:

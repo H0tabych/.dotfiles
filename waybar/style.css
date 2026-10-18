@@ -40,17 +40,110 @@ window#waybar {
     color: @text;
 }
 
-#workspaces button.active {
+/* Иконки чуть крупнее (11px базовых текстовых в theme.css — для глифов
+   мелко). 13px — не произвольное число, а font.size.lg из palette.toml
+   (там не вынесено отдельным GTK-токеном: numeric-токены палитры не
+   экспортируются в CSS, в отличие от цветов через @define-color). Только
+   модули-глифы, не текст (EN/RU, время, цифра воркспейса, трей) — им
+   увеличение не нужно и портит выравнивание строк. */
+#custom-launcher,
+#custom-dnd,
+#idle_inhibitor,
+#mpris,
+#custom-tunnel,
+#network,
+#backlight,
+#pulseaudio,
+#battery,
+#custom-more,
+#custom-power {
+    font-size: 13px;
+}
+
+/* Фирменный синий NixOS (снежинка), не токен палитры — это цвет чужого
+   бренда, а не состояние UI, поэтому не в theme.css/palette.toml. */
+#custom-launcher {
+    color: #5277C3;
+}
+
+/* "Коробочки" состояния. #net-status/#sound-light — одна капсула на
+   несколько модулей (CSS-id группы = имя после "group/", см. комментарий в
+   config.jsonc); остальное — по одному в своей. Воркспейсы сюда не входят —
+   у каждого своя коробочка уже выше (#workspaces > button). */
+#custom-launcher,
+#net-status,
+#sound-light,
+#privacy,
+#custom-dnd,
+#idle_inhibitor,
+#mpris,
+#more,
+#clock,
+#custom-power {
+    background-color: @surface0;
+    border-radius: 8px;
+    margin: 2px 4px;
+}
+
+/* Каждый воркспейс — отдельная "коробочка" (DSN-TOK: radius.control = 8,
+   см. palette.toml [shape], здесь не выражен токеном — GTK3 CSS не читает
+   числа из theme.css, только цвета через @define-color). Селектор с прямым
+   потомком (>): у #workspaces два уровня button — сам воркспейс (прямой
+   потомок) и кнопки открытых окон внутри него (taskbar-window, через
+   уровень) — иначе этот фон попал бы и на кнопки окон тоже. */
+#workspaces > button {
+    background-color: @surface0;
+    border-radius: 8px;
+    margin: 2px 4px;
+}
+
+#workspaces > button.active {
+    background-color: @surface1;
     color: @accent;
 }
 
-#workspaces button.urgent {
-    color: @error;
+#workspaces > button.urgent {
+    background-color: @error;
+    color: @on_accent;
 }
 
-#battery.warning,
-#backlight.warning {
+/* Иконки открытых окон (workspace-taskbar). margin: auto не подходит — GTK3
+   CSS его не понимает ("Junk at end of value for margin", роняло waybar в
+   краш-луп, ПРОВЕРЕНО живым запуском); выравнивание — через min-width под
+   icon-size (18, config.jsonc) и нулевой padding, чтобы кнопка не была шире
+   самой иконки и не ехала к краю. */
+/* Иконки открытых окон не центрируются сами — ПРОВЕРЕНО живым запуском с
+   отладочной обводкой (.taskbar-window в красный контур, .taskbar-window
+   image в зелёный): кнопка .taskbar-window растягивается на всю ширину
+   капсулы, но исходник Waybar пакует саму иконку внутри (window_box,
+   src/modules/hyprland/workspace.cpp) через pack_start(icon, expand=false,
+   fill=false) — это жёстко прижимает её к левому краю, не центрирует;
+   margin: auto GTK3 CSS не понимает (роняло waybar, см. выше), halign не
+   стилизуется через CSS вообще — настроить в коде C++ нельзя. Единственный
+   рабочий вариант — сдвинуть вручную отступом: margin-left = (ширина капсулы
+   − icon-size) / 2. Ширина капсулы = 44 (width бара) − 2×1 (border
+   window#waybar) − 2×4 (margin "#workspaces > button" слева/справа) = 34px;
+   icon-size = 18 (config.jsonc) → (34 − 18) / 2 = 8px. Если поменяется
+   bar.width, margин капсулы или icon-size — пересчитать по этой формуле. */
+#workspaces button.taskbar-window {
+    min-width: 18px;
+    padding: 0;
+}
+.taskbar-window image {
+    margin-left: 8px;
+}
+
+/* Цвет по уровню заряда (ПРОВЕРЕНО источником Waybar, src/modules/battery.cpp:
+   status.transform(lowercase) + add_class(status) — "charging" добавляется тем
+   же механизмом, независимо от states, так что иконка-молния при зарядке
+   раскрашивается этими же классами по уровню). "good" — не отдельный порог, а
+   catch-all states: 100 (ниже critical/warning всегда перекрывает его). */
+#battery.warning {
     color: @warning;
+}
+
+#battery.good {
+    color: @success;
 }
 
 /* DSN-LAY-5: критично — капсула с фоном error и текстом on_accent. */
@@ -76,12 +169,60 @@ window#waybar {
     color: @accent;
 }
 
+/* Цвет по громкости, по аналогии с battery: тихо — красный, средне — жёлтый,
+   громко — зелёный (базовый цвет блока, без класса — для states это верхний
+   непомеченный диапазон). ПРОВЕРЕНО: класс "low"/"medium" (не "high") —
+   states у pulseaudio срабатывает при value <= порога, см. комментарий в
+   config.jsonc; поэтому "выше порога" остаётся без класса и красится базовым
+   правилом ниже. */
+#pulseaudio {
+    color: @success;
+}
+
+#pulseaudio.medium {
+    color: @warning;
+}
+
+#pulseaudio.low,
 #pulseaudio.muted {
     color: @error;
 }
 
-/* ПРОВЕРЕНО: класс "low" (не "high") — states у pulseaudio срабатывает при
-   value <= порога, см. комментарий в config.jsonc. */
-#pulseaudio.low {
-    color: @subtext0;
+/* Яркость — не красный/жёлтый/зелёный, как у battery/pulseaudio, а плавный
+   переход серый (тускло) → ярко-жёлтый (полная яркость): тусклый экран — не
+   "плохое" состояние, которое нужно чинить, в отличие от разряда/тишины.
+   Пять states (config.jsonc) — линейная интерполяция RGB между @overlay0 (t=0)
+   и @warning (t=1) в этих же точках (0.2/0.4/0.6/0.8/1.0); посчитано один раз
+   вручную — GTK3 CSS не умеет color-mix(). direction states здесь обратный
+   pulseaudio/battery: ПРОВЕРЕНО источником Waybar (src/modules/backlight.cpp
+   вызывает getState(percent) без lesser=true) — срабатывает при value >= N,
+   поэтому базовый (непомеченный) уровень — самый тусклый, t=0. */
+#backlight {
+    color: @overlay0;
+}
+
+#backlight.s20 {
+    color: #6B7270;
+}
+
+#backlight.s40 {
+    color: #8C836F;
+}
+
+#backlight.s60 {
+    color: #AE956F;
+}
+
+#backlight.s80 {
+    color: #CFA66E;
+}
+
+#backlight.s100 {
+    color: @warning;
+}
+
+/* Кнопка выключения — всегда красная, как действие с последствиями
+   (завершение сессии/выключение), не по states — у custom-модулей их нет. */
+#custom-power {
+    color: @error;
 }
