@@ -84,7 +84,10 @@ ac = { enabled = true, size = 6, passes = 3, noise = 0.02, contrast = 0.9, brigh
 ui      = "Inter"
 mono    = "JetBrains Mono"
 symbols = "Symbols Nerd Font Mono"
-size    = { sm = 10, md = 11, lg = 13, mono = 11, display = 72 }
+# mono 11->10 (запрос 2026-10-18, терминал и всё в нём крупноват) — это пол
+# DSN-TYP-2 ("текст меньше 10 pt запрещён"), меньше уже нельзя; совпадает с
+# sm — это не новый шестой размер, правило запрещает только это.
+size    = { sm = 10, md = 11, lg = 13, mono = 10, display = 72 }
 weight  = { body = 400, glass = 500, strong = 600 }
 line    = { ui = 1.4, mono = 1.0 }
 
