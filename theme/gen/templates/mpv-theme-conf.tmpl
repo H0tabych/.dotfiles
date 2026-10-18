@@ -2,7 +2,10 @@
 # управления из палитры. Окно видео остаётся сплошным, без размытия и
 # затемнения неактивного (DSN-EXC-1) — альфа фона OSD не зависит от профиля
 # эффектов, фиксирована generator'ом на уровне >= 0.85 (DSN-CMP-19).
-osd-font=${font_ui}
-osd-color=#FF${accent_raw}
-osd-selected-color=#FF${accent_raw}
-osd-back-color=#${osd_back_alpha_hex}${mantle_raw}
+# Значения в кавычках: ПРОВЕРЕНО на машине — без кавычек mpv читает `#` как
+# начало комментария (как в shell), и `osd-color=#AARRGGBB` молча становится
+# пустым значением ("setting option osd-color='' failed").
+osd-font="${font_ui}"
+osd-color="#FF${accent_raw}"
+osd-selected-color="#FF${accent_raw}"
+osd-back-color="#${osd_back_alpha_hex}${mantle_raw}"
