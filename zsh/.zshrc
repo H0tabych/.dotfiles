@@ -64,5 +64,10 @@ if command -v fzf >/dev/null 2>&1; then
   [ -f "$HOME/.config/fzf/config.zsh" ] && source "$HOME/.config/fzf/config.zsh"
 fi
 
+# --- direnv: автоактивация проектных окружений (env-manager-direnv.nix) ---
+# Хук — целиком здесь (A.6, не два хука): Nix-фича включает только системный
+# direnv/nix-direnv и выключает enable*Integration намеренно.
+command -v direnv >/dev/null 2>&1 && eval "$(direnv hook zsh)"
+
 # --- Подсветка синтаксиса — ДОЛЖНА быть последней строкой (требование плагина) ---
 [ -f "$ZSH_SYNTAX_HIGHLIGHTING" ] && source "$ZSH_SYNTAX_HIGHLIGHTING"
