@@ -18,17 +18,18 @@
     // Зона 2 (Внимание) — только при активном событии/режиме.
     "modules-center": ["privacy", "custom/dnd", "idle_inhibitor", "mpris"],
     // Зона 3 (Состояние, всегда кроме капсулы «ещё») + зона 4 (Время и питание).
-    // Две смысловые пары — каждая в одной капсуле (style.css): net-status
-    // (язык/туннель/сеть/заряд — «где я и насколько жив») и sound-light
-    // (звук/яркость — настройки вывода). group/more — своя капсула, по
-    // наведению; остальное (launcher/privacy/dnd/idle/mpris/clock/power) —
-    // по одному, см. style.css.
+    // Три смысловые пары — каждая в одной капсуле (style.css): net-status
+    // (язык/туннель/сеть/заряд — «где я и насколько жив»), sound-light
+    // (звук/яркость — настройки вывода) и load (ЦП/память — «чем занята
+    // машина», запрос 2026-10-21). group/more — своя капсула, по наведению;
+    // остальное (launcher/privacy/dnd/idle/mpris/clock/power) — по одному,
+    // см. style.css.
     "modules-right": [
-        "group/net-status", "group/sound-light", "group/more", "clock", "custom/power"
+        "group/net-status", "group/sound-light", "group/load", "group/more", "clock", "custom/power"
     ],
     // Без "drawer" — это не капсула «ещё» (не прячет содержимое), просто общий
     // фон для нескольких модулей; CSS-id группы — имя после "group/" (#net-
-    // status, #sound-light), а не "group/…" целиком (ПРОВЕРЕНО исходником
+    // status, #sound-light, #load), а не "group/…" целиком (ПРОВЕРЕНО исходником
     // Waybar, src/bar.cpp: Group(id_name, …) → box.set_name(id_name)).
     "group/net-status": {
         "orientation": "inherit",
@@ -37,6 +38,10 @@
     "group/sound-light": {
         "orientation": "inherit",
         "modules": ["backlight", "pulseaudio"]
+    },
+    "group/load": {
+        "orientation": "inherit",
+        "modules": ["cpu", "memory"]
     },
 
     "custom/launcher": {
@@ -189,6 +194,33 @@
             "default": ["󰂎", "󰁺", "󰁻", "󰁼", "󰁽", "󰁾", "󰁿", "󰂀", "󰂁", "󰁹"]
         },
         "tooltip-format": "{capacity}%"
+    },
+    // Загрузка ЦП и памяти (запрос 2026-10-21, DSN-LAY-2 зона 3). Значок над
+    // числом, как у часов ("{:%H\n%M}"): в одну строку «󰻠 100» не влезает в
+    // колонку 44px (DSN-LAY-10 — тот же довод, что у сети и звука), а один
+    // глиф без числа здесь бессмыслен — значение и есть информация. Без знака
+    // «%»: он занял бы ещё символ при 100, а смысл ясен из значка; у памяти
+    // абсолютные гигабайты — в подсказке. Пороги states срабатывают при
+    // значении >= порога (man waybar-states(5): «equal to or greater» для всех
+    // модулей, кроме батареи), цвета — в style.css. tooltip-format у cpu нет
+    // (ПРОВЕРЕНО исходником, src/modules/cpu.cpp: подсказка штатная — загрузка
+    // по ядрам), у memory есть (src/modules/memory/common.cpp). interval: у ЦП
+    // 3 с — иначе всплески не видны; у памяти 10 с — она так быстро не меняется.
+    // Значок крупнее числа — разметкой Pango, а не CSS: правило font-size бьёт по
+    // всей подписи и растянуло бы заодно цифры (они должны совпадать с часами,
+    // 11px); size='large' даёт те же ~13px = font.size.lg, что у соседних
+    // капсул-глифов. ПРОВЕРЕНО живым запуском: разметка отрисовывается, а не
+    // печатается буквально.
+    "cpu": {
+        "interval": 3,
+        "format": "<span size='large'>󰻠</span>\n{usage}",
+        "states": { "warning": 70, "critical": 90 }
+    },
+    "memory": {
+        "interval": 10,
+        "format": "<span size='large'>󰍛</span>\n{percentage}",
+        "states": { "warning": 70, "critical": 90 },
+        "tooltip-format": "{used:0.1f} / {total:0.1f} ГиБ"
     },
     "group/more": {
         "orientation": "inherit",

@@ -31,6 +31,8 @@ window#waybar {
 #network,
 #pulseaudio,
 #battery,
+#cpu,
+#memory,
 #custom-more,
 #backlight,
 #tray,
@@ -66,13 +68,14 @@ window#waybar {
     color: #5277C3;
 }
 
-/* "Коробочки" состояния. #net-status/#sound-light — одна капсула на
+/* "Коробочки" состояния. #net-status/#sound-light/#load — одна капсула на
    несколько модулей (CSS-id группы = имя после "group/", см. комментарий в
    config.jsonc); остальное — по одному в своей. Воркспейсы сюда не входят —
    у каждого своя коробочка уже выше (#workspaces > button). */
 #custom-launcher,
 #net-status,
 #sound-light,
+#load,
 #privacy,
 #custom-dnd,
 #idle_inhibitor,
@@ -219,6 +222,22 @@ window#waybar {
 
 #backlight.s100 {
     color: @warning;
+}
+
+/* Загрузка ЦП и памяти: цвет по уровню, но БЕЗ капсулы фона @error, в отличие
+   от #battery.critical. Отступление от буквы DSN-LAY-5 осознанное: высокая
+   загрузка — нормальный рабочий режим (сборка, игра, инференс), а не тревога,
+   требующая действия; красная плашка загоралась бы при каждой сборке и
+   обесценивала бы сигнал. Тот же довод, что уже применён к яркости выше.
+   Классы — из states (config.jsonc), срабатывают при значении >= порога. */
+#cpu.warning,
+#memory.warning {
+    color: @warning;
+}
+
+#cpu.critical,
+#memory.critical {
+    color: @error;
 }
 
 /* Кнопка выключения — всегда красная, как действие с последствиями
