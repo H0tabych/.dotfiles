@@ -58,6 +58,20 @@
     // режиме workspace-taskbar он игнорируется, но живой исходник (ПРОВЕРЕНО,
     // src/modules/hyprland/workspace.cpp) вставляет его между иконками
     // безусловно — без явного "" между иконками были лишние пустые строки.
+    // on-click-window (M24, исправление 2026-10-21) — клик по значку окна:
+    // переходит на его стол и фокусирует окно. Без параметра waybar вообще не
+    // подключает обработчик к кнопке окна (ПРОВЕРЕНО исходником, src/modules/
+    // hyprland/workspace.cpp: сигнал подключается только при непустом
+    // on-click-window), а кнопки .taskbar-window растянуты на всю ширину капсулы —
+    // клик по значку умирал. Команда исполняется через `sh -c` (ПРОВЕРЕНО
+    // include/util/command.hpp), hyprctl лежит в PATH юнита (bar-waybar.nix),
+    // HYPRLAND_INSTANCE_SIGNATURE есть в окружении процесса. Форма — Lua, а не
+    // легаси-текст: Hyprland 0.55.4 с Lua-конфигом исполняет payload сокета как
+    // Lua (подробности и патч самого waybar — в bar-waybar.nix). Строка Lua в
+    // одинарных кавычках, чтобы не экранировать двойные внутри JSON; {address}
+    // waybar подставляет уже с префиксом 0x (ПРОВЕРЕНО исходником), селектор
+    // address:0x… Lua-API принимает (ПРОВЕРЕНО пробой: чужой адрес даёт
+    // «window not found», а не ошибку разбора).
     "hyprland/workspaces": {
         "format": "{id}\n{windows}",
         "format-window-separator": "",
@@ -65,7 +79,8 @@
             "enable": true,
             "orientation": "vertical",
             "icon-size": 18,
-            "max-icons": 5
+            "max-icons": 5,
+            "on-click-window": "hyprctl dispatch \"hl.dsp.focus({ window = 'address:{address}' })\""
         }
     },
 
