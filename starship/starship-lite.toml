@@ -10,12 +10,12 @@ scan_timeout = 10
 [palettes.glass_tide]
 text = "#DCE7EC"
 subtext0 = "#A6B7BF"
-accent_warm = "#F2A988"
-special = "#B49AE8"
-info = "#91A4ED"
-warning = "#F0B86E"
-error = "#F0817F"
-success = "#B5DB86"
+accent_warm = "#F17F4C"
+special = "#AE8DF1"
+info = "#829AF5"
+warning = "#E38912"
+error = "#F47A77"
+success = "#6FB020"
 
 [directory]
 format = "[$path]($style)[$read_only]($read_only_style) "

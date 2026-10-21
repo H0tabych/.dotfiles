@@ -4,7 +4,7 @@
 # fzf/config.zsh, не .zshrc напрямую (DOT-3: нетокенная часть — отдельно).
 export FZF_DEFAULT_OPTS="\
 --color=fg:#DCE7EC,fg+:#DCE7EC,bg:-1,bg+:#2A3F4D \
---color=hl:#6CC6DD,hl+:#6CC6DD \
---color=info:#91A4ED,border:#1F313D,prompt:#6CC6DD \
---color=pointer:#B49AE8,marker:#F2A988,spinner:#91A4ED \
+--color=hl:#1BACD1,hl+:#1BACD1 \
+--color=info:#829AF5,border:#1F313D,prompt:#1BACD1 \
+--color=pointer:#AE8DF1,marker:#F17F4C,spinner:#829AF5 \
 --color=header:#839AA5"

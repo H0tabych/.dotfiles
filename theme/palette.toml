@@ -28,22 +28,39 @@ text     = "#DCE7EC"
 # по ролям special/info/teal/accent_warm, ни одна не завязана на accent,
 # чтобы подсветка не менялась между вариантами обоев). Контраст к base не
 # хуже прежнего — DSN-COL-4 проверен gen.py --check для обоих вариантов.
+#
+# Насыщенность и светлота подняты 2026-10-21 (запрос: «цвета тусклые, не
+# выделяющиеся», тон не трогался). Связывающее ограничение — не контраст к
+# base (он почти всегда с запасом), а on_accent (#070D12) НА семантике/accent
+# ≥ 7:1 (DSN-COL-4: капсула критичного состояния, активный воркспейс и т. п.
+# используют on_accent как текст поверх этих цветов) — он не даёт увести
+# цвет глубже определённого предела светлоты. Светлота подобрана бинарным
+# поиском по этому порогу (gen.py: wcag_contrast(on_accent, цвет) с запасом
+# 7.15-7.35:1), насыщенность поднята к потолку 77-90% (не 100% — чтобы
+# остаться в пределах DSN-COL-9, не «неоновым»). У тёплых/зелёных тонов
+# (success/teal/accent/warning) это даёт заметно более насыщенный, не
+# пастельный цвет (светлота ушла с 62-70% на 39-48%); у холодных/фиолетовых
+# (error/info/special) светлота физически не может уйти так же низко и
+# остаться ≥ 7:1 — вес зелёного канала в sRGB-светимости намного больше
+# синего, поэтому они темнеют меньше. Проверено целиком через gen.py
+# (check_schema/monotonic/contrast/hue/wallpapers — все зелёные для обоих
+# вариантов и всех четырёх профилей), не только на глаз.
 [semantic]
-success     = "#B5DB86"
-warning     = "#F0B86E"
-error       = "#F0817F"
-info        = "#91A4ED"
-special     = "#B49AE8"
-teal        = "#6CD09E"
+success     = "#6FB020"
+warning     = "#E38912"
+error       = "#F47A77"
+info        = "#829AF5"
+special     = "#AE8DF1"
+teal        = "#24B56C"
 on_accent   = "#070D12"
-accent_warm = "#F2A988"
+accent_warm = "#F17F4C"
 
 [ansi]
-regular = ["#1F313D", "#F0817F", "#B5DB86", "#F0B86E", "#91A4ED", "#B49AE8", "#6CD09E", "#BECAD0"]
-bright  = ["#839AA5", "#F79A97", "#C9E8A2", "#F6CC8E", "#AFBEF5", "#C9B4F2", "#86DFB3", "#DCE7EC"]
+regular = ["#1F313D", "#F47A77", "#6FB020", "#E38912", "#829AF5", "#AE8DF1", "#24B56C", "#BECAD0"]
+bright  = ["#839AA5", "#FA9290", "#86DA1F", "#F39C28", "#A2B5FB", "#C4AAF8", "#24DE80", "#DCE7EC"]
 
 [variant.tree]                         # обои «Дерево и планета»
-accent    = "#7FD6B0"
+accent    = "#24B475"
 icons     = "teal"
 wallpaper = { file = "tree-and-planet.jpg", sha256 = "e36c87f3f07224476280f02c7d7964331a5c98e7f1d1dc9a43eee187579d0f89" }
 # probe пересчитан theme/gen/probe.py по реальному файлу 2026-10-14 (реальные
@@ -51,7 +68,7 @@ wallpaper = { file = "tree-and-planet.jpg", sha256 = "e36c87f3f07224476280f02c7d
 probe     = { screen = "#ABAB95", bar = "#0EA487", screen_sharp = "#FCFCDB", bar_sharp = "#0FFBCC" }
 
 [variant.forest]                       # обои «Лес и река»
-accent    = "#6CC6DD"
+accent    = "#1BACD1"
 icons     = "cyan"
 wallpaper = { file = "forest-river.jpg", sha256 = "f32b67d34ad952227182d8d7a93c6d47baaeb289318d8ebcbbe5225aec03f01b" }
 probe     = { screen = "#C6AE75", bar = "#0B1F31", screen_sharp = "#FCEDAD", bar_sharp = "#218D9E" }

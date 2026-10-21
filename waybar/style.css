@@ -57,6 +57,8 @@ window#waybar {
 #backlight,
 #pulseaudio,
 #battery,
+#cpu,
+#memory,
 #custom-more,
 #custom-power {
     font-size: 13px;
@@ -68,14 +70,14 @@ window#waybar {
     color: #5277C3;
 }
 
-/* "Коробочки" состояния. #net-status/#sound-light/#load — одна капсула на
+/* "Коробочки" состояния. #net-status/#sound-light/#vitals — одна капсула на
    несколько модулей (CSS-id группы = имя после "group/", см. комментарий в
    config.jsonc); остальное — по одному в своей. Воркспейсы сюда не входят —
    у каждого своя коробочка уже выше (#workspaces > button). */
 #custom-launcher,
 #net-status,
 #sound-light,
-#load,
+#vitals,
 #privacy,
 #custom-dnd,
 #idle_inhibitor,
@@ -195,8 +197,13 @@ window#waybar {
    переход серый (тускло) → ярко-жёлтый (полная яркость): тусклый экран — не
    "плохое" состояние, которое нужно чинить, в отличие от разряда/тишины.
    Пять states (config.jsonc) — линейная интерполяция RGB между @overlay0 (t=0)
-   и @warning (t=1) в этих же точках (0.2/0.4/0.6/0.8/1.0); посчитано один раз
-   вручную — GTK3 CSS не умеет color-mix(). direction states здесь обратный
+   и @warning (t=1) в этих же точках (0.2/0.4/0.6/0.8/1.0) через mix() —
+   встроенную функцию GTK3 CSS (ПРОВЕРЕНО исходником, gtkcsscolorvalue.c:
+   распознаёт "mix", как и уже применённый в этом файле alpha(); исправление
+   2026-10-21 — раньше здесь стояли hex-литералы с пометкой «GTK3 CSS не умеет
+   color-mix()», но это другая, веб-стандартная функция, не "mix" GTK;
+   литералы блокировали theme/gen/gen.py --check, DSN-TOK-8, и тем самым —
+   любую перегенерацию темы). direction states здесь обратный
    pulseaudio/battery: ПРОВЕРЕНО источником Waybar (src/modules/backlight.cpp
    вызывает getState(percent) без lesser=true) — срабатывает при value >= N,
    поэтому базовый (непомеченный) уровень — самый тусклый, t=0. */
@@ -205,19 +212,19 @@ window#waybar {
 }
 
 #backlight.s20 {
-    color: #6B7270;
+    color: mix(@overlay0, @warning, 0.2);
 }
 
 #backlight.s40 {
-    color: #8C836F;
+    color: mix(@overlay0, @warning, 0.4);
 }
 
 #backlight.s60 {
-    color: #AE956F;
+    color: mix(@overlay0, @warning, 0.6);
 }
 
 #backlight.s80 {
-    color: #CFA66E;
+    color: mix(@overlay0, @warning, 0.8);
 }
 
 #backlight.s100 {
@@ -229,7 +236,32 @@ window#waybar {
    загрузка — нормальный рабочий режим (сборка, игра, инференс), а не тревога,
    требующая действия; красная плашка загоралась бы при каждой сборке и
    обесценивала бы сигнал. Тот же довод, что уже применён к яркости выше.
-   Классы — из states (config.jsonc), срабатывают при значении >= порога. */
+   Классы — из states (config.jsonc), срабатывают при значении >= порога.
+   Цифр на панели больше нет (запрос 2026-10-21): три промежуточные ступени
+   между нормой (@text) и warning — mix(@text, @warning, доля), доля = порог
+   / 70 (порог warning), т. е. линейная интерполяция RGB. mix() — встроенная
+   функция GTK3 CSS (проверено исходником gtkcsscolorvalue.c: распознаёт
+   "mix", как и уже применённый здесь alpha()); отличается от стандартной
+   веб-функции color-mix(), которую GTK3 не знает — именно её отсутствие
+   задокументировано у #backlight выше, там ступени посчитаны вручную. Здесь
+   литералов цвета нет (DSN-COL-1). В видимом состоянии канал — только цвет:
+   допущенное исключение из DSN-COL-8 для этих двух индикаторов (точные
+   цифры — в tooltip, DSN-LAY-5). */
+#cpu.rising,
+#memory.rising {
+    color: mix(@text, @warning, 0.286);
+}
+
+#cpu.elevated,
+#memory.elevated {
+    color: mix(@text, @warning, 0.571);
+}
+
+#cpu.busy,
+#memory.busy {
+    color: mix(@text, @warning, 0.857);
+}
+
 #cpu.warning,
 #memory.warning {
     color: @warning;

@@ -20,7 +20,7 @@ group-by=app-name
 background-color=#0A141BE6
 text-color=#DCE7EC
 border-color=#DCE7EC1A
-progress-color=over #6CC6DD
+progress-color=over #1BACD1
 
 [urgency=low]
 border-color=#4A6070
@@ -28,7 +28,7 @@ border-color=#4A6070
 [urgency=critical]
 background-color=#0A141BFF
 border-size=2
-border-color=#F0817F
+border-color=#F47A77
 default-timeout=0
 
 [mode=do-not-disturb]

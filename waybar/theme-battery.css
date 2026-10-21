@@ -11,15 +11,15 @@
 @define-color subtext1 #BECAD0;
 @define-color text #DCE7EC;
 
-@define-color accent #6CC6DD;
-@define-color accent_warm #F2A988;
+@define-color accent #1BACD1;
+@define-color accent_warm #F17F4C;
 @define-color on_accent #070D12;
 
-@define-color success #B5DB86;
-@define-color warning #F0B86E;
-@define-color error #F0817F;
-@define-color info #91A4ED;
-@define-color special #B49AE8;
+@define-color success #6FB020;
+@define-color warning #E38912;
+@define-color error #F47A77;
+@define-color info #829AF5;
+@define-color special #AE8DF1;
 
 @define-color glass_bar alpha(@base, 0.94);
 @define-color glass_rim alpha(@text, 0.1);

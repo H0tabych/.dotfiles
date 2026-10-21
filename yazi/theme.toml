@@ -1,6 +1,6 @@
 # Сгенерировано theme/gen/gen.py из theme/palette.toml (вариант forest, профиль ac) — не редактируйте
 [mgr]
-cwd = { fg = "#6CC6DD" }
+cwd = { fg = "#1BACD1" }
 
 # R6.9, ПРОВЕРИТЬ: было reversed = true — инверсия цвета конфликтовала с
 # вылезающим краем иконки (overflowing-glyphs=yes, умолчание foot) и давала
@@ -9,74 +9,74 @@ cwd = { fg = "#6CC6DD" }
 hovered         = { bg = "#1F313D" }
 preview_hovered = { underline = true }
 
-find_keyword  = { fg = "#F0B86E", italic = true }
-find_position = { fg = "#B49AE8", bg = "reset", italic = true }
+find_keyword  = { fg = "#E38912", italic = true }
+find_position = { fg = "#AE8DF1", bg = "reset", italic = true }
 
-marker_copied   = { fg = "#B5DB86", bg = "#B5DB86" }
-marker_cut      = { fg = "#F0817F", bg = "#F0817F" }
-marker_marked   = { fg = "#91A4ED", bg = "#91A4ED" }
-marker_selected = { fg = "#6CC6DD", bg = "#6CC6DD" }
+marker_copied   = { fg = "#6FB020", bg = "#6FB020" }
+marker_cut      = { fg = "#F47A77", bg = "#F47A77" }
+marker_marked   = { fg = "#829AF5", bg = "#829AF5" }
+marker_selected = { fg = "#1BACD1", bg = "#1BACD1" }
 
 # ПРОВЕРИТЬ: имена count_* — по аналогии с marker_* (DESIGN_SYSTEM.md P.3.5
 # упоминает только группу "count_*", без точных имён), не подтверждено живым
 # запуском.
-count_copied   = { fg = "#0E1A22", bg = "#B5DB86" }
-count_cut      = { fg = "#0E1A22", bg = "#F0817F" }
-count_selected = { fg = "#0E1A22", bg = "#6CC6DD" }
+count_copied   = { fg = "#0E1A22", bg = "#6FB020" }
+count_cut      = { fg = "#0E1A22", bg = "#F47A77" }
+count_selected = { fg = "#0E1A22", bg = "#1BACD1" }
 
 border_symbol = "│"
 border_style  = { fg = "#1F313D" }
 
 [tabs]
-active   = { fg = "#0E1A22", bg = "#6CC6DD" }
+active   = { fg = "#0E1A22", bg = "#1BACD1" }
 inactive = { fg = "#DCE7EC", bg = "#1F313D" }
 
 [mode]
-normal = { fg = "#0E1A22", bg = "#6CC6DD", bold = true }
-select = { fg = "#0E1A22", bg = "#B5DB86", bold = true }
-unset  = { fg = "#0E1A22", bg = "#B49AE8", bold = true }
+normal = { fg = "#0E1A22", bg = "#1BACD1", bold = true }
+select = { fg = "#0E1A22", bg = "#6FB020", bold = true }
+unset  = { fg = "#0E1A22", bg = "#AE8DF1", bold = true }
 
 [status]
 separator_open  = ""
 separator_close = ""
 
 progress_label  = { fg = "#DCE7EC", bold = true }
-progress_normal = { fg = "#6CC6DD", bg = "#1F313D" }
-progress_error  = { fg = "#F0817F", bg = "#1F313D" }
+progress_normal = { fg = "#1BACD1", bg = "#1F313D" }
+progress_error  = { fg = "#F47A77", bg = "#1F313D" }
 
-permissions_t = { fg = "#91A4ED" }
-permissions_r = { fg = "#F0B86E" }
-permissions_w = { fg = "#F0817F" }
-permissions_x = { fg = "#B5DB86" }
+permissions_t = { fg = "#829AF5" }
+permissions_r = { fg = "#E38912" }
+permissions_w = { fg = "#F47A77" }
+permissions_x = { fg = "#6FB020" }
 permissions_s = { fg = "#1F313D" }
 
 [input]
-border   = { fg = "#6CC6DD" }
+border   = { fg = "#1BACD1" }
 title    = {}
 value    = {}
 selected = { reversed = true }
 
 [select]
-border = { fg = "#6CC6DD" }
-active = { fg = "#6CC6DD" }
+border = { fg = "#1BACD1" }
+active = { fg = "#1BACD1" }
 inactive = {}
 
 [tasks]
-border  = { fg = "#6CC6DD" }
+border  = { fg = "#1BACD1" }
 title   = {}
 hovered = { underline = true }
 
 [which]
 mask            = { bg = "#0E1A22" }
-cand            = { fg = "#6CD09E" }
+cand            = { fg = "#24B56C" }
 rest            = { fg = "#1F313D" }
-desc            = { fg = "#6CC6DD" }
+desc            = { fg = "#1BACD1" }
 separator       = "  "
 separator_style = { fg = "#1F313D" }
 
 [help]
-on      = { fg = "#6CD09E" }
-run     = { fg = "#6CC6DD" }
+on      = { fg = "#24B56C" }
+run     = { fg = "#1BACD1" }
 desc    = { fg = "#1F313D" }
 hovered = { bg = "#1F313D", bold = true }
 footer  = { fg = "#DCE7EC", bg = "#1F313D" }

@@ -359,6 +359,15 @@ LITERAL_HEX_RE = re.compile(r"#[0-9A-Fa-f]{6}\b")
 # DSN-S4): это обращение к функции-токену, а не цветовой литерал.
 LITERAL_RGB_RE = re.compile(r"(?<![.\w])rgba?\(")
 
+# Исключение 2026-10-21: сторонние брендовые цвета — это не состояние UI и
+# не роль палитры (см. комментарий у #custom-launcher в waybar/style.css),
+# поэтому намеренно не в palette.toml; но DSN-TOK-8 в остальном бьёт по
+# любому литералу вне сгенерированного файла. Список короткий и штучный —
+# не общий механизм обхода проверки.
+LITERAL_HEX_ALLOWLIST = {
+    "#5277C3",  # снежинка NixOS, waybar/style.css: #custom-launcher
+}
+
 
 def all_generated_paths(p: dict) -> set[Path]:
     """Пути, которые пишет render(): исключаются из поиска литералов (DSN-TOK-8).
@@ -392,6 +401,8 @@ def check_literals(p: dict) -> list[str]:
         except OSError:
             continue
         for m in LITERAL_HEX_RE.finditer(text):
+            if m.group(0).upper() in LITERAL_HEX_ALLOWLIST:
+                continue
             errs.append(f"DSN-TOK-8: литерал цвета {m.group(0)} в {path.relative_to(REPO_ROOT)}")
         for m in LITERAL_RGB_RE.finditer(text):
             errs.append(f"DSN-TOK-8: литерал rgb()/rgba() в {path.relative_to(REPO_ROOT)}")

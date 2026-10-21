@@ -14,15 +14,15 @@ M.c = {
   subtext0    = "A6B7BF",
   subtext1    = "BECAD0",
   text        = "DCE7EC",
-  accent      = "6CC6DD",
-  accent_warm = "F2A988",
+  accent      = "1BACD1",
+  accent_warm = "F17F4C",
   on_accent   = "070D12",
-  success     = "B5DB86",
-  warning     = "F0B86E",
-  error       = "F0817F",
-  info        = "91A4ED",
-  special     = "B49AE8",
-  teal        = "6CD09E",
+  success     = "6FB020",
+  warning     = "E38912",
+  error       = "F47A77",
+  info        = "829AF5",
+  special     = "AE8DF1",
+  teal        = "24B56C",
 }
 
 local function alpha_hex(a)

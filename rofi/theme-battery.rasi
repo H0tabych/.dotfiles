@@ -12,13 +12,13 @@
     subtext1: #BECAD0;
     text:     #DCE7EC;
 
-    accent:      #6CC6DD;
-    accent-warm: #F2A988;
+    accent:      #1BACD1;
+    accent-warm: #F17F4C;
     on-accent:   #070D12;
 
-    success: #B5DB86;
-    warning: #F0B86E;
-    error:   #F0817F;
+    success: #6FB020;
+    warning: #E38912;
+    error:   #F47A77;
 
     /* DSN-CMP-5 (L3): капсула стекла с альфой профиля — rasi не знает функцию
        alpha() по токену (как GTK3 CSS, P.3.2), поэтому байт альфы считает

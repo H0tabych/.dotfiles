@@ -6,8 +6,8 @@
 @define-color base #0E1A22;
 @define-color surface0 #16252F;
 @define-color text #DCE7EC;
-@define-color accent #6CC6DD;
-@define-color warning #F0B86E;
+@define-color accent #1BACD1;
+@define-color warning #E38912;
 
 @define-color glass_popup alpha(@mantle, 0.9);
 @define-color glass_rim alpha(@text, 0.1);

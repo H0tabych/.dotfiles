@@ -12,27 +12,27 @@ return {
   subtext1 = "#BECAD0",
   text     = "#DCE7EC",
 
-  accent      = "#6CC6DD",
-  accent_warm = "#F2A988",
+  accent      = "#1BACD1",
+  accent_warm = "#F17F4C",
   on_accent   = "#070D12",
 
-  success = "#B5DB86",
-  warning = "#F0B86E",
-  error   = "#F0817F",
-  info    = "#91A4ED",
-  special = "#B49AE8",
-  teal    = "#6CD09E",
+  success = "#6FB020",
+  warning = "#E38912",
+  error   = "#F47A77",
+  info    = "#829AF5",
+  special = "#AE8DF1",
+  teal    = "#24B56C",
 
   selection = "#2A3F4D",
 
   ansi = {
     regular = {
-      "#1F313D", "#F0817F", "#B5DB86", "#F0B86E",
-      "#91A4ED", "#B49AE8", "#6CD09E", "#BECAD0",
+      "#1F313D", "#F47A77", "#6FB020", "#E38912",
+      "#829AF5", "#AE8DF1", "#24B56C", "#BECAD0",
     },
     bright = {
-      "#839AA5", "#F79A97", "#C9E8A2", "#F6CC8E",
-      "#AFBEF5", "#C9B4F2", "#86DFB3", "#DCE7EC",
+      "#839AA5", "#FA9290", "#86DA1F", "#F39C28",
+      "#A2B5FB", "#C4AAF8", "#24DE80", "#DCE7EC",
     },
   },
 }
