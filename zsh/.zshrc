@@ -14,6 +14,7 @@ setopt autocd
 setopt interactive_comments
 
 [ -f "$HOME/.config/machine.d/zsh-env" ] && source "$HOME/.config/machine.d/zsh-env"
+[ -f "$HOME/.config/machine.d/ai-env" ] && source "$HOME/.config/machine.d/ai-env"
 
 # --- oh-my-zsh: регистрация + компинит (единственный, не дублируем свой) ---
 # Запасные пути — типовые места дистрибутивов (DOT-8: dotfiles работают и без

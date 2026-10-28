@@ -9,8 +9,10 @@ return {
     preset = "modern",
     -- R6.15: явная группа для <leader>d (debug) — без этого which-key
     -- показывает клавиши россыпью, без заголовка подменю.
+    -- R8.4: та же причина для <leader>a (AI — автодополнение/чат).
     spec = {
       { "<leader>d", group = "Debug" },
+      { "<leader>a", group = "AI" },
     },
   },
 }

@@ -1,0 +1,5 @@
+# Заглушка машинного слоя (DOT-5, AI-CMP-4): адрес инференса и роль→модель.
+# Реальный файл — ~/.config/machine.d/ai-env, не коммитится.
+# export AI_INFERENCE_URL="http://127.0.0.1:11434"
+# export AI_MODEL_LOCAL_FAST="qwen2.5-coder:1.5b-base"
+# export AI_MODEL_LOCAL_CHAT=""
