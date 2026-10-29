@@ -1,0 +1,9 @@
+# Контролируемая роль (AI_SUBSYSTEM.md §3.4 agents-tools, AI-AGT-1: «diff,
+# атомарные коммиты» — штатное поведение aider, не выключаем). Модель и
+# адрес приходят из окружения (agent-launcher, --model/--env), не отсюда —
+# здесь только поведение самого aider. read: CLAUDE.md — чтобы контролируемый
+# агент видел те же инструкции проекта, что и тяжёлый (claude-code), без
+# дублирования контента (DOT-1).
+read: CLAUDE.md
+auto-commits: true
+show-diffs: true
