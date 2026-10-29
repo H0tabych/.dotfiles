@@ -74,7 +74,9 @@ hl.window_rule({ name = "solid-content", match = { class = "^(firefox|org\\.tele
                  no_blur = true, opaque = true })
 hl.window_rule({ name = "solid-steam",   match = { class = "^(steam|steam_app_.*)$" }, no_blur = true, opaque = true, no_dim = true })
 hl.window_rule({ name = "solid-float",   match = { float = true }, no_blur = true })
-hl.window_rule({ name = "flat-fullscreen", match = { fullscreen = true }, rounding = 0, border_size = 0 })
+-- fullscreen_state_internal=2 — именно FSMODE_FULLSCREEN (SUPER+F); match={fullscreen=true}
+-- матчил бы и maximize (FSMODE_MAXIMIZED=1), который по DSN-EXC-5 должен оставаться скруглённым
+hl.window_rule({ name = "flat-fullscreen", match = { fullscreen_state_internal = 2 }, rounding = 0, border_size = 0 })
 -- Профили battery/solid: терминал становится сплошным без перезапуска (DSN-PWR-3)
 if fx.terminal_opaque then
   hl.window_rule({ name = "term-opaque", match = { class = "^(foot|footclient)$" }, opaque = true })
@@ -87,11 +89,15 @@ end
 local mainMod = "SUPER"
 
 hl.bind(mainMod .. " + Return", hl.dsp.exec_cmd("foot"))
+-- SUPER+T — дублирует Return: на текущей раскладке Return не нажимается одной рукой
+hl.bind(mainMod .. " + T",      hl.dsp.exec_cmd("foot"))
 hl.bind(mainMod .. " + Q",      hl.dsp.window.close())
 hl.bind(mainMod .. " + M",      hl.dsp.exit())
 hl.bind(mainMod .. " + Space",  hl.dsp.exec_cmd("rofi -show drun"))
 hl.bind(mainMod .. " + V",      hl.dsp.window.float({ action = "toggle" }))
 hl.bind(mainMod .. " + F",      hl.dsp.window.fullscreen())
+-- Maximize: waybar и gaps остаются видимыми (в отличие от SUPER+F — настоящий fullscreen)
+hl.bind(mainMod .. " + D",      hl.dsp.window.fullscreen({ mode = "maximized" }))
 
 -- DSN-PWR-2 (раздел 9, DSN-S7/R6.10): ручной выбор профиля эффектов solid/game;
 -- ac/battery переключаются автоматически (effects-profile.nix). Скрипт
@@ -107,6 +113,27 @@ for i = 1, 9 do
 end
 hl.bind(mainMod .. " + 0",         hl.dsp.focus({ workspace = 10 }))
 hl.bind(mainMod .. " + SHIFT + 0", hl.dsp.window.move({ workspace = 10 }))
+
+-- Навигация фокуса между окнами в стиле vim (movefocus)
+hl.bind(mainMod .. " + h", hl.dsp.focus({ direction = "l" }))
+hl.bind(mainMod .. " + l", hl.dsp.focus({ direction = "r" }))
+hl.bind(mainMod .. " + k", hl.dsp.focus({ direction = "u" }))
+hl.bind(mainMod .. " + j", hl.dsp.focus({ direction = "d" }))
+
+-- Перемещение активного окна в направлении (movewindow)
+hl.bind(mainMod .. " + SHIFT + h", hl.dsp.window.move({ direction = "l" }))
+hl.bind(mainMod .. " + SHIFT + l", hl.dsp.window.move({ direction = "r" }))
+hl.bind(mainMod .. " + SHIFT + k", hl.dsp.window.move({ direction = "u" }))
+hl.bind(mainMod .. " + SHIFT + j", hl.dsp.window.move({ direction = "d" }))
+
+-- Переключение фокуса между мониторами (пока один монитор — заготовка на будущее)
+hl.bind(mainMod .. " + comma",  hl.dsp.focus({ monitor = "-1" }))
+hl.bind(mainMod .. " + period", hl.dsp.focus({ monitor = "+1" }))
+
+-- Scratchpad (special workspace). SHIFT+S занят профилем solid (ниже),
+-- поэтому "убрать окно в scratchpad" на ALT+S, а не на обычный SHIFT-паттерн.
+hl.bind(mainMod .. " + S",       hl.dsp.workspace.toggle_special("scratchpad"))
+hl.bind(mainMod .. " + ALT + S", hl.dsp.window.move({ workspace = "special:scratchpad" }))
 
 hl.bind(mainMod .. " + mouse:272", hl.dsp.window.drag(),   { mouse = true })
 hl.bind(mainMod .. " + mouse:273", hl.dsp.window.resize(), { mouse = true })
@@ -132,3 +159,13 @@ hl.bind("XF86AudioRaiseVolume", hl.dsp.exec_cmd("swayosd-client --output-volume 
 hl.bind("XF86AudioLowerVolume", hl.dsp.exec_cmd("swayosd-client --output-volume lower"), volOpts)
 hl.bind("XF86AudioMute",        hl.dsp.exec_cmd("swayosd-client --output-volume mute-toggle"), volOpts)
 hl.bind("XF86AudioMicMute",     hl.dsp.exec_cmd("swayosd-client --input-volume mute-toggle"), volOpts)
+
+-- Resize-режим: SUPER+R входит, hjkl меняет размер шагами по 20px, Escape выходит
+hl.bind(mainMod .. " + R", hl.dsp.submap("resize"))
+hl.define_submap("resize", function()
+  hl.bind("h", hl.dsp.window.resize({ x = -20, y = 0,   relative = true }))
+  hl.bind("l", hl.dsp.window.resize({ x = 20,  y = 0,   relative = true }))
+  hl.bind("k", hl.dsp.window.resize({ x = 0,   y = -20, relative = true }))
+  hl.bind("j", hl.dsp.window.resize({ x = 0,   y = 20,  relative = true }))
+  hl.bind("Escape", hl.dsp.submap("reset"))
+end)
