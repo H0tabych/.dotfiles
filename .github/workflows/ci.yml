@@ -43,3 +43,9 @@ jobs:
             'mpv/theme.conf' \
             'theme/export/glass-tide-*.tdesktop-theme' \
             || { echo 'сгенерированные файлы не соответствуют palette.toml — перегенерируйте и закоммитьте'; exit 1; }
+
+      - name: MCP regenerated (AI-CTX-3)
+        run: |
+          python3 ai/gen/gen.py
+          git diff --exit-code -- 'ai/generated' \
+            || { echo 'ai/generated не соответствует mcp-servers.toml — перегенерируйте и закоммитьте'; exit 1; }

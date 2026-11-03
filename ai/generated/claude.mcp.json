@@ -1,0 +1,25 @@
+{
+  "mcpServers": {
+    "lsp-python": {
+      "type": "stdio",
+      "command": "code-context-lsp",
+      "args": [
+        "python"
+      ]
+    },
+    "lsp-cpp": {
+      "type": "stdio",
+      "command": "code-context-lsp",
+      "args": [
+        "cpp"
+      ]
+    },
+    "lsp-rust": {
+      "type": "stdio",
+      "command": "code-context-lsp",
+      "args": [
+        "rust"
+      ]
+    }
+  }
+}

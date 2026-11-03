@@ -29,6 +29,12 @@
 (требует Pillow/numpy) пересчитывает контрольные точки контраста `probe`,
 результат копируется в `palette.toml` руками.
 
+## Правка списка MCP-серверов
+
+1. Отредактировать `ai/mcp-servers.toml`.
+2. `python3 ai/gen/gen.py` (стандартная библиотека Python 3.11+).
+3. Закоммитить `ai/generated/*` вместе с `mcp-servers.toml`.
+
 ## Проверки
 
 `checks/scan-forbidden.sh` — поиск констант хоста, путей `/nix/store` и приватных
@@ -39,4 +45,5 @@
 ```sh
 bash checks/scan-forbidden.sh
 python3 theme/gen/gen.py --check
+python3 ai/gen/gen.py --check   # MCP-конфиги актуальны (AI-CTX-3)
 ```

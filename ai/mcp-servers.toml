@@ -1,0 +1,18 @@
+# Единый список MCP-серверов для агентов (AI_SUBSYSTEM.md AI-CTX-3).
+# Источник правды: править только здесь, затем `python3 ai/gen/gen.py` и
+# коммитить `ai/generated/*` вместе с этим файлом.
+# Серверы — локальные, stdio (AI-CTX-4). `command` — имя из PATH, не путь:
+# пакет и обёртку даёт хост (на NixOS — фича code-context, на другой
+# системе — установить самому); путей хранилища пакетов и констант хоста здесь нет.
+
+[server.lsp-python]
+command = "code-context-lsp"
+args = ["python"]
+
+[server.lsp-cpp]
+command = "code-context-lsp"
+args = ["cpp"]
+
+[server.lsp-rust]
+command = "code-context-lsp"
+args = ["rust"]
