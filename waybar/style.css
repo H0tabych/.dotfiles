@@ -162,12 +162,20 @@ window#waybar {
     color: @accent;
 }
 
-#custom-tunnel.connected {
+/* NET-13, DSN-LAY-5: tunnel — норма; direct — «внимание» (защита снята, иконка другая —
+   второй канал, DSN-COL-8); down — «критично»: капсула error с текстом on_accent. */
+#custom-tunnel.tunnel {
     color: @text;
 }
 
-#custom-tunnel.disconnected {
-    color: @error;
+#custom-tunnel.direct {
+    color: @warning;
+}
+
+#custom-tunnel.down {
+    color: @on_accent;
+    background-color: @error;
+    border-radius: 999px;
 }
 
 #idle_inhibitor.activated {

@@ -1,0 +1,37 @@
+#!/usr/bin/env bash
+# rofi/scripts/tunnel (DSN-CMP-5, NET-13): меню маршрута туннеля в оформлении
+# лаунчера. Переход в «Напрямую» снимает защиту, поэтому — с подтверждением
+# отдельным запросом (как в rofi/scripts/power); возврат «Через туннель»
+# подтверждения не требует. Пароль администратора спрашивает агент polkit.
+set -euo pipefail
+
+net="${XDG_CONFIG_HOME:-$HOME/.config}/net/tunnel"
+[ -x "$net" ] || exit 0
+
+route="$("$net" route)"
+if [ "$route" = direct ]; then
+  options="Через туннель\nНапрямую (сейчас)"
+else
+  options="Через туннель (сейчас)\nНапрямую"
+fi
+
+choice="$(printf '%b' "$options" | rofi -dmenu -i -p "Маршрут")"
+[ -n "$choice" ] || exit 0
+
+case "$choice" in
+  "Через туннель"*) target=tunnel ;;
+  "Напрямую"*) target=direct ;;
+  *) exit 0 ;;
+esac
+[ "$target" = "$route" ] && exit 0
+
+if [ "$target" = direct ]; then
+  confirm="$(printf 'Нет\nДа, напрямую' | rofi -dmenu -i -p "Защита туннеля будет снята")"
+  [ "$confirm" = "Да, напрямую" ] || exit 0
+fi
+
+if ! "$net" set "$target"; then
+  notify-send -u critical "Маршрут туннеля" "Не удалось переключить на «$target»" || true
+fi
+# Индикатор не ждёт интервала опроса.
+pkill -RTMIN+9 waybar || true

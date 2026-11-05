@@ -1,0 +1,5 @@
+# Заглушка машинного слоя (DOT-5, NET-13): путь к файлу состояния маршрута и юниты
+# клиента туннеля. Реальный файл — ~/.config/machine.d/tunnel-env, пишет Nix
+# (route-switch), не коммитится. Нет файла — индикатор маршрута скрыт.
+# export TUNNEL_ROUTE_STATE="/run/tunnel/route"
+# export TUNNEL_ROUTE_UNITS="tunnel-xray.service"

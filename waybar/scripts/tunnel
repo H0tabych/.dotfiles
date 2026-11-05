@@ -1,16 +1,6 @@
 #!/usr/bin/env bash
-# custom/tunnel (DESK-9, DSN-LAY-3): состояние туннеля всегда на виду. Иконка
-# (не текст "M1"/"off", как было раньше) — тот же визуальный язык, что у
-# остальной панели; режим в тексте не нужен, цвет класса (connected/
-# disconnected) уже несёт смысл, подробности — в tooltip.
-# Режим M1 (vpn-client.nix): системный юнит tunnel-xray (tunnel-xray.nix).
-# ПРОВЕРИТЬ (новый пункт I.6): имя юнита в режиме M2 может отличаться
-# (killswitch/dns-resolver, VPN_SUBSYSTEM.md) — сверить при переходе на M2
-# (гейт 7.3 ещё не пройден, ADR-35).
-set -euo pipefail
-
-if systemctl is-active --quiet tunnel-xray; then
-  printf '{"text":"󰖂","class":"connected","tooltip":"Туннель: активен (режим M1)"}\n'
-else
-  printf '{"text":"󰖂","class":"disconnected","tooltip":"Туннель: остановлен"}\n'
-fi
+# custom/tunnel (DESK-9, DSN-LAY-3, DSN-LAY-5): индикатор маршрута туннеля. Вся логика
+# в net/tunnel (общий скрипт подсистемы), здесь только вызов — имени реализации
+# туннеля в dotfiles нет (SLOT-3). Без route-switch на хосте вывод пустой и
+# индикатор скрыт (DOT-5).
+exec "${XDG_CONFIG_HOME:-$HOME/.config}/net/tunnel" status

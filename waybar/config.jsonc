@@ -121,10 +121,15 @@
 
     // DSN-LAY-2 зона 3: раскладка/туннель/сеть/яркость/звук/батарея — всегда; «ещё» — по наведению.
     "hyprland/language": { "format-en": "EN", "format-ru": "RU" },
+    // NET-13, DSN-CMP-5: маршрут туннеля. Клик — меню в лаунчере (rofi/scripts/tunnel);
+    // signal 9 — немедленное обновление после переключения (pkill -RTMIN+9 waybar).
+    // Без route-switch на хосте скрипт молчит, и модуль скрыт (DOT-5).
     "custom/tunnel": {
         "exec": "~/.config/waybar/scripts/tunnel",
         "return-type": "json",
-        "interval": 15
+        "interval": 15,
+        "signal": 9,
+        "on-click": "~/.config/rofi/scripts/tunnel"
     },
     // DSN-LAY-10: SSID — переменный длинный текст, в панели только иконка;
     // имя сети — в подсказке (иначе растягивает 44px колонку вширь).

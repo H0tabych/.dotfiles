@@ -1,0 +1,76 @@
+#!/usr/bin/env bash
+# net/tunnel (NET-13, VPN-OPS-2, DSN-LAY-5): состояние и переключение маршрута
+# туннеля. Работает с контрактом подсистемы — юнитом route-switch@<маршрут>.service и
+# файлом состояния, имени реализации туннеля здесь нет (SLOT-3). Пути и список юнитов
+# клиента — из машинного слоя ~/.config/machine.d/tunnel-env (DOT-5, DESK-9); без него
+# (хост без route-switch) скрипт молчит, а индикатор скрыт.
+#
+#   tunnel status        JSON для waybar: класс tunnel | direct | down
+#   tunnel set <route>   tunnel | direct (пароль спрашивает агент polkit — каждый раз)
+#
+# Классы (DSN-LAY-5): tunnel — норма; direct — «внимание», защита снята, отдельная
+# иконка (второй канал, DSN-COL-8); down — «критично»: клиент не работает или в
+# маршруте tunnel нет связи с выходом.
+set -euo pipefail
+
+env_file="${XDG_CONFIG_HOME:-$HOME/.config}/machine.d/tunnel-env"
+# shellcheck disable=SC1090
+[ -r "$env_file" ] && . "$env_file"
+
+# Проверка связи в маршруте tunnel: любой короткий ответ 204 через то, что система
+# считает путём наружу (M2 — виртуальный интерфейс, M1 — прокси сессии).
+probe_url="${TUNNEL_PROBE_URL:-https://cp.cloudflare.com/generate_204}"
+
+current_route() {
+  local value=""
+  [ -r "${TUNNEL_ROUTE_STATE:-}" ] && value="$(tr -d '[:space:]' <"$TUNNEL_ROUTE_STATE")"
+  # Любое значение, кроме direct, — tunnel (VPN-MOD-9).
+  if [ "$value" = direct ]; then echo direct; else echo tunnel; fi
+}
+
+client_active() {
+  local unit
+  for unit in ${TUNNEL_ROUTE_UNITS:-}; do
+    systemctl is-active --quiet "$unit" || return 1
+  done
+}
+
+status() {
+  if [ -z "${TUNNEL_ROUTE_STATE:-}" ]; then
+    printf '{"text":""}\n'
+    return
+  fi
+  local route
+  route="$(current_route)"
+  if ! client_active; then
+    printf '{"text":"","class":"down","tooltip":"Туннель: клиент не работает (маршрут: %s)"}\n' "$route"
+  elif [ "$route" = direct ]; then
+    printf '{"text":"","class":"direct","tooltip":"Маршрут: напрямую — защита туннеля снята"}\n'
+  elif curl -fsS --max-time 3 -o /dev/null "$probe_url" 2>/dev/null; then
+    printf '{"text":"󰖂","class":"tunnel","tooltip":"Маршрут: через туннель"}\n'
+  else
+    printf '{"text":"","class":"down","tooltip":"Туннель: нет связи с выходом"}\n'
+  fi
+}
+
+set_route() {
+  case "${1:-}" in
+    tunnel | direct) ;;
+    *)
+      echo "usage: tunnel set tunnel|direct" >&2
+      exit 2
+      ;;
+  esac
+  # Пароль спрашивает агент polkit при каждом вызове — разрешение не удерживается.
+  systemctl start "route-switch@$1.service"
+}
+
+case "${1:-status}" in
+  status) status ;;
+  set) set_route "${2:-}" ;;
+  route) current_route ;;
+  *)
+    echo "usage: tunnel status|set <route>|route" >&2
+    exit 2
+    ;;
+esac
