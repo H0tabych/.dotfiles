@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+# Колесо мыши над значком: step volume|brightness up|down — через swayosd (тот же путь,
+# что у клавиш громкости: показывает OSD).
+set -u
+dir="raise"
+[ "${2:-up}" = down ] && dir="lower"
+case "${1:-}" in
+  volume) exec swayosd-client --output-volume "$dir" ;;
+  brightness) exec swayosd-client --brightness "$dir" ;;
+  *) echo "usage: step volume|brightness up|down" >&2; exit 2 ;;
+esac

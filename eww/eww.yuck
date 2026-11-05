@@ -44,4 +44,16 @@
   :wm-ignore true
   :focusable "none"
   :geometry (geometry :x "0px" :y "0px" :width "100%" :height "100%" :anchor "top left")
-  (eventbox :class "catcher" :onclick "$HOME/.config/eww/scripts/netpanel close" ""))
+  (eventbox :class "catcher" :onclick "~/.config/eww/scripts/bg ~/.config/eww/scripts/netpanel close" ""))
+
+;; Календарь по наведению на часы (scripts/calpop).
+(defwindow calendar-popup
+  :monitor 0
+  :namespace "eww-panel"
+  :stacking "overlay"
+  :windowtype "normal"
+  :wm-ignore true
+  :focusable "none"
+  :geometry (geometry :width "250px" :anchor "top left")
+  (box :class "panel" :valign "start"
+    (calendar :class "cal" :show-heading true :show-day-names true :show-week-numbers false)))

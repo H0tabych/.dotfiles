@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+# Запуск команды отдельно от eww. Обработчики onclick/onscroll/onhover eww убивает
+# по таймауту (по умолчанию 200 мс), поэтому всё, что может идти дольше (rofi, polkit,
+# nmcli, bluetoothctl, blueman-manager), запускается через этот скрипт: он сразу
+# возвращается, а команда продолжает работать в своём сеансе.
+set -u
+exec setsid -f "$@" >/dev/null 2>&1 </dev/null

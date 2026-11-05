@@ -17,7 +17,7 @@
     (box :class "panel-head" :space-evenly false
       (label :class "panel-title" :halign "start" :hexpand true :text "Сеть")
       (eventbox :class "icon-btn" :tooltip "Обновить"
-                :onclick "$HOME/.config/net/netctl rescan; eww poll wifi_list; eww poll netstat"
+                :onclick "~/.config/eww/scripts/bg ~/.config/eww/scripts/act wifi_list netstat -- ~/.config/net/netctl rescan"
         (label :class "ico" :text ico_refresh)))
 
     ;; Маршрут (NET-13). Скрыт на хосте без route-switch.
@@ -26,7 +26,7 @@
       (label :class "sect-title" :halign "start" :text "Маршрут")
       (box :class "segs" :space-evenly true
         (seg-btn :label "Через туннель" :active {netstat.route == "tunnel"}
-                 :onclick "eww update confirm_direct=false; $HOME/.config/net/tunnel set tunnel; eww poll netstat")
+                 :onclick "eww update confirm_direct=false; ~/.config/eww/scripts/bg ~/.config/eww/scripts/act netstat -- ~/.config/net/tunnel set tunnel")
         (seg-btn :label "Напрямую" :active {netstat.route == "direct"}
                  :onclick "eww update confirm_direct=${netstat.route != 'direct'}"))
       (box :class "confirm" :visible confirm_direct :space-evenly true :spacing 6
@@ -34,13 +34,13 @@
                :text "Защита туннеля будет снята. Продолжить?")
         (eventbox :class "btn" :onclick "eww update confirm_direct=false" (label :text "Нет"))
         (eventbox :class "btn danger"
-                  :onclick "eww update confirm_direct=false; $HOME/.config/net/tunnel set direct; eww poll netstat"
+                  :onclick "eww update confirm_direct=false; ~/.config/eww/scripts/bg ~/.config/eww/scripts/act netstat -- ~/.config/net/tunnel set direct"
           (label :text "Да"))))
 
     ;; Wi-Fi: переключатель радио.
     (box :class "sect row" :space-evenly false
       (label :class "sect-title" :halign "start" :hexpand true :text "Wi-Fi")
-      (switch-btn :on {netstat.wifi} :onclick "$HOME/.config/net/netctl wifi toggle; eww poll netstat; eww poll wifi_list"))
+      (switch-btn :on {netstat.wifi} :onclick "~/.config/eww/scripts/bg ~/.config/eww/scripts/act netstat wifi_list -- ~/.config/net/netctl wifi toggle"))
 
     (label :class "msg" :visible {net_msg != ""} :halign "start" :wrap true :text net_msg)
 
@@ -49,7 +49,7 @@
         (label :class "muted" :halign "start" :visible {arraylength(wifi_list) == 0} :text "Сети не найдены")
         (for n in wifi_list
           (eventbox :class "net ${n.active ? 'active' : ''}"
-                    :onclick "$HOME/.config/net/netctl connect ${n.idx}"
+                    :onclick "~/.config/eww/scripts/bg ~/.config/net/netctl connect ${n.idx}"
             (box :space-evenly false :spacing 8
               (label :class "ico" :text {ico_net["wifi${n.level}"]})
               (label :halign "start" :hexpand true :limit-width 28 :text {n.ssid})

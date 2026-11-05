@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+# Лаунчер: повторный клик закрывает уже открытый rofi, иначе открывает приложения.
+# Имя процесса — с учётом обёртки пакета (.rofi-wrapped).
+set -u
+pat='\.?rofi(-wrapped)?'
+if pgrep -x "$pat" >/dev/null; then
+  pkill -x "$pat"
+else
+  exec rofi -show drun
+fi

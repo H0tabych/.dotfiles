@@ -1,0 +1,22 @@
+#!/usr/bin/env bash
+# Календарь при наведении на часы (бывшая подсказка waybar): окно рядом с панелью на
+# высоте указателя. calpop open | close
+set -u
+gap=8 # зазор до панели; позиция окна отсчитывается от края панели (её зона резервирования)
+
+open_cal() {
+  local cy mon my mh y cal_h=260
+  read -r _ cy < <(hyprctl cursorpos | tr -d ',')
+  read -r mon _ my mh < <(hyprctl monitors -j | jq -r '
+    ([.[] | select(.focused)][0] // .[0]) | "\(.name) \(.x) \(.y) \((.height / .scale) | floor)"')
+  y=$((cy - my - cal_h + 60))
+  [ "$y" -gt $((mh - cal_h - 12)) ] && y=$((mh - cal_h - 12))
+  [ "$y" -lt 12 ] && y=12
+  eww open calendar-popup --screen "$mon" --pos "${gap}x$y" --anchor "top left"
+}
+
+case "${1:-open}" in
+  open) eww active-windows 2>/dev/null | grep -q '^calendar-popup:' || open_cal ;;
+  close) eww close calendar-popup 2>/dev/null || true ;;
+  *) echo "usage: calpop open|close" >&2; exit 2 ;;
+esac

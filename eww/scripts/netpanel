@@ -2,6 +2,9 @@
 # Окно сети рядом со значком: открывается слева у панели на высоте клика.
 #   netpanel toggle | open | close
 set -u
+# Зазор до панели. Слои оверлея размещаются в области, оставшейся после зоны резервирования
+# панели (ширина + отступ), поэтому отступ окна считается от её края, а не от экрана.
+gap=8
 
 is_open() { eww active-windows 2>/dev/null | grep -q '^network-panel:'; }
 
@@ -20,8 +23,7 @@ open_panel() {
   [ "$y" -lt 12 ] && y=12
   eww update panel_open=true
   eww open net-catcher --screen "$mon"
-  # x: ширина панели 44 + отступ 8 + зазор 8
-  eww open network-panel --screen "$mon" --pos "60x$y" --anchor "top left"
+  eww open network-panel --screen "$mon" --pos "${gap}x$y" --anchor "top left"
   eww poll wifi_list netstat >/dev/null 2>&1 || true
 }
 

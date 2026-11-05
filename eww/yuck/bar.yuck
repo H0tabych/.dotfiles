@@ -1,5 +1,8 @@
 ;; Виджеты панели. Зоны DSN-LAY-2 сверху вниз: 1 навигация, 2 внимание (только при
 ;; событии), 3 состояние, 4 время и питание.
+;; ВАЖНО: обработчики eww (onclick, onscroll, onhover) убиваются через 200 мс. Всё, что
+;; может идти дольше (rofi, polkit, nmcli, bluetoothctl, окна), запускается через
+;; scripts/bg (отдельный сеанс), а команда + обновление значка — через scripts/act.
 
 (defwidget bar []
   (centerbox :class "bar" :orientation "v"
@@ -23,7 +26,7 @@
 (defwidget launcher []
   (box :class "cap"
     (eventbox :tooltip "Приложения"
-              :onclick "pgrep -x rofi >/dev/null && pkill rofi || rofi -show drun"
+              :onclick "~/.config/eww/scripts/bg ~/.config/eww/scripts/launcher"
       (label :class "ico launcher" :text ico_launcher))))
 
 ;; Рабочие столы: капсула на стол, номер и иконки его окон (до 5). Клик — Lua-
@@ -55,7 +58,7 @@
 (defwidget idle-box []
   (box :class "cap idle"
     (eventbox :tooltip {idle == "on" ? "Запрет сна включён" : "Запрет сна выключен"}
-              :onclick "$HOME/.config/eww/scripts/idle toggle; eww poll idle"
+              :onclick "~/.config/eww/scripts/bg ~/.config/eww/scripts/act idle -- ~/.config/eww/scripts/idle toggle"
       (label :class "ico ${idle == 'on' ? 'active' : ''}" :text {ico_idle[idle]}))))
 
 (defwidget mpris-box []
@@ -69,19 +72,20 @@
 (defwidget net-group []
   (box :class "cap" :orientation "v" :space-evenly false
     (eventbox :tooltip {netstat.tooltip}
-              :onclick "$HOME/.config/eww/scripts/netpanel toggle"
+              :onclick "~/.config/eww/scripts/bg ~/.config/eww/scripts/netpanel toggle"
       (label :class "ico net ${netstat.state}" :text {ico_net[netstat.key]}))
     (eventbox :tooltip {bt.tooltip}
-              :onclick "$HOME/.config/net/bluetooth toggle; eww poll bt"
-              :onrightclick "blueman-manager"
+              :onclick "~/.config/eww/scripts/bg ~/.config/eww/scripts/act bt -- ~/.config/net/bluetooth toggle"
+              :onrightclick "~/.config/eww/scripts/bg blueman-manager"
       (label :class "ico bt ${bt.key}" :text {ico_bt[bt.key]}))))
 
 (defwidget sound-light []
   (box :class "cap" :orientation "v" :space-evenly false
-    (label :class "ico bright s${bright >= 100 ? 100 : bright >= 80 ? 80 : bright >= 60 ? 60 : bright >= 40 ? 40 : bright >= 20 ? 20 : 0}"
-           :tooltip "${bright}%"
-           :text {ico_bright[min(6, floor(bright / 14.3))]})
-    (eventbox :onclick "swayosd-client --output-volume mute-toggle" :tooltip "${audio.vol}%"
+    (eventbox :onscroll "~/.config/eww/scripts/step brightness {}" :tooltip "${bright}% · колесо — яркость"
+      (label :class "ico bright s${bright >= 100 ? 100 : bright >= 80 ? 80 : bright >= 60 ? 60 : bright >= 40 ? 40 : bright >= 20 ? 20 : 0}"
+             :text {ico_bright[min(6, floor(bright / 14.3))]}))
+    (eventbox :onclick "swayosd-client --output-volume mute-toggle"
+              :onscroll "~/.config/eww/scripts/step volume {}" :tooltip "${audio.vol}% · колесо — громкость"
       (label :class "ico vol ${audio.muted ? 'muted' : audio.vol <= 20 ? 'low' : audio.vol <= 60 ? 'medium' : ''}"
              :text {audio.muted ? ico_mute : ico_vol[audio.vol <= 20 ? 0 : audio.vol <= 60 ? 1 : 2]}))))
 
@@ -113,11 +117,12 @@
         (systray :class "tray" :orientation "v" :spacing 8 :icon-size 18 :prepend-new false)))))
 
 (defwidget clock-box []
-  (box :class "cap clock"
-    (label :tooltip {formattime(EWW_TIME, "%A, %d %B %Y")}
-           :text {formattime(EWW_TIME, "%H%n%M")})))
+  (eventbox :onhover "~/.config/eww/scripts/bg ~/.config/eww/scripts/calpop open"
+            :onhoverlost "~/.config/eww/scripts/bg ~/.config/eww/scripts/calpop close"
+    (box :class "cap clock"
+      (label :text {formattime(EWW_TIME, "%H%n%M")}))))
 
 (defwidget power-box []
   (box :class "cap power"
-    (eventbox :tooltip "Меню питания" :onclick "$HOME/.config/rofi/scripts/power"
+    (eventbox :tooltip "Меню питания" :onclick "~/.config/eww/scripts/bg ~/.config/rofi/scripts/power"
       (label :class "ico" :text ico_power))))

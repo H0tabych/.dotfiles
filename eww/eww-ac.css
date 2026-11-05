@@ -369,3 +369,30 @@ tooltip label {
 .catcher {
     background-color: transparent;
 }
+
+/* Календарь при наведении на часы (бывшая подсказка waybar): та же стеклянная
+   капсула, что у окна сети; сегодняшний день — accent. */
+calendar {
+    color: @text;
+    padding: 2px;
+}
+
+calendar.header,
+calendar.button {
+    color: @subtext0;
+}
+
+calendar.highlight {
+    color: @subtext0;
+    font-size: 10px;
+}
+
+calendar:indeterminate {
+    color: @overlay0;
+}
+
+calendar:selected {
+    background-color: @accent;
+    color: @on_accent;
+    border-radius: 8px;
+}
