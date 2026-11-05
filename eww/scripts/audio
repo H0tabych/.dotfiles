@@ -1,16 +1,16 @@
 #!/usr/bin/env bash
 # eww deflisten: громкость и «выключен звук» основного выхода (JSON).
+# Опрос раз в 0,5 с, а не `pactl subscribe`: pactl есть не в каждой системе (на NixOS
+# с pipewire его в PATH нет — слушатель молча умирал, и значок застывал), а wpctl
+# входит в wireplumber. Неизменный вывод повторно не печатается.
 set -u
 last=""
-emit() {
-  local out vol muted=false json
+while :; do
   out="$(wpctl get-volume @DEFAULT_AUDIO_SINK@ 2>/dev/null)" || out=""
   vol="$(awk '{printf "%d", $2 * 100 + 0.5}' <<<"$out")"
+  muted=false
   grep -q MUTED <<<"$out" && muted=true
   json="$(jq -nc --argjson v "${vol:-0}" --argjson m "$muted" '{vol: $v, muted: $m}')"
   [ "$json" = "$last" ] || { printf '%s\n' "$json"; last="$json"; }
-}
-emit
-pactl subscribe 2>/dev/null | while read -r line; do
-  case "$line" in *sink* | *server*) emit ;; esac
+  sleep 0.5
 done

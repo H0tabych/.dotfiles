@@ -6,7 +6,6 @@ __pycache__/
 # Симлинки на активный профиль (P.3.1, DSN-S5/R6.8) — производное состояние
 # переключателя профиля (DSN-S7/R6.10), не коммитится; начальный симлинк на
 # ac создаёт theme/gen/gen.py.
-/waybar/theme.css
 /rofi/theme.rasi
 /swayosd/theme.css
 /hypr/effects.lua

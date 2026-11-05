@@ -10,7 +10,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      # DSN-S5 (R6.8): скрипты оболочки (waybar/scripts/*, rofi/scripts/*) без
+      # DSN-S5 (R6.8): скрипты оболочки (eww/scripts/*, net/*, rofi/scripts/*) без
       # расширения .sh (имена — по DESIGN_SYSTEM.md P.3.2/P.3.3), поэтому ищем
       # и по пути, не только по расширению.
       - name: shellcheck
@@ -38,7 +38,7 @@ jobs:
             'nvim/lua/colors.lua' 'foot/colors.ini' 'hypr/theme.lua' \
             'hypr/theme.conf' 'hypr/hyprpaper.conf' 'yazi/theme.toml' \
             'starship/starship.toml' 'starship/starship-lite.toml' \
-            'waybar/theme-*.css' 'eww/eww-*.css' 'rofi/theme-*.rasi' 'swayosd/theme-*.css' \
+            'eww/eww-*.css' 'rofi/theme-*.rasi' 'swayosd/theme-*.css' \
             'hypr/effects-*.lua' 'mako/config-*' 'zathura/zathurarc' \
             'mpv/theme.conf' \
             'theme/export/glass-tide-*.tdesktop-theme' \

@@ -34,4 +34,4 @@ if ! "$net" set "$target"; then
   notify-send -u critical "Маршрут туннеля" "Не удалось переключить на «$target»" || true
 fi
 # Индикатор не ждёт интервала опроса.
-pkill -RTMIN+9 waybar || true
+eww poll netstat >/dev/null 2>&1 || true

@@ -8,7 +8,6 @@
 #   tunnel route         tunnel | direct
 #   tunnel health        none | ok | direct | down
 #   tunnel set <route>   tunnel | direct (пароль спрашивает агент polkit — каждый раз)
-#   tunnel status        JSON для waybar (устарело: панель теперь на eww, net/netstatus)
 #
 # health (DSN-LAY-5): ok — норма; direct — «внимание», защита снята; down —
 # «критично»: клиент не работает или в маршруте tunnel нет связи с выходом;
@@ -69,19 +68,6 @@ health() {
   fi
 }
 
-# JSON для waybar. Глифы — \uXXXX-эскейпами: литеральные символы из частной области
-# Unicode при правке файла терялись, текст становился пустым, и waybar скрывал модуль.
-status() {
-  local h
-  h="$(health)"
-  case "$h" in
-    none) printf '{"text":""}\n' ;;
-    direct) printf '{"text":"\\uf09c","class":"direct","tooltip":"Маршрут: напрямую — защита туннеля снята"}\n' ;;
-    down) printf '{"text":"\\uf071","class":"down","tooltip":"Туннель: нет связи"}\n' ;;
-    *) printf '{"text":"\\udb81\\udd82","class":"tunnel","tooltip":"Маршрут: через туннель"}\n' ;;
-  esac
-}
-
 set_route() {
   case "${1:-}" in
     tunnel | direct) ;;
@@ -94,13 +80,12 @@ set_route() {
   systemctl start "route-switch@$1.service"
 }
 
-case "${1:-status}" in
-  status) status ;;
+case "${1:-health}" in
   health) health ;;
   set) set_route "${2:-}" ;;
   route) current_route ;;
   *)
-    echo "usage: tunnel route|health|set <route>|status" >&2
+    echo "usage: tunnel route|health|set <route>" >&2
     exit 2
     ;;
 esac

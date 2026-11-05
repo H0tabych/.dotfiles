@@ -63,7 +63,7 @@ hl.animation({ leaf = "fade",       enabled = true, speed = 2.5 * fx.k, bezier =
 hl.animation({ leaf = "workspaces", enabled = true, speed = 3.5 * fx.k, bezier = "glass", style = "slidevert" })
 
 -- Стекло поверхностей оболочки (DSN-MAT-7, раздел 8 — панель/лаунчер/уведомления/OSD не исключения)
-for _, ns in ipairs({ "waybar", "eww-bar", "eww-panel", "rofi", "notifications", "swayosd" }) do
+for _, ns in ipairs({ "eww-bar", "eww-panel", "rofi", "notifications", "swayosd" }) do
   hl.layer_rule({ name = "glass-" .. ns, match = { namespace = "^" .. ns .. "$" }, blur = fx.blur, ignore_alpha = 0.2 })
 end
 
@@ -96,7 +96,7 @@ hl.bind(mainMod .. " + M",      hl.dsp.exit())
 hl.bind(mainMod .. " + Space",  hl.dsp.exec_cmd("rofi -show drun"))
 hl.bind(mainMod .. " + V",      hl.dsp.window.float({ action = "toggle" }))
 hl.bind(mainMod .. " + F",      hl.dsp.window.fullscreen())
--- Maximize: waybar и gaps остаются видимыми (в отличие от SUPER+F — настоящий fullscreen)
+-- Maximize: панель и gaps остаются видимыми (в отличие от SUPER+F — настоящий fullscreen)
 hl.bind(mainMod .. " + D",      hl.dsp.window.fullscreen({ mode = "maximized" }))
 
 -- DSN-PWR-2 (раздел 9, DSN-S7/R6.10): ручной выбор профиля эффектов solid/game;
@@ -105,7 +105,7 @@ hl.bind(mainMod .. " + D",      hl.dsp.window.fullscreen({ mode = "maximized" })
 hl.bind(mainMod .. " + SHIFT + S", hl.dsp.exec_cmd("~/.config/hypr/scripts/profile solid"))
 hl.bind(mainMod .. " + SHIFT + G", hl.dsp.exec_cmd("~/.config/hypr/scripts/profile game"))
 
--- 10 рабочих столов, 1..9 затем 0 (DSN-LAY-3: всегда на виду, waybar —
+-- 10 рабочих столов, 1..9 затем 0 (DSN-LAY-3: всегда на виду, панель —
 -- persistent-workspaces). Клавиша "0" -> стол 10, как на цифровом ряду клавиатуры.
 for i = 1, 9 do
   hl.bind(mainMod .. " + " .. i,         hl.dsp.focus({ workspace = i }))
@@ -150,7 +150,7 @@ hl.bind("SHIFT + Print", hl.dsp.exec_cmd("~/.config/hypr/scripts/screenshot --fu
 -- Клавиши громкости (DSN-S5/R6.8, M28): с клавиатуры звук не регулировался —
 -- swayosd-libinput-backend ловит только CapsLock/NumLock/ScrollLock (README
 -- SwayOSD 0.3.1, раздел "LibInput Backend (Optional)"), громкость он не
--- трогает вовсе; клик по иконке waybar работал отдельно, через свой on-click.
+-- трогает вовсе; клик по значку звука в панели работал отдельно, через свой onclick.
 -- Нужны явные биндинги на swayosd-client (как в примерах README для Sway/
 -- Hyprland). repeating — повтор при удержании; locked — работает и при
 -- активном input-инхибиторе (экран блокировки).

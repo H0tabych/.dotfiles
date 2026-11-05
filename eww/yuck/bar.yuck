@@ -86,8 +86,9 @@
              :text {ico_bright[min(6, floor(bright / 14.3))]}))
     (eventbox :onclick "swayosd-client --output-volume mute-toggle"
               :onscroll "~/.config/eww/scripts/step volume {}" :tooltip "${audio.vol}% · колесо — громкость"
-      (label :class "ico vol ${audio.muted ? 'muted' : audio.vol <= 20 ? 'low' : audio.vol <= 60 ? 'medium' : ''}"
-             :text {audio.muted ? ico_mute : ico_vol[audio.vol <= 20 ? 0 : audio.vol <= 60 ? 1 : 2]}))))
+      ;; Громкость 0 % — тот же значок «без звука», что и при mute.
+      (label :class "ico vol ${audio.muted || audio.vol == 0 ? 'muted' : audio.vol <= 20 ? 'low' : audio.vol <= 60 ? 'medium' : ''}"
+             :text {audio.muted || audio.vol == 0 ? ico_mute : ico_vol[audio.vol <= 20 ? 0 : audio.vol <= 60 ? 1 : 2]}))))
 
 ;; Заряд, ЦП, память. Цифр на панели нет — значок и цвет (DSN-LAY-5); значения в tooltip.
 (defwidget vitals []

@@ -13,7 +13,7 @@ Python >= 3.11 (DESIGN_SYSTEM.md, Приложение S.2) — без внеш�
 добавил композитор (`hypr/theme.lua`, `hypr/effects.lua` — только профиль
 `ac`, PROFILE_EFFECTS). DSN-S5 (R6.8) добавил SwayOSD, `hypr/theme.conf`
 (роли цвета/шрифт для hyprlock — не зависит от профиля, L6 не тонируется,
-раздел 2.1) и per-profile файлы для waybar/rofi/swayosd (`theme-<профиль>.<ext>`
+раздел 2.1) и per-profile файлы для eww/rofi/swayosd (`theme-<профиль>.<ext>`
 + симлинк `theme.<ext>` без суффикса, PROFILED_DEST).
 DSN-S7 (R6.10): `hypr/effects.lua` и `mako/config` переведены в PROFILED_DEST
 (`effects-<профиль>.lua`, `config-<профиль>`); `render()` пишет файлы **всех**
@@ -129,7 +129,6 @@ PROFILES = ("ac", "battery", "solid", "game")
 # при первом прогоне (его ещё нет) — на уже переключённом профиле он не
 # трогается (не затирает состояние переключателя правкой palette.toml).
 PROFILED_DEST = {
-    "waybar-theme.css.tmpl": ("waybar", "theme", ".css"),
     "eww-style.css.tmpl": ("eww", "eww", ".css"),
     "rofi-theme.rasi.tmpl": ("rofi", "theme", ".rasi"),
     "swayosd-theme.css.tmpl": ("swayosd", "theme", ".css"),
@@ -366,7 +365,7 @@ LITERAL_RGB_RE = re.compile(r"(?<![.\w])rgba?\(")
 # любому литералу вне сгенерированного файла. Список короткий и штучный —
 # не общий механизм обхода проверки.
 LITERAL_HEX_ALLOWLIST = {
-    "#5277C3",  # снежинка NixOS: .launcher в eww-style.css.tmpl и #custom-launcher в waybar/style.css
+    "#5277C3",  # снежинка NixOS: .launcher в eww-style.css.tmpl
 }
 
 
