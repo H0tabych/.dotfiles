@@ -1,0 +1,77 @@
+#!/usr/bin/env bash
+# net/netctl: Wi-Fi для окна сети (eww) поверх nmcli.
+#   netctl list           JSON-массив сетей {idx,ssid,signal,level,secured,active,known}
+#   netctl rescan         запросить пересканирование
+#   netctl wifi on|off|toggle
+#   netctl connect <idx>  подключиться к сети из последнего list (по номеру, а не по имени:
+#                         имя сети может содержать любые символы)
+# Пароль новой защищённой сети спрашивает rofi и передаёт nmcli через stdin: он не
+# попадает ни в аргументы процессов, ни в журнал.
+set -u
+cache="${XDG_RUNTIME_DIR:-/tmp}/netctl-list.json"
+
+unesc() { sed 's/\\:/:/g; s/\\\\/\\/g'; }
+
+msg() { eww update "net_msg=$1" >/dev/null 2>&1 || true; }
+
+list() {
+  local known tsv
+  known="$(nmcli -t -f NAME,TYPE connection show 2>/dev/null | grep ':802-11-wireless$' | sed 's/:802-11-wireless$//' | unesc)"
+  tsv="$(
+    nmcli -t -f IN-USE,SIGNAL,SECURITY,SSID device wifi list --rescan no 2>/dev/null | while IFS= read -r line; do
+      inuse="${line%%:*}"; rest="${line#*:}"
+      signal="${rest%%:*}"; rest="${rest#*:}"
+      sec="${rest%%:*}"; ssid="$(printf '%s' "${rest#*:}" | unesc)"
+      [ -n "$ssid" ] || continue
+      printf '%s\t%s\t%s\t%s\n' "$inuse" "$signal" "$sec" "$ssid"
+    done
+  )"
+  printf '%s\n' "$tsv" | jq -Rn --arg known "$known" '
+    ($known | split("\n")) as $k
+    | [inputs | select(length > 0) | split("\t") | {
+        ssid: .[3], signal: (.[1] | tonumber), secured: (.[2] != "" and .[2] != "--"), active: (.[0] == "*")}]
+    | sort_by(-(.active | if . then 1 else 0 end), -.signal)
+    | unique_by(.ssid) | sort_by(-(.active | if . then 1 else 0 end), -.signal)
+    | to_entries | map(.value + {
+        idx: .key,
+        known: (.value.ssid as $s | $k | index($s) != null),
+        level: (if .value.signal <= 25 then 1 elif .value.signal <= 50 then 2 elif .value.signal <= 75 then 3 else 4 end)})' \
+    | tee "$cache"
+}
+
+connect() {
+  local idx="${1:?номер сети}" row ssid secured known active pw rc=0
+  row="$(jq -c ".[$idx] // empty" "$cache" 2>/dev/null)"
+  [ -n "$row" ] || { msg "Список устарел — обновите"; return 1; }
+  ssid="$(jq -r .ssid <<<"$row")"; secured="$(jq -r .secured <<<"$row")"
+  known="$(jq -r .known <<<"$row")"; active="$(jq -r .active <<<"$row")"
+  [ "$active" = true ] && return 0
+  msg "Подключение к «$ssid»…"
+  if [ "$known" = true ]; then
+    nmcli connection up id "$ssid" >/dev/null 2>&1 || rc=$?
+  elif [ "$secured" = true ]; then
+    pw="$(rofi -dmenu -password -l 0 -p "Пароль «$ssid»" </dev/null)" || { msg ""; return 0; }
+    [ -n "$pw" ] || { msg ""; return 0; }
+    printf '%s\n' "$pw" | nmcli --ask device wifi connect "$ssid" >/dev/null 2>&1 || rc=$?
+  else
+    nmcli device wifi connect "$ssid" >/dev/null 2>&1 || rc=$?
+  fi
+  if [ "$rc" -eq 0 ]; then msg ""; else msg "Не удалось подключиться к «$ssid»"; fi
+  eww poll netstat >/dev/null 2>&1 || true
+  eww poll wifi_list >/dev/null 2>&1 || true
+}
+
+case "${1:-list}" in
+  list) list ;;
+  rescan) nmcli device wifi rescan >/dev/null 2>&1 || true ;;
+  wifi)
+    case "${2:-toggle}" in
+      on) nmcli radio wifi on ;;
+      off) nmcli radio wifi off ;;
+      toggle) if [ "$(nmcli radio wifi)" = enabled ]; then nmcli radio wifi off; else nmcli radio wifi on; fi ;;
+      *) echo "usage: netctl wifi on|off|toggle" >&2; exit 2 ;;
+    esac
+    ;;
+  connect) connect "${2:-}" ;;
+  *) echo "usage: netctl list|rescan|wifi|connect <idx>" >&2; exit 2 ;;
+esac

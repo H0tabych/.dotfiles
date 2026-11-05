@@ -1,0 +1,371 @@
+/* Сгенерировано theme/gen/gen.py из theme/palette.toml (вариант forest, профиль solid) — не редактируйте */
+@define-color crust #070D12;
+@define-color mantle #0A141B;
+@define-color base #0E1A22;
+@define-color surface0 #16252F;
+@define-color surface1 #1F313D;
+@define-color surface2 #2A3F4D;
+@define-color overlay0 #4A6070;
+@define-color overlay1 #839AA5;
+@define-color subtext0 #A6B7BF;
+@define-color subtext1 #BECAD0;
+@define-color text #DCE7EC;
+
+@define-color accent #1BACD1;
+@define-color accent_warm #F17F4C;
+@define-color on_accent #070D12;
+
+@define-color success #6FB020;
+@define-color warning #E38912;
+@define-color error #F47A77;
+@define-color info #829AF5;
+@define-color special #AE8DF1;
+
+@define-color glass_bar alpha(@base, 1.0);
+@define-color glass_rim alpha(@text, 0.1);
+@define-color glass_popup alpha(@base, 1.0);
+
+/* Панель и окно сети (eww, слот bar; DSN-LAY-1…5, DSN-CMP-4). Файл целиком —
+   токены и статика вместе, как mako/config: eww читает один CSS, а относительный
+   @import в нём не разрешается. Меняйте здесь (theme/gen/templates), затем
+   запускайте theme/gen/gen.py. Цвета — только токены (DSN-COL-1). */
+* {
+    all: unset;
+}
+
+/* Шрифт и цвет наследуются вниз от окна. DSN-CMP-4: шрифт UI md/500 — здесь,
+   а не в других файлах (DSN-TOK-8). */
+window {
+    background-color: transparent;
+    color: @text;
+    font-family: "Inter";
+    font-size: 11px;
+    font-weight: 500;
+}
+
+tooltip {
+    background-color: @mantle;
+    border: 1px solid @glass_rim;
+    border-radius: 8px;
+    padding: 4px 8px;
+}
+
+tooltip label {
+    color: @text;
+}
+
+/* L1: панель — одна стеклянная капсула на весь столбец (DSN-LAY-1). Размытие —
+   правилом слоя композитора (hyprland.lua, namespace eww-bar). */
+.bar {
+    background-color: @glass_bar;
+    border: 1px solid @glass_rim;
+    border-radius: 12px;
+    padding: 4px 0;
+}
+
+/* «Коробочка» состояния: одна на модуль или на смысловую группу. Ширина панели
+   44 − 2×1 (рамка) − 2×4 (поля) = 34 px. */
+.cap {
+    background-color: @surface0;
+    border-radius: 8px;
+    margin: 2px 4px;
+    padding: 4px 0;
+}
+
+.cap label {
+    padding: 4px 0;
+}
+
+.ico {
+    font-size: 13px;
+}
+
+/* Фирменный синий NixOS (снежинка) — цвет чужого бренда, не состояние UI. */
+.launcher {
+    color: #5277C3;
+}
+
+/* Рабочие столы: капсула на стол; номер и иконки окон (≤ 5). */
+.ws {
+    background-color: @surface0;
+    border-radius: 8px;
+    margin: 2px 4px;
+    padding: 4px 0;
+}
+
+.ws-num {
+    padding: 4px 0;
+}
+
+.ws-win {
+    padding: 3px 0;
+}
+
+.ws.active {
+    background-color: @surface1;
+}
+
+.ws.active .ws-num {
+    color: @accent;
+}
+
+.ws.urgent {
+    background-color: @error;
+    color: @on_accent;
+}
+
+.ws.urgent .ws-num {
+    color: @on_accent;
+}
+
+/* Зона 2: внимание. */
+.privacy .ico {
+    color: @warning;
+}
+
+.ico.active {
+    color: @accent;
+}
+
+/* Сеть (DSN-LAY-5): норма — text; direct — «внимание» (+ значок тревоги, второй
+   канал, DSN-COL-8); нет связи — «критично», капсула error. */
+.net.ok {
+    color: @text;
+}
+
+.net.offline {
+    color: @subtext0;
+}
+
+.net.direct {
+    color: @warning;
+}
+
+.net.down {
+    color: @on_accent;
+    background-color: @error;
+    border-radius: 999px;
+}
+
+/* Bluetooth: включён — голубой (info), выключен — приглушён. */
+.bt.off {
+    color: @subtext0;
+}
+
+.bt.on,
+.bt.connected {
+    color: @info;
+}
+
+.layout-text {
+    font-weight: 600;
+}
+
+/* Батарея: цвет по уровню заряда; критично — капсула error. */
+.bat.good {
+    color: @success;
+}
+
+.bat.warning {
+    color: @warning;
+}
+
+.bat.critical {
+    color: @on_accent;
+    background-color: @error;
+    border-radius: 999px;
+}
+
+/* Звук: тихо — error, средне — warning, громко — success (DSN-LAY-5). */
+.vol {
+    color: @success;
+}
+
+.vol.medium {
+    color: @warning;
+}
+
+.vol.low,
+.vol.muted {
+    color: @error;
+}
+
+/* Яркость: плавный переход overlay0 → warning (тусклый экран — не тревога). */
+.bright {
+    color: @overlay0;
+}
+
+.bright.s20 {
+    color: mix(@overlay0, @warning, 0.2);
+}
+
+.bright.s40 {
+    color: mix(@overlay0, @warning, 0.4);
+}
+
+.bright.s60 {
+    color: mix(@overlay0, @warning, 0.6);
+}
+
+.bright.s80 {
+    color: mix(@overlay0, @warning, 0.8);
+}
+
+.bright.s100 {
+    color: @warning;
+}
+
+/* ЦП и память: только цвет, без капсулы error — высокая загрузка это рабочий
+   режим (сборка, игра, инференс), а не тревога (решение 2026-10-21). Ступени —
+   mix(text, warning, порог / 70). */
+.load.rising {
+    color: mix(@text, @warning, 0.286);
+}
+
+.load.elevated {
+    color: mix(@text, @warning, 0.571);
+}
+
+.load.busy {
+    color: mix(@text, @warning, 0.857);
+}
+
+.load.warning {
+    color: @warning;
+}
+
+.load.critical {
+    color: @error;
+}
+
+.power .ico {
+    color: @error;
+}
+
+.tray image {
+    padding: 4px 0;
+    margin: 0 8px;
+}
+
+/* ---------------------------------------------------------------- окно сети -- */
+
+.panel {
+    background-color: @glass_popup;
+    border: 1px solid @glass_rim;
+    border-radius: 12px;
+    padding: 12px;
+}
+
+.panel-title {
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.icon-btn {
+    padding: 4px 8px;
+    border-radius: 8px;
+}
+
+.icon-btn:hover,
+.net:hover,
+.seg:hover {
+    background-color: @surface1;
+}
+
+.sect-title {
+    color: @subtext0;
+    font-size: 10px;
+}
+
+.sect.row {
+    padding: 2px 0;
+}
+
+.segs {
+    background-color: @surface0;
+    border-radius: 8px;
+    padding: 2px;
+}
+
+.seg {
+    padding: 8px;
+    border-radius: 8px;
+}
+
+.seg label {
+    padding: 0;
+}
+
+.seg.active,
+.seg.active:hover {
+    background-color: @accent;
+    color: @on_accent;
+}
+
+.confirm {
+    padding-top: 4px;
+}
+
+.warn {
+    color: @warning;
+}
+
+.btn {
+    background-color: @surface0;
+    border-radius: 8px;
+    padding: 6px 12px;
+}
+
+.btn.danger {
+    background-color: @error;
+    color: @on_accent;
+}
+
+.switch {
+    background-color: @surface1;
+    border-radius: 999px;
+    min-width: 44px;
+    min-height: 24px;
+    padding: 2px;
+}
+
+.switch.on {
+    background-color: @accent;
+}
+
+.knob {
+    background-color: @text;
+    border-radius: 999px;
+    min-width: 20px;
+    min-height: 20px;
+}
+
+.nets {
+    min-height: 120px;
+}
+
+.net {
+    padding: 8px;
+    border-radius: 8px;
+}
+
+.net.active {
+    background-color: @surface1;
+}
+
+.msg,
+.muted {
+    color: @subtext0;
+}
+
+.ico.ok {
+    color: @success;
+}
+
+.ico.dim {
+    color: @overlay0;
+}
+
+.catcher {
+    background-color: transparent;
+}

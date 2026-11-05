@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+# eww deflisten: громкость и «выключен звук» основного выхода (JSON).
+set -u
+last=""
+emit() {
+  local out vol muted=false json
+  out="$(wpctl get-volume @DEFAULT_AUDIO_SINK@ 2>/dev/null)" || out=""
+  vol="$(awk '{printf "%d", $2 * 100 + 0.5}' <<<"$out")"
+  grep -q MUTED <<<"$out" && muted=true
+  json="$(jq -nc --argjson v "${vol:-0}" --argjson m "$muted" '{vol: $v, muted: $m}')"
+  [ "$json" = "$last" ] || { printf '%s\n' "$json"; last="$json"; }
+}
+emit
+pactl subscribe 2>/dev/null | while read -r line; do
+  case "$line" in *sink* | *server*) emit ;; esac
+done

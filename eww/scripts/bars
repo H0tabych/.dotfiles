@@ -1,0 +1,30 @@
+#!/usr/bin/env bash
+# Панель на каждом мониторе (окно bar с id bar-<монитор>); пересинхронизация по
+# событиям подключения/отключения мониторов. Высота = высота монитора минус 24 px
+# (отступы 12 + 12, DSN-LAY-1).
+#   bars          sync + слушать события (запускает юнит eww-bars)
+#   bars sync     один раз
+set -u
+sock="$XDG_RUNTIME_DIR/hypr/$HYPRLAND_INSTANCE_SIGNATURE/.socket2.sock"
+
+until eww ping >/dev/null 2>&1; do sleep 0.3; done
+
+sync() {
+  local name h id want=" "
+  while read -r name h; do
+    [ -n "$name" ] || continue
+    want+="bar-$name "
+    if ! eww active-windows 2>/dev/null | grep -q "^bar-$name:"; then
+      eww open bar --id "bar-$name" --screen "$name" --arg "h=$((h - 24))"
+    fi
+  done < <(hyprctl monitors -j | jq -r '.[] | "\(.name) \((.height / .scale) | floor)"')
+  for id in $(eww active-windows 2>/dev/null | sed -n 's/^\(bar-[^:]*\):.*/\1/p'); do
+    [[ "$want" == *" $id "* ]] || eww close "$id"
+  done
+}
+
+sync
+[ "${1:-}" = sync ] && exit 0
+socat -u "UNIX-CONNECT:$sock" - | while read -r line; do
+  case "${line%%>>*}" in monitoradded* | monitorremoved*) sleep 0.5; sync ;; esac
+done

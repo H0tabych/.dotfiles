@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+# eww deflisten: состояние медиаплеера. Пустой status — плеера нет, модуль скрыт.
+# Название — только в подсказке (DSN-LAY-10).
+set -u
+printf '%s\n' '{"status":"","title":""}'
+playerctl --follow metadata --format '{{status}}|{{artist}} — {{title}}' 2>/dev/null | while IFS='|' read -r status title; do
+  jq -nc --arg s "$status" --arg t "$title" '{status: $s, title: $t}'
+done

@@ -1,0 +1,66 @@
+#!/usr/bin/env bash
+# eww deflisten: JSON-массив рабочих столов с окнами для панели (DSN-LAY-3).
+# События — сокет Hyprland; всплески событий склеиваются в один вывод, неизменный
+# вывод повторно не печатается. Иконка окна — из desktop-файла приложения
+# (StartupWMClass, затем имя файла), иначе класс окна в нижнем регистре.
+set -u
+sock="$XDG_RUNTIME_DIR/hypr/$HYPRLAND_INSTANCE_SIGNATURE/.socket2.sock"
+declare -A icons urgent
+last=""
+
+icon_for() {
+  local class="$1" key="${1,,}" f="" d found=""
+  [ -n "${icons[$key]+x}" ] && return
+  local -a dirs
+  IFS=: read -ra dirs <<<"${XDG_DATA_HOME:-$HOME/.local/share}:${XDG_DATA_DIRS:-/usr/local/share:/usr/share}"
+  for d in "${dirs[@]}"; do
+    [ -d "$d/applications" ] || continue
+    f="$(grep -ilxF "StartupWMClass=$class" "$d"/applications/*.desktop 2>/dev/null | head -1)"
+    [ -z "$f" ] && [ -f "$d/applications/$key.desktop" ] && f="$d/applications/$key.desktop"
+    if [ -n "$f" ]; then
+      found="$(sed -n 's/^Icon=//p' "$f" | head -1)"
+      break
+    fi
+  done
+  case "$found" in /*) found="" ;; esac # абсолютный путь не имя темы значков
+  icons[$key]="${found:-$key}"
+}
+
+emit() {
+  local cl ws act iconmap urg out c
+  cl="$(hyprctl clients -j 2>/dev/null)" || return 0
+  ws="$(hyprctl workspaces -j 2>/dev/null)" || return 0
+  act="$(hyprctl activeworkspace -j 2>/dev/null | jq '.id')" || return 0
+  while read -r c; do [ -n "$c" ] && icon_for "$c"; done < <(jq -r '.[].class' <<<"$cl" | sort -u)
+  iconmap="$(for k in "${!icons[@]}"; do printf '%s\t%s\n' "$k" "${icons[$k]}"; done | jq -Rn '[inputs | split("\t") | {(.[0]): .[1]}] | add // {}')"
+  urg="$(printf '%s\n' "${!urgent[@]}" | jq -Rn '[inputs | select(length > 0)]')"
+  out="$(jq -nc --argjson cl "$cl" --argjson ws "$ws" --argjson act "${act:-1}" --argjson im "$iconmap" --argjson urg "$urg" '
+    ([$ws[] | select(.id > 0) | .id] + [$act] | unique | sort) as $show
+    | [ $show[] as $id | {
+        id: $id,
+        active: ($id == $act),
+        urgent: ([$cl[] | select(.workspace.id == $id and (.address as $a | $urg | index($a)))] | length > 0),
+        windows: ([$cl[] | select(.workspace.id == $id and .mapped)
+          | {address, title, icon: ($im[(.class | ascii_downcase)] // (.class | ascii_downcase))}] | .[0:5])
+      } ]')"
+  [ "$out" = "$last" ] || { printf '%s\n' "$out"; last="$out"; }
+}
+
+handle() {
+  local ev="${1%%>>*}" data="${1#*>>}"
+  case "$ev" in
+    urgent) urgent["0x$data"]=1 ;;
+    activewindowv2) unset "urgent[0x$data]" ;;
+  esac
+}
+
+emit
+socat -u "UNIX-CONNECT:$sock" - | while read -r line; do
+  case "${line%%>>*}" in
+    workspace* | createworkspace* | destroyworkspace* | openwindow | closewindow | movewindow* | activewindow* | urgent | focusedmon* | windowtitle* | moveworkspace*)
+      handle "$line"
+      while read -r -t 0.05 more; do handle "$more"; done
+      emit
+      ;;
+  esac
+done

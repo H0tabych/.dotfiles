@@ -130,6 +130,7 @@ PROFILES = ("ac", "battery", "solid", "game")
 # трогается (не затирает состояние переключателя правкой palette.toml).
 PROFILED_DEST = {
     "waybar-theme.css.tmpl": ("waybar", "theme", ".css"),
+    "eww-style.css.tmpl": ("eww", "eww", ".css"),
     "rofi-theme.rasi.tmpl": ("rofi", "theme", ".rasi"),
     "swayosd-theme.css.tmpl": ("swayosd", "theme", ".css"),
     "hypr-effects.lua.tmpl": ("hypr", "effects", ".lua"),
@@ -360,12 +361,12 @@ LITERAL_HEX_RE = re.compile(r"#[0-9A-Fa-f]{6}\b")
 LITERAL_RGB_RE = re.compile(r"(?<![.\w])rgba?\(")
 
 # Исключение 2026-10-21: сторонние брендовые цвета — это не состояние UI и
-# не роль палитры (см. комментарий у #custom-launcher в waybar/style.css),
+# не роль палитры (см. комментарий у .launcher в theme/gen/templates/eww-style.css.tmpl),
 # поэтому намеренно не в palette.toml; но DSN-TOK-8 в остальном бьёт по
 # любому литералу вне сгенерированного файла. Список короткий и штучный —
 # не общий механизм обхода проверки.
 LITERAL_HEX_ALLOWLIST = {
-    "#5277C3",  # снежинка NixOS, waybar/style.css: #custom-launcher
+    "#5277C3",  # снежинка NixOS: .launcher в eww-style.css.tmpl и #custom-launcher в waybar/style.css
 }
 
 

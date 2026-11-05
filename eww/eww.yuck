@@ -1,0 +1,47 @@
+;; Портативная конфигурация панели (eww, слот bar; DOT-3, DSN-S5). Вертикальная
+;; панель у левого края (DSN-LAY-1) + окно сети рядом с ней. Цвета, шрифт и форма —
+;; только в eww.css (сгенерирован из palette.toml, DSN-TOK-8). Значения хоста сюда
+;; не вшиваются (DOT-1): пути и факты — из машинного слоя ~/.config/machine.d/*,
+;; которые читают скрипты; PATH задаёт юнит демона (nixos-config, bar-eww).
+;; Иконки — глифы Nerd Fonts Symbols (font.symbols); набор в yuck/icons.yuck.
+(include "yuck/icons.yuck")
+(include "yuck/vars.yuck")
+(include "yuck/bar.yuck")
+(include "yuck/net.yuck")
+
+;; Панель: ширина 44 px, отступ от края 8 px, сверху и снизу по 12 px (DSN-LAY-1).
+;; Высота — аргумент: scripts/bars передаёт высоту монитора минус 24 px.
+;; exclusive — на Wayland компоновщик резервирует место под панель (anchor обязан
+;; содержать center); reserve — то же для X11, на Wayland игнорируется.
+(defwindow bar [h]
+  :monitor 0
+  :namespace "eww-bar"
+  :stacking "fg"
+  :windowtype "dock"
+  :exclusive true
+  :focusable "none"
+  :reserve (struts :side "left" :distance "52px")
+  :geometry (geometry :x "8px" :y "0px" :width "44px" :height "${h}px" :anchor "left center")
+  (bar))
+
+;; Окно сети: открывает scripts/netpanel рядом со значком, на высоте клика.
+(defwindow network-panel
+  :monitor 0
+  :namespace "eww-panel"
+  :stacking "overlay"
+  :windowtype "normal"
+  :wm-ignore true
+  :focusable "none"
+  :geometry (geometry :width "320px" :anchor "top left")
+  (network-panel))
+
+;; Прозрачная «ловушка»: клик вне окна сети закрывает его.
+(defwindow net-catcher
+  :monitor 0
+  :namespace "eww-catcher"
+  :stacking "overlay"
+  :windowtype "normal"
+  :wm-ignore true
+  :focusable "none"
+  :geometry (geometry :x "0px" :y "0px" :width "100%" :height "100%" :anchor "top left")
+  (eventbox :class "catcher" :onclick "$HOME/.config/eww/scripts/netpanel close" ""))

@@ -1,0 +1,23 @@
+#!/usr/bin/env bash
+# eww deflisten: короткое имя активной раскладки (EN/RU) — DSN-LAY-3, DSN-LAY-4.
+set -u
+sock="$XDG_RUNTIME_DIR/hypr/$HYPRLAND_INSTANCE_SIGNATURE/.socket2.sock"
+
+short() {
+  case "${1,,}" in
+    english*) echo EN ;;
+    russian*) echo RU ;;
+    "") echo EN ;;
+    *) echo "${1:0:2}" | tr '[:lower:]' '[:upper:]' ;;
+  esac
+}
+
+short "$(hyprctl devices -j 2>/dev/null | jq -r '([.keyboards[] | select(.main)][0] // .keyboards[0]).active_keymap // ""')"
+socat -u "UNIX-CONNECT:$sock" - | while read -r line; do
+  case "$line" in
+    activelayout\>\>*)
+      data="${line#*>>}"
+      short "${data#*,}"
+      ;;
+  esac
+done

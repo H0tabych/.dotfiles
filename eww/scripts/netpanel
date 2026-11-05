@@ -1,0 +1,33 @@
+#!/usr/bin/env bash
+# Окно сети рядом со значком: открывается слева у панели на высоте клика.
+#   netpanel toggle | open | close
+set -u
+
+is_open() { eww active-windows 2>/dev/null | grep -q '^network-panel:'; }
+
+close_panel() {
+  eww close network-panel net-catcher 2>/dev/null || true
+  eww update panel_open=false confirm_direct=false net_msg=""
+}
+
+open_panel() {
+  local cy mon my mh y panel_h=430
+  read -r _ cy < <(hyprctl cursorpos | tr -d ',')
+  read -r mon _ my mh < <(hyprctl monitors -j | jq -r '
+    ([.[] | select(.focused)][0] // .[0]) | "\(.name) \(.x) \(.y) \((.height / .scale) | floor)"')
+  y=$((cy - my - 24))
+  [ "$y" -gt $((mh - panel_h - 12)) ] && y=$((mh - panel_h - 12))
+  [ "$y" -lt 12 ] && y=12
+  eww update panel_open=true
+  eww open net-catcher --screen "$mon"
+  # x: ширина панели 44 + отступ 8 + зазор 8
+  eww open network-panel --screen "$mon" --pos "60x$y" --anchor "top left"
+  eww poll wifi_list netstat >/dev/null 2>&1 || true
+}
+
+case "${1:-toggle}" in
+  toggle) if is_open; then close_panel; else open_panel; fi ;;
+  open) is_open || open_panel ;;
+  close) close_panel ;;
+  *) echo "usage: netpanel toggle|open|close" >&2; exit 2 ;;
+esac

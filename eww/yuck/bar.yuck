@@ -1,0 +1,123 @@
+;; Виджеты панели. Зоны DSN-LAY-2 сверху вниз: 1 навигация, 2 внимание (только при
+;; событии), 3 состояние, 4 время и питание.
+
+(defwidget bar []
+  (centerbox :class "bar" :orientation "v"
+    (box :orientation "v" :valign "start" :space-evenly false :spacing 6
+      (launcher)
+      (workspaces))
+    (box :orientation "v" :valign "center" :space-evenly false :spacing 6
+      (privacy-box)
+      (dnd-box)
+      (idle-box)
+      (mpris-box))
+    (box :orientation "v" :valign "end" :space-evenly false :spacing 6
+      (net-group)
+      (sound-light)
+      (vitals)
+      (layout-box)
+      (more-box)
+      (clock-box)
+      (power-box))))
+
+(defwidget launcher []
+  (box :class "cap"
+    (eventbox :tooltip "Приложения"
+              :onclick "pgrep -x rofi >/dev/null && pkill rofi || rofi -show drun"
+      (label :class "ico launcher" :text ico_launcher))))
+
+;; Рабочие столы: капсула на стол, номер и иконки его окон (до 5). Клик — Lua-
+;; диспетчер Hyprland (hyprctl dispatch "hl.dsp.focus({ … })").
+(defwidget workspaces []
+  (box :class "workspaces" :orientation "v" :space-evenly false :spacing 4
+    (for w in ws
+      (box :class "ws ${w.active ? 'active' : ''} ${w.urgent ? 'urgent' : ''}"
+           :orientation "v" :space-evenly false
+        (eventbox :onclick "hyprctl dispatch \"hl.dsp.focus({ workspace = ${w.id} })\""
+          (label :class "ws-num" :text "${w.id}"))
+        (for win in {w.windows}
+          (eventbox :tooltip {win.title}
+                    :onclick "hyprctl dispatch \"hl.dsp.focus({ window = 'address:${win.address}' })\""
+            (image :class "ws-win" :halign "center" :icon {win.icon} :icon-size "button")))))))
+
+;; Зона 2: видны только при событии/режиме.
+(defwidget privacy-box []
+  (box :class "cap privacy" :visible {privacy.mic || privacy.share} :orientation "v" :space-evenly false
+    (label :class "ico" :visible {privacy.share} :tooltip "Идёт показ экрана" :text ico_share)
+    (label :class "ico" :visible {privacy.mic} :tooltip "Микрофон используется" :text ico_mic)))
+
+(defwidget dnd-box []
+  (box :class "cap dnd" :visible {dnd == "on"}
+    (eventbox :tooltip "Режим «не беспокоить» включён"
+              :onclick "makoctl mode -t do-not-disturb; eww update dnd=off"
+      (label :class "ico active" :text ico_dnd))))
+
+(defwidget idle-box []
+  (box :class "cap idle"
+    (eventbox :tooltip {idle == "on" ? "Запрет сна включён" : "Запрет сна выключен"}
+              :onclick "$HOME/.config/eww/scripts/idle toggle; eww poll idle"
+      (label :class "ico ${idle == 'on' ? 'active' : ''}" :text {ico_idle[idle]}))))
+
+(defwidget mpris-box []
+  (box :class "cap mpris" :visible {mpris.status != ""}
+    (eventbox :tooltip {mpris.title} :onclick "playerctl play-pause"
+      (label :class "ico" :text {ico_mpris[mpris.status] ?: ico_mpris["Playing"]}))))
+
+;; Зона 3. Сеть и Bluetooth в одной капсуле: значок сети — состояние и маршрут
+;; (direct — «внимание», нет связи — «критично»), клик — окно сети; Bluetooth —
+;; голубой, когда включён (клик — вкл/выкл, правый — менеджер устройств).
+(defwidget net-group []
+  (box :class "cap" :orientation "v" :space-evenly false
+    (eventbox :tooltip {netstat.tooltip}
+              :onclick "$HOME/.config/eww/scripts/netpanel toggle"
+      (label :class "ico net ${netstat.state}" :text {ico_net[netstat.key]}))
+    (eventbox :tooltip {bt.tooltip}
+              :onclick "$HOME/.config/net/bluetooth toggle; eww poll bt"
+              :onrightclick "blueman-manager"
+      (label :class "ico bt ${bt.key}" :text {ico_bt[bt.key]}))))
+
+(defwidget sound-light []
+  (box :class "cap" :orientation "v" :space-evenly false
+    (label :class "ico bright s${bright >= 100 ? 100 : bright >= 80 ? 80 : bright >= 60 ? 60 : bright >= 40 ? 40 : bright >= 20 ? 20 : 0}"
+           :tooltip "${bright}%"
+           :text {ico_bright[min(6, floor(bright / 14.3))]})
+    (eventbox :onclick "swayosd-client --output-volume mute-toggle" :tooltip "${audio.vol}%"
+      (label :class "ico vol ${audio.muted ? 'muted' : audio.vol <= 20 ? 'low' : audio.vol <= 60 ? 'medium' : ''}"
+             :text {audio.muted ? ico_mute : ico_vol[audio.vol <= 20 ? 0 : audio.vol <= 60 ? 1 : 2]}))))
+
+;; Заряд, ЦП, память. Цифр на панели нет — значок и цвет (DSN-LAY-5); значения в tooltip.
+(defwidget vitals []
+  (box :class "cap" :orientation "v" :space-evenly false
+    (label :class "ico bat ${EWW_BATTERY.total_avg <= 10 ? 'critical' : EWW_BATTERY.total_avg <= 25 ? 'warning' : 'good'}"
+           :tooltip "${EWW_BATTERY.total_avg}%"
+           :text {batstat == "Discharging" || batstat == "Unknown" ? ico_bat[min(9, floor(EWW_BATTERY.total_avg / 10))] : ico_bat_chg[min(9, floor(EWW_BATTERY.total_avg / 10))]})
+    (label :class "ico load ${EWW_CPU.avg >= 90 ? 'critical' : EWW_CPU.avg >= 70 ? 'warning' : EWW_CPU.avg >= 60 ? 'busy' : EWW_CPU.avg >= 40 ? 'elevated' : EWW_CPU.avg >= 20 ? 'rising' : ''}"
+           :tooltip "ЦП ${round(EWW_CPU.avg, 0)}%" :text ico_cpu)
+    (label :class "ico load ${EWW_RAM.used_mem_perc >= 90 ? 'critical' : EWW_RAM.used_mem_perc >= 70 ? 'warning' : EWW_RAM.used_mem_perc >= 60 ? 'busy' : EWW_RAM.used_mem_perc >= 40 ? 'elevated' : EWW_RAM.used_mem_perc >= 20 ? 'rising' : ''}"
+           :tooltip "${round(EWW_RAM.used_mem_perc, 0)}% · ${round(EWW_RAM.used_mem / 1073741824, 1)} / ${round(EWW_RAM.total_mem / 1073741824, 1)} ГиБ"
+           :text ico_mem)))
+
+;; Раскладка — отдельная капсула над треем; клик переключает.
+(defwidget layout-box []
+  (box :class "cap layout"
+    (eventbox :tooltip "Раскладка клавиатуры: клик — переключить"
+              :onclick "hyprctl switchxkblayout all next"
+      (label :class "layout-text" :text kbd))))
+
+;; «Ещё»: по наведению раскрывается трей.
+(defwidget more-box []
+  (eventbox :onhover "eww update more_open=true" :onhoverlost "eww update more_open=false"
+    (box :class "cap more" :orientation "v" :space-evenly false
+      (label :class "ico" :tooltip "Ещё: трей" :text ico_more)
+      (revealer :reveal more_open :transition "slideup" :duration "250ms"
+        (systray :class "tray" :orientation "v" :spacing 8 :icon-size 18 :prepend-new false)))))
+
+(defwidget clock-box []
+  (box :class "cap clock"
+    (label :tooltip {formattime(EWW_TIME, "%A, %d %B %Y")}
+           :text {formattime(EWW_TIME, "%H%n%M")})))
+
+(defwidget power-box []
+  (box :class "cap power"
+    (eventbox :tooltip "Меню питания" :onclick "$HOME/.config/rofi/scripts/power"
+      (label :class "ico" :text ico_power))))

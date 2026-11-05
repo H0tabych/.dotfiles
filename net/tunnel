@@ -5,12 +5,14 @@
 # клиента — из машинного слоя ~/.config/machine.d/tunnel-env (DOT-5, DESK-9); без него
 # (хост без route-switch) скрипт молчит, а индикатор скрыт.
 #
-#   tunnel status        JSON для waybar: класс tunnel | direct | down
+#   tunnel route         tunnel | direct
+#   tunnel health        none | ok | direct | down
 #   tunnel set <route>   tunnel | direct (пароль спрашивает агент polkit — каждый раз)
+#   tunnel status        JSON для waybar (устарело: панель теперь на eww, net/netstatus)
 #
-# Классы (DSN-LAY-5): tunnel — норма; direct — «внимание», защита снята, отдельная
-# иконка (второй канал, DSN-COL-8); down — «критично»: клиент не работает или в
-# маршруте tunnel нет связи с выходом.
+# health (DSN-LAY-5): ok — норма; direct — «внимание», защита снята; down —
+# «критично»: клиент не работает или в маршруте tunnel нет связи с выходом;
+# none — на хосте нет route-switch.
 set -euo pipefail
 
 env_file="${XDG_CONFIG_HOME:-$HOME/.config}/machine.d/tunnel-env"
@@ -18,8 +20,10 @@ env_file="${XDG_CONFIG_HOME:-$HOME/.config}/machine.d/tunnel-env"
 [ -r "$env_file" ] && . "$env_file"
 
 # Проверка связи в маршруте tunnel: любой короткий ответ 204 через то, что система
-# считает путём наружу (M2 — виртуальный интерфейс, M1 — прокси сессии).
+# считает путём наружу (M2 — виртуальный интерфейс, M1 — прокси сессии). Результат
+# кэшируется на 20 с, чтобы опрос панели не ходил в сеть каждые 5 с.
 probe_url="${TUNNEL_PROBE_URL:-https://cp.cloudflare.com/generate_204}"
+probe_file="${XDG_RUNTIME_DIR:-/tmp}/tunnel-probe"
 
 current_route() {
   local value=""
@@ -35,22 +39,47 @@ client_active() {
   done
 }
 
-status() {
+probe_ok() {
+  local now age=999 result=ok
+  now="$(date +%s)"
+  if [ -r "$probe_file" ]; then
+    read -r result stamp <"$probe_file" || true
+    age=$((now - ${stamp:-0}))
+  fi
+  if [ "$age" -gt 20 ]; then
+    if curl -fsS --max-time 3 -o /dev/null "$probe_url" 2>/dev/null; then result=ok; else result=fail; fi
+    printf '%s %s\n' "$result" "$now" >"$probe_file"
+  fi
+  [ "$result" = ok ]
+}
+
+health() {
   if [ -z "${TUNNEL_ROUTE_STATE:-}" ]; then
-    printf '{"text":""}\n'
+    echo none
     return
   fi
-  local route
-  route="$(current_route)"
   if ! client_active; then
-    printf '{"text":"","class":"down","tooltip":"Туннель: клиент не работает (маршрут: %s)"}\n' "$route"
-  elif [ "$route" = direct ]; then
-    printf '{"text":"","class":"direct","tooltip":"Маршрут: напрямую — защита туннеля снята"}\n'
-  elif curl -fsS --max-time 3 -o /dev/null "$probe_url" 2>/dev/null; then
-    printf '{"text":"󰖂","class":"tunnel","tooltip":"Маршрут: через туннель"}\n'
+    echo down
+  elif [ "$(current_route)" = direct ]; then
+    echo direct
+  elif probe_ok; then
+    echo ok
   else
-    printf '{"text":"","class":"down","tooltip":"Туннель: нет связи с выходом"}\n'
+    echo down
   fi
+}
+
+# JSON для waybar. Глифы — \uXXXX-эскейпами: литеральные символы из частной области
+# Unicode при правке файла терялись, текст становился пустым, и waybar скрывал модуль.
+status() {
+  local h
+  h="$(health)"
+  case "$h" in
+    none) printf '{"text":""}\n' ;;
+    direct) printf '{"text":"\\uf09c","class":"direct","tooltip":"Маршрут: напрямую — защита туннеля снята"}\n' ;;
+    down) printf '{"text":"\\uf071","class":"down","tooltip":"Туннель: нет связи"}\n' ;;
+    *) printf '{"text":"\\udb81\\udd82","class":"tunnel","tooltip":"Маршрут: через туннель"}\n' ;;
+  esac
 }
 
 set_route() {
@@ -67,10 +96,11 @@ set_route() {
 
 case "${1:-status}" in
   status) status ;;
+  health) health ;;
   set) set_route "${2:-}" ;;
   route) current_route ;;
   *)
-    echo "usage: tunnel status|set <route>|route" >&2
+    echo "usage: tunnel route|health|set <route>|status" >&2
     exit 2
     ;;
 esac

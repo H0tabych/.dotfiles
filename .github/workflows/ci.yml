@@ -38,7 +38,7 @@ jobs:
             'nvim/lua/colors.lua' 'foot/colors.ini' 'hypr/theme.lua' \
             'hypr/theme.conf' 'hypr/hyprpaper.conf' 'yazi/theme.toml' \
             'starship/starship.toml' 'starship/starship-lite.toml' \
-            'waybar/theme-*.css' 'rofi/theme-*.rasi' 'swayosd/theme-*.css' \
+            'waybar/theme-*.css' 'eww/eww-*.css' 'rofi/theme-*.rasi' 'swayosd/theme-*.css' \
             'hypr/effects-*.lua' 'mako/config-*' 'zathura/zathurarc' \
             'mpv/theme.conf' \
             'theme/export/glass-tide-*.tdesktop-theme' \

@@ -1,0 +1,37 @@
+#!/usr/bin/env bash
+# net/bluetooth: состояние и переключение адаптера (панель, eww).
+#   bluetooth status   JSON: key (off | on | connected), tooltip
+#   bluetooth toggle   вкл/выкл питание адаптера (при rfkill — сначала снять блокировку)
+# Управление устройствами — blueman-manager (правый клик по значку).
+set -u
+
+powered() { bluetoothctl show 2>/dev/null | awk '/Powered:/ {print $2}' | grep -qx yes; }
+
+status() {
+  local key=off tip="Bluetooth выключен" names count
+  if powered; then
+    names="$(bluetoothctl devices Connected 2>/dev/null | cut -d' ' -f3-)"
+    count="$(printf '%s' "$names" | grep -c . || true)"
+    if [ "$count" -gt 0 ]; then
+      key=connected
+      tip="Bluetooth: $(printf '%s' "$names" | paste -sd, - | sed 's/,/, /g')"
+    else
+      key=on
+      tip="Bluetooth включён"
+    fi
+  fi
+  jq -nc --arg k "$key" --arg t "$tip" '{key: $k, tooltip: $t}'
+}
+
+case "${1:-status}" in
+  status) status ;;
+  toggle)
+    if powered; then
+      bluetoothctl power off >/dev/null
+    else
+      rfkill unblock bluetooth 2>/dev/null || true
+      bluetoothctl power on >/dev/null
+    fi
+    ;;
+  *) echo "usage: bluetooth status|toggle" >&2; exit 2 ;;
+esac

@@ -1,0 +1,62 @@
+#!/usr/bin/env bash
+# net/netstatus: одной строкой JSON — состояние сети для значка панели (eww).
+# Поля: key (какой глиф: wifi1..4, wifi1a..4a, lan, lana, off, wifioff — суффикс «a»
+# даёт значок тревоги), state (ok | direct | down | offline — класс цвета, DSN-LAY-5),
+# route (tunnel | direct | none), wifi (радио включено), ssid, tooltip. Глифов здесь
+# нет — их выбирает eww по ключу. Маршрут и связность — у net/tunnel (SLOT-3).
+set -u
+dir="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"
+
+wifi=true
+[ "$(nmcli radio wifi 2>/dev/null)" = disabled ] && wifi=false
+
+kind=none level=0 ssid="" signal=0
+devs="$(nmcli -t -f TYPE,STATE device 2>/dev/null)"
+if grep -qx 'ethernet:connected' <<<"$devs"; then
+  kind=ethernet
+elif grep -qx 'wifi:connected' <<<"$devs"; then
+  kind=wifi
+  line="$(nmcli -t -f IN-USE,SIGNAL,SSID device wifi list --rescan no 2>/dev/null | grep '^\*' | head -1)"
+  IFS=: read -r _ signal rest <<<"$line"
+  ssid="$(printf '%s' "$rest" | sed 's/\\:/:/g; s/\\\\/\\/g')"
+  signal="${signal:-0}"
+  if [ "$signal" -le 25 ]; then level=1
+  elif [ "$signal" -le 50 ]; then level=2
+  elif [ "$signal" -le 75 ]; then level=3
+  else level=4; fi
+fi
+
+health="$("$dir/tunnel" health 2>/dev/null || echo none)"
+route=none
+[ "$health" != none ] && route="$("$dir/tunnel" route)"
+
+state=ok
+if [ "$kind" = none ]; then
+  state=offline
+else
+  case "$health" in direct) state=direct ;; down) state=down ;; esac
+fi
+
+case "$kind" in
+  wifi) key="wifi$level" ;;
+  ethernet) key=lan ;;
+  *) if [ "$wifi" = true ]; then key=off; else key=wifioff; fi ;;
+esac
+if [ "$state" = direct ] || [ "$state" = down ]; then
+  case "$kind" in wifi) key="${key}a" ;; ethernet) key=lana ;; esac
+fi
+
+case "$kind" in
+  wifi) tip="Wi-Fi: $ssid ($signal%)" ;;
+  ethernet) tip="Проводная сеть" ;;
+  *) if [ "$wifi" = true ]; then tip="Нет подключения"; else tip="Wi-Fi выключен"; fi ;;
+esac
+case "$health" in
+  ok) tip="$tip"$'\n'"Маршрут: через туннель" ;;
+  direct) tip="$tip"$'\n'"Маршрут: напрямую — защита снята" ;;
+  down) tip="$tip"$'\n'"Туннель: нет связи" ;;
+esac
+
+jq -nc --arg key "$key" --arg state "$state" --arg route "$route" --argjson wifi "$wifi" \
+  --arg ssid "$ssid" --arg tip "$tip" \
+  '{key: $key, state: $state, route: $route, wifi: $wifi, ssid: $ssid, tooltip: $tip}'

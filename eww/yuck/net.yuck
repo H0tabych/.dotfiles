@@ -1,0 +1,57 @@
+;; Окно сети (рядом со значком, как «быстрые параметры»): маршрут туннеля, Wi-Fi,
+;; список сетей. Логика — net/netctl (nmcli) и net/tunnel; здесь только вид.
+;; Пароль новой сети спрашивает rofi (net/netctl), а не поле этого окна: так он
+;; не попадает в командную строку и не требует экранирования.
+
+(defwidget switch-btn [on onclick]
+  (eventbox :onclick onclick :valign "center"
+    (box :class "switch ${on ? 'on' : ''}" :orientation "h" :space-evenly false
+      (box :class "knob" :halign {on ? "end" : "start"} :hexpand true ""))))
+
+(defwidget seg-btn [label active onclick]
+  (eventbox :onclick onclick :class "seg ${active ? 'active' : ''}" :hexpand true
+    (label :text label)))
+
+(defwidget network-panel []
+  (box :class "panel" :orientation "v" :valign "start" :space-evenly false :spacing 10
+    (box :class "panel-head" :space-evenly false
+      (label :class "panel-title" :halign "start" :hexpand true :text "Сеть")
+      (eventbox :class "icon-btn" :tooltip "Обновить"
+                :onclick "$HOME/.config/net/netctl rescan; eww poll wifi_list; eww poll netstat"
+        (label :class "ico" :text ico_refresh)))
+
+    ;; Маршрут (NET-13). Скрыт на хосте без route-switch.
+    (box :class "sect" :orientation "v" :space-evenly false :spacing 6
+         :visible {netstat.route != "none"}
+      (label :class "sect-title" :halign "start" :text "Маршрут")
+      (box :class "segs" :space-evenly true
+        (seg-btn :label "Через туннель" :active {netstat.route == "tunnel"}
+                 :onclick "eww update confirm_direct=false; $HOME/.config/net/tunnel set tunnel; eww poll netstat")
+        (seg-btn :label "Напрямую" :active {netstat.route == "direct"}
+                 :onclick "eww update confirm_direct=${netstat.route != 'direct'}"))
+      (box :class "confirm" :visible confirm_direct :space-evenly true :spacing 6
+        (label :class "warn" :hexpand true :halign "start" :wrap true
+               :text "Защита туннеля будет снята. Продолжить?")
+        (eventbox :class "btn" :onclick "eww update confirm_direct=false" (label :text "Нет"))
+        (eventbox :class "btn danger"
+                  :onclick "eww update confirm_direct=false; $HOME/.config/net/tunnel set direct; eww poll netstat"
+          (label :text "Да"))))
+
+    ;; Wi-Fi: переключатель радио.
+    (box :class "sect row" :space-evenly false
+      (label :class "sect-title" :halign "start" :hexpand true :text "Wi-Fi")
+      (switch-btn :on {netstat.wifi} :onclick "$HOME/.config/net/netctl wifi toggle; eww poll netstat; eww poll wifi_list"))
+
+    (label :class "msg" :visible {net_msg != ""} :halign "start" :wrap true :text net_msg)
+
+    (scroll :class "nets" :vscroll true :hscroll false :height 240 :visible {netstat.wifi}
+      (box :orientation "v" :space-evenly false :spacing 2
+        (label :class "muted" :halign "start" :visible {arraylength(wifi_list) == 0} :text "Сети не найдены")
+        (for n in wifi_list
+          (eventbox :class "net ${n.active ? 'active' : ''}"
+                    :onclick "$HOME/.config/net/netctl connect ${n.idx}"
+            (box :space-evenly false :spacing 8
+              (label :class "ico" :text {ico_net["wifi${n.level}"]})
+              (label :halign "start" :hexpand true :limit-width 28 :text {n.ssid})
+              (label :class "ico dim" :visible {n.secured} :text ico_lock)
+              (label :class "ico ok" :visible {n.active} :text ico_check))))))))

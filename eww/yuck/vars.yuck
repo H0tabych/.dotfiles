@@ -1,0 +1,24 @@
+;; Источники данных панели. Долгие слушатели (deflisten) — на событиях сокета
+;; Hyprland и pipewire; опросы (defpoll) — для того, у чего событий нет.
+(deflisten ws :initial "[]" "$HOME/.config/eww/scripts/workspaces")
+(deflisten kbd :initial "EN" "$HOME/.config/eww/scripts/layout")
+(deflisten audio :initial '{"vol":0,"muted":false}' "$HOME/.config/eww/scripts/audio")
+(deflisten privacy :initial '{"mic":false,"share":false}' "$HOME/.config/eww/scripts/privacy")
+(deflisten mpris :initial '{"status":"","title":""}' "$HOME/.config/eww/scripts/mpris")
+
+(defpoll bright :interval "2s" :initial "50" "brightnessctl -m 2>/dev/null | cut -d, -f4 | tr -d '%'")
+(defpoll dnd :interval "3s" :initial "off" "makoctl mode 2>/dev/null | grep -qx do-not-disturb && echo on || echo off")
+(defpoll idle :interval "3s" :initial "off" "$HOME/.config/eww/scripts/idle status")
+(defpoll batstat :interval "10s" :initial "Unknown" "cat /sys/class/power_supply/BAT*/status 2>/dev/null | head -1")
+
+;; Сеть и Bluetooth — общие скрипты подсистемы туннеля (dotfiles/net/).
+(defpoll netstat :interval "5s"
+  :initial '{"key":"off","state":"offline","route":"none","tooltip":"Сеть"}'
+  "$HOME/.config/net/netstatus")
+(defpoll bt :interval "4s" :initial '{"key":"off","tooltip":"Bluetooth"}' "$HOME/.config/net/bluetooth status")
+
+(defvar more_open false)
+(defvar panel_open false)
+(defvar confirm_direct false)
+(defvar net_msg "")
+(defpoll wifi_list :interval "8s" :run-while panel_open :initial "[]" "$HOME/.config/net/netctl list")

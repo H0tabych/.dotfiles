@@ -1,0 +1,29 @@
+;; Глифы Nerd Fonts Symbols Only (font.symbols). Написаны кодами в исходнике
+;; генерации; здесь — готовые символы. Если глиф «пропал» (пустая строка) —
+;; восстановить по коду из комментария: прямая вставка уже теряла символы.
+(defvar ico_launcher "")                       ;; fl-nixos
+(defvar ico_power "")                          ;; fa-power_off
+(defvar ico_more "")                           ;; fa-ellipsis_v
+(defvar ico_cpu "")                            ;; fa-microchip
+(defvar ico_mem "")                            ;; fa-memory
+(defvar ico_idle '{"on":"","off":""}') ;; fa-eye / fa-eye_slash
+(defvar ico_mpris '{"Playing":"󰐊","Paused":"󰏤"}') ;; md-play / md-pause (fa-music из диапазона F000 перекрывает DejaVu Sans)
+(defvar ico_lock "")                           ;; fa-lock
+(defvar ico_check "")                          ;; fa-check
+(defvar ico_refresh "")                        ;; fa-refresh
+(defvar ico_mic "")                            ;; fa-microphone
+(defvar ico_share "")                          ;; fa-television
+(defvar ico_dnd "")                            ;; fa-bell_slash
+
+;; Сеть: ключ даёт scripts net/netstatus. Суффикс «a» — вариант со значком
+;; тревоги (второй канал после цвета, DSN-COL-8): маршрут direct или нет связи.
+(defvar ico_net '{"wifi1":"󰤟","wifi2":"󰤢","wifi3":"󰤥","wifi4":"󰤨","wifi1a":"󰤠","wifi2a":"󰤣","wifi3a":"󰤦","wifi4a":"󰤩","lan":"󰌗","lana":"󰌙","wifioff":"󰖪","off":"󰤮"}')
+(defvar ico_bt '{"on":"󰂯","connected":"󰂱","off":"󰂲"}')
+
+(defvar ico_bright '["󰃚","󰃛","󰃜","󰃝","󰃞","󰃟","󰃠"]')
+(defvar ico_vol '["","",""]')
+(defvar ico_mute "󰝟")                          ;; md-volume_mute
+
+;; Батарея: от пустой к полной; при зарядке — с молнией.
+(defvar ico_bat '["󰂎","󰁺","󰁻","󰁼","󰁽","󰁾","󰁿","󰂀","󰂁","󰁹"]')
+(defvar ico_bat_chg '["󰢜","󰂆","󰂇","󰂈","󰢝","󰂉","󰢞","󰂊","󰂋","󰂅"]')

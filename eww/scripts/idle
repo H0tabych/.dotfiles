@@ -1,0 +1,23 @@
+#!/usr/bin/env bash
+# Запрет сна (бывший idle_inhibitor waybar). У eww нет протокола idle-inhibit, поэтому
+# блокировку держит `systemd-inhibit --what=idle` в отдельной группе процессов;
+# hypridle учитывает её (ignore_systemd_inhibit по умолчанию выключен).
+#   idle status   -> on | off      idle toggle
+set -u
+pidf="${XDG_RUNTIME_DIR:-/tmp}/eww-idle-inhibit.pid"
+
+active() { [ -f "$pidf" ] && kill -0 "$(cat "$pidf")" 2>/dev/null; }
+
+case "${1:-status}" in
+  status) if active; then echo on; else echo off; fi ;;
+  toggle)
+    if active; then
+      kill -TERM -- "-$(cat "$pidf")" 2>/dev/null || true
+      rm -f "$pidf"
+    else
+      setsid systemd-inhibit --what=idle --who=eww --why="Запрет сна (панель)" --mode=block sleep infinity >/dev/null 2>&1 &
+      echo $! >"$pidf"
+    fi
+    ;;
+  *) echo "usage: idle status|toggle" >&2; exit 2 ;;
+esac

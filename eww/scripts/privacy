@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+# eww deflisten: индикаторы приватности (DSN-LAY-2, зона 2): показ экрана и
+# использование микрофона — те же определения, что у модуля privacy в waybar:
+# потоки pipewire Stream/Input/Video и Stream/Input/Audio.
+set -u
+last=""
+while :; do
+  json="$(pw-dump 2>/dev/null | jq -c '
+    [.[] | .info.props["media.class"]? // empty] as $c
+    | {share: ($c | index("Stream/Input/Video") != null), mic: ($c | index("Stream/Input/Audio") != null)}' 2>/dev/null)" || json=""
+  [ -n "$json" ] || json='{"mic":false,"share":false}'
+  [ "$json" = "$last" ] || { printf '%s\n' "$json"; last="$json"; }
+  sleep 2
+done

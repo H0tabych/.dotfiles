@@ -63,7 +63,7 @@ hl.animation({ leaf = "fade",       enabled = true, speed = 2.5 * fx.k, bezier =
 hl.animation({ leaf = "workspaces", enabled = true, speed = 3.5 * fx.k, bezier = "glass", style = "slidevert" })
 
 -- Стекло поверхностей оболочки (DSN-MAT-7, раздел 8 — панель/лаунчер/уведомления/OSD не исключения)
-for _, ns in ipairs({ "waybar", "rofi", "notifications", "swayosd" }) do
+for _, ns in ipairs({ "waybar", "eww-bar", "eww-panel", "rofi", "notifications", "swayosd" }) do
   hl.layer_rule({ name = "glass-" .. ns, match = { namespace = "^" .. ns .. "$" }, blur = fx.blur, ignore_alpha = 0.2 })
 end
 
