@@ -6,8 +6,8 @@
     python3 ai/gen/gen.py          # перегенерировать
     python3 ai/gen/gen.py --check  # проверить схему и актуальность файлов
 
-Форматы: claude.mcp.json — для `claude --mcp-config`. Другие агенты: aider не
-поддерживает MCP; формат DeepSeek Harness не проверен (ПРОВЕРИТЬ) — не генерируется.
+Форматы: claude.mcp.json — для `claude --mcp-config`. Другие агенты: формат
+DeepSeek Harness не проверен (ПРОВЕРИТЬ) — не генерируется.
 """
 import json
 import sys

@@ -6,7 +6,7 @@ set -euo pipefail
 repo_root="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 config_home="${XDG_CONFIG_HOME:-$HOME/.config}"
 
-APPS=(nvim zsh starship foot hypr eww net rofi mako swayosd yazi mpv git mangohud aider ai)
+APPS=(nvim zsh starship foot hypr eww net rofi mako swayosd yazi mpv git mangohud ai)
 
 # Некоторые приложения ждут каталог не в нижнем регистре — REGISTRY.md.
 declare -A TARGET_NAME=(
