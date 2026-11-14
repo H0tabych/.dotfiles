@@ -10,8 +10,12 @@
 `ai-tools`: список MCP живёт в штатной конфигурации агента (плагин), а не во флаге запуска, и
 поэтому переживает `--resume` и фоновые сессии (ADR-48). Подключение — разовая команда
 (REGISTRY.md, запись `ai`): `claude plugin marketplace add <каталог>` и
-`claude plugin install ai-tools@ai-local`. Формат DeepSeek Harness не проверен (ПРОВЕРИТЬ) —
-не генерируется.
+`claude plugin install ai-tools@ai-local`.
+
+Для DeepSeek Harness (`dsh`) — два патча формата `--patch` (плагин `@deepseek-ai/dsh-mcp-client`):
+`generated/dsh/local.cordis.yml` (stdio-серверы) и `generated/dsh/gateway.cordis.yml` (вход
+MCP-шлюза; адрес и ключ читает из окружения процесса, поэтому адаптер подключает его только
+когда они заданы).
 """
 import json
 import re
@@ -121,10 +125,49 @@ def render(servers: dict) -> dict[str, str]:
     def dump(obj: dict) -> str:
         return json.dumps(obj, indent=2, ensure_ascii=False) + "\n"
 
+    def js_ref(text: str) -> str:
+        """Значение со ссылками ${ИМЯ} → выражение `!!js` (читает process.env при запуске агента)."""
+        m = VAR.fullmatch(text)
+        if m:
+            return f"!!js process.env.{m.group(1)}"
+        return "!!js '`" + VAR.sub(lambda v: "${process.env." + v.group(1) + "}", text) + "`'"
+
+    def dsh_rows(kind: str) -> str:
+        rows = []
+        for n, s in servers.items():
+            if s["type"] != kind:
+                continue
+            row = [
+                f"    - id: mcp-{n}",
+                "      name: '@deepseek-ai/dsh-mcp-client'",
+                "      config:",
+                f"        serverName: {n}",
+            ]
+            if kind == "stdio":
+                row += [
+                    "        transport: stdio",
+                    f"        command: {json.dumps(s['command'])}",
+                    f"        args: {json.dumps(s.get('args', []))}",
+                    "        cwd: !!js process.cwd()",  # серверы работают в каталоге проекта
+                ]
+            else:
+                row += ["        transport: streamable-http", f"        url: {js_ref(s['url'])}"]
+                if s.get("headers"):
+                    row.append("        headers:")
+                    row += [f"          {h}: {js_ref(v)}" for h, v in s["headers"].items()]
+            rows += row
+        head = (
+            "# Сгенерировано ai/gen/gen.py из ai/mcp-servers.toml — не править руками (AI-CTX-3).\n"
+            f"# Патч DeepSeek Harness: серверы MCP ({kind}), `dsh --patch <файл>`.\n"
+        )
+        return head + "- insert:\n" + "\n".join(rows) + "\n"
+
     return {
         f"{MARKET}/.claude-plugin/marketplace.json": dump(market),
         f"{MARKET}/plugins/{PLUGIN}/.claude-plugin/plugin.json": dump(plugin),
         f"{MARKET}/plugins/{PLUGIN}/.mcp.json": dump({"mcpServers": mcp}),
+        "dsh/local.cordis.yml": dsh_rows("stdio"),
+        "dsh/gateway.cordis.yml": dsh_rows("http"),
     }
 
 

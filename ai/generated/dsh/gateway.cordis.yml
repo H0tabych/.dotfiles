@@ -1,0 +1,11 @@
+# Сгенерировано ai/gen/gen.py из ai/mcp-servers.toml — не править руками (AI-CTX-3).
+# Патч DeepSeek Harness: серверы MCP (http), `dsh --patch <файл>`.
+- insert:
+    - id: mcp-gateway
+      name: '@deepseek-ai/dsh-mcp-client'
+      config:
+        serverName: gateway
+        transport: streamable-http
+        url: !!js process.env.AI_MCP_URL
+        headers:
+          x-bf-vk: !!js process.env.AI_MCP_KEY
