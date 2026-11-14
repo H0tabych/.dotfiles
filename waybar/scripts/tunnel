@@ -1,6 +1,0 @@
-#!/usr/bin/env bash
-# custom/tunnel (DESK-9, DSN-LAY-3, DSN-LAY-5): индикатор маршрута туннеля. Вся логика
-# в net/tunnel (общий скрипт подсистемы), здесь только вызов — имени реализации
-# туннеля в dotfiles нет (SLOT-3). Без route-switch на хосте вывод пустой и
-# индикатор скрыт (DOT-5).
-exec "${XDG_CONFIG_HOME:-$HOME/.config}/net/tunnel" status

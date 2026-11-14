@@ -14,6 +14,7 @@
 (defvar ico_mic "")                            ;; fa-microphone
 (defvar ico_share "")                          ;; fa-television
 (defvar ico_dnd "")                            ;; fa-bell_slash
+(defvar ico_fx '{"solid":"󰌩","game":""}')  ;; md-layers_off U+F0329 / fa-gamepad U+F11B (ручной профиль эффектов, R9.27)
 
 ;; Сеть: ключ даёт scripts net/netstatus. Суффикс «a» — вариант со значком
 ;; тревоги (второй канал после цвета, DSN-COL-8): маршрут direct или нет связи.

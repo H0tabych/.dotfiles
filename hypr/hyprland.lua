@@ -99,11 +99,11 @@ hl.bind(mainMod .. " + F",      hl.dsp.window.fullscreen())
 -- Maximize: панель и gaps остаются видимыми (в отличие от SUPER+F — настоящий fullscreen)
 hl.bind(mainMod .. " + D",      hl.dsp.window.fullscreen({ mode = "maximized" }))
 
--- DSN-PWR-2 (раздел 9, DSN-S7/R6.10): ручной выбор профиля эффектов solid/game;
--- ac/battery переключаются автоматически (effects-profile.nix). Скрипт
--- идемпотентен — повторное нажатие на уже активном профиле ничего не делает.
-hl.bind(mainMod .. " + SHIFT + S", hl.dsp.exec_cmd("~/.config/hypr/scripts/profile solid"))
-hl.bind(mainMod .. " + SHIFT + G", hl.dsp.exec_cmd("~/.config/hypr/scripts/profile game"))
+-- DSN-PWR-2 (раздел 9, DSN-S7/R6.10, R9.27): ручной профиль эффектов solid/game — тумблер:
+-- первое нажатие включает, повторное возвращает автоматический (ac/battery по питанию,
+-- effects-profile.nix). Ручной профиль держится до выхода из сеанса; виден в панели (зона 2).
+hl.bind(mainMod .. " + SHIFT + S", hl.dsp.exec_cmd("~/.config/hypr/scripts/profile toggle solid"))
+hl.bind(mainMod .. " + SHIFT + G", hl.dsp.exec_cmd("~/.config/hypr/scripts/profile toggle game"))
 
 -- 10 рабочих столов, 1..9 затем 0 (DSN-LAY-3: всегда на виду, панель —
 -- persistent-workspaces). Клавиша "0" -> стол 10, как на цифровом ряду клавиатуры.

@@ -13,6 +13,7 @@
       (privacy-box)
       (dnd-box)
       (idle-box)
+      (effects-box)
       (mpris-box))
     (box :orientation "v" :valign "end" :space-evenly false :spacing 6
       (net-group)
@@ -54,6 +55,14 @@
     (eventbox :tooltip "Режим «не беспокоить» включён"
               :onclick "makoctl mode -t do-not-disturb; eww update dnd=off"
       (label :class "ico active" :text ico_dnd))))
+
+;; Ручной профиль эффектов (DSN-PWR-2, DSN-LAY-3, R9.27): виден, только пока выбран вручную
+;; (solid/game); щелчок возвращает автоматический (ac/battery по питанию).
+(defwidget effects-box []
+  (box :class "cap effects" :visible {fxprofile == "solid" || fxprofile == "game"}
+    (eventbox :tooltip {fxprofile == "game" ? "Профиль эффектов «игра» (вручную) — щелчок вернёт автоматический" : "Профиль эффектов «без прозрачности» (вручную) — щелчок вернёт автоматический"}
+              :onclick "~/.config/eww/scripts/bg ~/.config/eww/scripts/act fxprofile -- ~/.config/hypr/scripts/profile auto"
+      (label :class "ico active" :text {fxprofile == "game" ? ico_fx["game"] : ico_fx["solid"]}))))
 
 (defwidget idle-box []
   (box :class "cap idle"

@@ -1,16 +1,20 @@
 #!/usr/bin/env bash
-# hypr/scripts/profile <ac|battery|solid|game> (DESK-9, effects-profile.nix —
-# DSN-S7/R6.10): переключатель профиля эффектов Glass Tide (DESIGN_SYSTEM.md,
-# раздел 9). Без аргумента — печатает текущий профиль. Идемпотентен: запрос
-# уже активного профиля не трогает симлинки и не перезагружает компоненты
-# (DSN-PWR-3, ≤ 2 с). Автопереключение ac/battery вызывает этот скрипт из
-# effects-profile.nix (следит за источником питания); сочетания клавиш для
-# solid/game — биндинги в hyprland.lua.
+# hypr/scripts/profile <ac|battery|solid|game|auto> | toggle <solid|game>
+# (DESK-9, effects-profile.nix — DSN-S7/R6.10, R9.27): переключатель профиля эффектов Glass
+# Tide (DESIGN_SYSTEM.md, раздел 9). Без аргумента — печатает текущий профиль. Идемпотентен:
+# запрос уже активного профиля не трогает симлинки и не перезагружает компоненты
+# (DSN-PWR-3, ≤ 2 с).
+#   auto         — профиль по источнику питания (ac/battery). Источник пишет effects-profile.nix
+#                  в $XDG_STATE_HOME/glass-tide/power; файла нет — ac (DSN-PWR-7).
+#   toggle <p>   — ручной профиль solid/game: включить, а если он уже включён — вернуть auto
+#                  (сочетания клавиш в hyprland.lua, щелчок по индикатору в панели; DSN-PWR-2).
+# Ручной профиль живёт до выхода из сеанса: смена источника питания его не снимает.
 set -euo pipefail
 
 profiles=(ac battery solid game)
 state_dir="${XDG_STATE_HOME:-$HOME/.local/state}/glass-tide"
 state_file="$state_dir/profile"
+power_file="$state_dir/power"
 
 current="$(cat "$state_file" 2>/dev/null || true)"
 current="${current:-ac}"
@@ -20,13 +24,36 @@ if [ $# -eq 0 ]; then
   exit 0
 fi
 
+power() {
+  local p
+  p="$(cat "$power_file" 2>/dev/null || true)"
+  case "$p" in
+    ac | battery) echo "$p" ;;
+    *) echo ac ;;
+  esac
+}
+
 profile="$1"
+case "$profile" in
+  auto) profile="$(power)" ;;
+  toggle)
+    case "${2:-}" in
+      solid | game) ;;
+      *)
+        echo "profile: toggle <solid|game>" >&2
+        exit 1
+        ;;
+    esac
+    if [ "$current" = "$2" ]; then profile="$(power)"; else profile="$2"; fi
+    ;;
+esac
+
 known=0
 for p in "${profiles[@]}"; do
   [ "$p" = "$profile" ] && known=1
 done
 if [ "$known" -ne 1 ]; then
-  echo "profile: неизвестный профиль '$profile' (ac|battery|solid|game)" >&2
+  echo "profile: неизвестный профиль '$profile' (ac|battery|solid|game|auto, toggle solid|game)" >&2
   exit 1
 fi
 
@@ -51,4 +78,9 @@ ln -sf "config-$profile" "$dotfiles_dir/mako/config"
 
 hyprctl reload >/dev/null
 eww reload >/dev/null 2>&1 || true
+# Индикатор ручного профиля в панели — сразу, не дожидаясь опроса.
+eww update fxprofile="$profile" >/dev/null 2>&1 || true
 makoctl reload >/dev/null 2>&1 || true
+# SwayOSD читает стиль только при старте, команды перечитать у него нет, а плотность стекла у
+# профилей разная (DSN-PWR-3): перезапуск сервера, если он запущен (окно OSD временное).
+systemctl --user try-restart swayosd-server.service >/dev/null 2>&1 || true

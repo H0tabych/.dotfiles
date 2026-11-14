@@ -9,6 +9,8 @@
 (defpoll bright :interval "2s" :initial "50" "brightnessctl -m 2>/dev/null | cut -d, -f4 | tr -d '%'")
 (defpoll dnd :interval "3s" :initial "off" "makoctl mode 2>/dev/null | grep -qx do-not-disturb && echo on || echo off")
 (defpoll idle :interval "3s" :initial "off" "$HOME/.config/eww/scripts/idle status")
+;; Профиль эффектов (DSN-PWR-1): переключатель сам обновляет переменную, опрос — запасной путь.
+(defpoll fxprofile :interval "5s" :initial "ac" "$HOME/.config/hypr/scripts/profile")
 (defpoll batstat :interval "10s" :initial "Unknown" "cat /sys/class/power_supply/BAT*/status 2>/dev/null | head -1")
 
 ;; Сеть и Bluetooth — общие скрипты подсистемы туннеля (dotfiles/net/).
