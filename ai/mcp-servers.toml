@@ -1,18 +1,40 @@
-# Единый список MCP-серверов для агентов (AI_SUBSYSTEM.md AI-CTX-3).
+# Единый список MCP-серверов, общих для агентов (AI_SUBSYSTEM.md AI-CTX-3, AI-CTX-4).
 # Источник правды: править только здесь, затем `python3 ai/gen/gen.py` и
 # коммитить `ai/generated/*` вместе с этим файлом.
-# Серверы — локальные, stdio (AI-CTX-4). `command` — имя из PATH, не путь:
-# пакет и обёртку даёт хост (на NixOS — фича code-context, на другой
-# системе — установить самому); путей хранилища пакетов и констант хоста здесь нет.
+#
+# Два вида записей:
+#   type = "stdio" — локальный сервер без секретов, запускается внутри песочницы агента
+#       (AI-CTX-4). `command` — имя из PATH, не путь: пакет и обёртку даёт хост (на NixOS —
+#       фича `code-context`), путей хранилища пакетов и констант хоста здесь нет.
+#   type = "http" — вход MCP-шлюза (AI-GW-14). Серверы с секретами (трекер задач, хостинг
+#       репозиториев) и поиск в сети шлюз запускает и обслуживает сам; их состав — политика
+#       хоста, здесь только вход. Адрес и ключ доступа — из окружения агента: значений в файле
+#       нет, ссылка `${ИМЯ}`. Имя переменной не должно быть «учётным» для Claude Code
+#       (ANTHROPIC_API_KEY, NPM_TOKEN, … — они читаются пустыми).
 
 [server.lsp-python]
+type = "stdio"
 command = "code-context-lsp"
 args = ["python"]
 
 [server.lsp-cpp]
+type = "stdio"
 command = "code-context-lsp"
 args = ["cpp"]
 
 [server.lsp-rust]
+type = "stdio"
 command = "code-context-lsp"
 args = ["rust"]
+
+[server.playwright]
+type = "stdio"
+command = "playwright-mcp"
+args = []
+
+[server.gateway]
+type = "http"
+url = "${AI_MCP_URL}"
+
+[server.gateway.headers]
+x-bf-vk = "${AI_MCP_KEY}"

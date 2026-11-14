@@ -20,6 +20,18 @@
       "args": [
         "rust"
       ]
+    },
+    "playwright": {
+      "type": "stdio",
+      "command": "playwright-mcp",
+      "args": []
+    },
+    "gateway": {
+      "type": "http",
+      "url": "${AI_MCP_URL}",
+      "headers": {
+        "x-bf-vk": "${AI_MCP_KEY}"
+      }
     }
   }
 }

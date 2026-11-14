@@ -1,0 +1,13 @@
+{
+  "name": "ai-local",
+  "owner": {
+    "name": "dotfiles"
+  },
+  "plugins": [
+    {
+      "name": "ai-tools",
+      "source": "./plugins/ai-tools",
+      "description": "Общие MCP-серверы агентов (ai/mcp-servers.toml, AI-CTX-3)"
+    }
+  ]
+}
