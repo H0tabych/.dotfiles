@@ -36,6 +36,33 @@ link_app() {
   echo "linked $dest -> $src"
 }
 
+# Дополнительные цели записи `ai` (R9.22, DOT-4, REGISTRY.md): стандартные пути агентов вне
+# ~/.config. Навыки — по одному (каталог ~/.claude/skills ведёт сам Claude); существующее не
+# симлинк — пропуск.
+link_path() {
+  local src="$1" dest="$2"
+  [ -e "$src" ] || return 0
+  if [ -e "$dest" ] && [ ! -L "$dest" ]; then
+    echo "install.sh: $dest уже существует и не симлинк — пропуск" >&2
+    return
+  fi
+  mkdir -p "$(dirname "$dest")"
+  ln -sfn "$src" "$dest"
+  echo "linked $dest -> $src"
+}
+
+link_agent_paths() {
+  link_path "$repo_root/ai/AGENTS.md" "$HOME/.agents/AGENTS.md"
+  link_path "$repo_root/ai/CLAUDE.md" "$HOME/.claude/CLAUDE.md"
+  local skill name
+  for skill in "$repo_root"/ai/skills/*/; do
+    [ -d "$skill" ] || continue
+    name="$(basename "$skill")"
+    link_path "${skill%/}" "$HOME/.agents/skills/$name"
+    link_path "${skill%/}" "$HOME/.claude/skills/$name"
+  done
+}
+
 install_machine_stubs() {
   local machine_dir="$config_home/machine.d"
   mkdir -p "$machine_dir"
@@ -56,6 +83,7 @@ case "${1:-}" in
     for app in "${APPS[@]}"; do
       link_app "$app"
     done
+    link_agent_paths
     install_machine_stubs
     ;;
   *)
