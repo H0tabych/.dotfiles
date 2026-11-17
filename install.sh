@@ -19,12 +19,13 @@ check_deps() {
 дистрибутивах могут отличаться):
   приложения реестра: neovim zsh starship foot hyprland rofi mako swayosd yazi mpv git mangohud
                       zathura zathura-pdf-mupdf lazygit btop fzf
-  eww-панель:         eww (в Arch — только AUR/сборка из исходников; нужны GTK3 и gtk-layer-shell)
+  eww-панель:         eww из master (Arch: AUR `eww-git`; AUR-пакет `eww` 0.6.0 старее и не разбирает
+                      `:focusable "none"`); нужны GTK3 и gtk-layer-shell
                       jq socat playerctl brightnessctl networkmanager bluez bluez-utils wireplumber
                       pipewire libnotify
   сессия Hyprland:    hyprpaper hyprlock
   zsh-плагины:        zsh-autosuggestions zsh-syntax-highlighting zsh-completions
-                      zsh-history-substring-search (oh-my-zsh — AUR или из репозитория проекта)
+                      zsh-history-substring-search (oh-my-zsh — Arch: AUR `oh-my-zsh-git`)
   разное:             fd ripgrep python (>= 3.11, генератор темы) gcc tree-sitter-cli (парсеры neovim)
                       ttf-jetbrains-mono-nerd ttf-nerd-fonts-symbols
 EOF

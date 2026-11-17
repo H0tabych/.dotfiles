@@ -84,10 +84,11 @@ Telegram — `ПРОВЕРИТЬ` вживую (Приложение I.6, M5). D
 ## Проверено на другом дистрибутиве (A15, R9.5)
 
 2026-11-17, Arch Linux (чистый rootfs, обычный пользователь, `install.sh` + пакеты): `checks/portability.sh --live` —
-PASS 25, FAIL 0, SKIP 4. Версии: neovim 0.12.6, Hyprland 0.57.2, foot 1.28.0, starship 1.27.0, yazi 26.9.1,
+PASS 27, FAIL 0, SKIP 2. Версии: neovim 0.12.6, Hyprland 0.57.2, foot 1.28.0, starship 1.27.0, yazi 26.9.1,
 rofi 2.1.1, mako 1.11.0, swayosd 0.3.2, mpv 0.42.0 — конфиги принимаются в пределах версионных заметок.
-Не проверено: eww (нет в репозиториях Arch), живой старт Hyprland/hyprpaper (нет GPU в среде проверки), oh-my-zsh
-(нет в репозиториях). Подробности — `docs/runbook/portability.md` в nixos-config.
+eww (AUR `eww-git`, 0.6.0 r91): окна `bar`/`calendar-popup` открываются; AUR-пакет `eww` 0.6.0 старее и не разбирает
+`:focusable "none"` — нужен eww из master (как nixpkgs 0.6.0-unstable-2026-07). oh-my-zsh — AUR `oh-my-zsh-git`.
+Не проверено: живой старт Hyprland/hyprpaper (нет GPU/DRM в среде проверки). Подробности — `docs/runbook/portability.md` в nixos-config.
 
 ## Статус
 

@@ -121,6 +121,18 @@ if [ "$live" -eq 1 ]; then
       else row "$app" FAIL "live-старт" "$(head -3 "$rt/$app.log" | sed 's/\x1b\[[0-9;]*m//g' | tr '\n' '|' | cut -c1-200)"; fail=$((fail + 1)); fi
       kill "$ap" 2>/dev/null
     done
+    # eww: демон + окна из eww.yuck (разбор yuck и открытие слоя на реальном композиторе).
+    if command -v eww >/dev/null 2>&1; then
+      eww daemon >"$rt/eww-win.log" 2>&1; sleep 2
+      eww open calendar-popup >>"$rt/eww-win.log" 2>&1; eww open bar --arg h=32 >>"$rt/eww-win.log" 2>&1
+      sleep 2; act="$(eww active-windows 2>&1)"
+      if printf '%s' "$act" | grep -q "calendar-popup" && printf '%s' "$act" | grep -q "bar"; then
+        row eww PASS "окна bar и calendar-popup открыты" "$(eww --version 2>/dev/null | head -1 | cut -c1-30)"; pass=$((pass + 1))
+      else
+        row eww FAIL "окна bar и calendar-popup" "$(printf '%s %s' "$act" "$(tail -3 "$rt/eww-win.log")" | tr '\n' '|' | cut -c1-240)"; fail=$((fail + 1))
+      fi
+      eww kill >/dev/null 2>&1
+    fi
   else
     row live FAIL "носитель Wayland не поднялся" "$(tail -3 "$rt/sway.log" 2>/dev/null | tr '\n' '|' | cut -c1-200)"; fail=$((fail + 1))
   fi
