@@ -81,6 +81,14 @@ Telegram — `ПРОВЕРИТЬ` вживую (Приложение I.6, M5). D
 формате Lua для `hyprland.lua`, DSN-S4), `ai-env` (R8.4: адрес инференса и
 роль→модель для `nvim/lua/plugins/ai.lua`, AI-CMP-4).
 
+## Проверено на другом дистрибутиве (A15, R9.5)
+
+2026-11-17, Arch Linux (чистый rootfs, обычный пользователь, `install.sh` + пакеты): `checks/portability.sh --live` —
+PASS 25, FAIL 0, SKIP 4. Версии: neovim 0.12.6, Hyprland 0.57.2, foot 1.28.0, starship 1.27.0, yazi 26.9.1,
+rofi 2.1.1, mako 1.11.0, swayosd 0.3.2, mpv 0.42.0 — конфиги принимаются в пределах версионных заметок.
+Не проверено: eww (нет в репозиториях Arch), живой старт Hyprland/hyprpaper (нет GPU в среде проверки), oh-my-zsh
+(нет в репозиториях). Подробности — `docs/runbook/portability.md` в nixos-config.
+
 ## Статус
 
 Это **стартовые** конфиги (R4.1, созданы без исходника — старой рабочей копии не было).

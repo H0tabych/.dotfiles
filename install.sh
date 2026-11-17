@@ -6,7 +6,7 @@ set -euo pipefail
 repo_root="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 config_home="${XDG_CONFIG_HOME:-$HOME/.config}"
 
-APPS=(nvim zsh starship foot hypr eww net rofi mako swayosd yazi mpv git mangohud ai)
+APPS=(nvim zsh starship foot hypr eww net rofi mako swayosd yazi mpv git mangohud zathura lazygit btop fzf ai)
 
 # Некоторые приложения ждут каталог не в нижнем регистре — REGISTRY.md.
 declare -A TARGET_NAME=(
@@ -15,9 +15,29 @@ declare -A TARGET_NAME=(
 
 check_deps() {
   cat <<'EOF'
-Пакеты для менеджера пакетов дистрибутива (имена могут отличаться):
-  neovim zsh starship foot hyprland eww rofi mako swayosd yazi mpv git mangohud
-  (для eww-панели: jq socat playerctl brightnessctl networkmanager bluez wireplumber)
+Пакеты для менеджера пакетов дистрибутива (имена проверены на Arch Linux, R9.5; в других
+дистрибутивах могут отличаться):
+  приложения реестра: neovim zsh starship foot hyprland rofi mako swayosd yazi mpv git mangohud
+                      zathura zathura-pdf-mupdf lazygit btop fzf
+  eww-панель:         eww (в Arch — только AUR/сборка из исходников; нужны GTK3 и gtk-layer-shell)
+                      jq socat playerctl brightnessctl networkmanager bluez bluez-utils wireplumber
+                      pipewire libnotify
+  сессия Hyprland:    hyprpaper hyprlock
+  zsh-плагины:        zsh-autosuggestions zsh-syntax-highlighting zsh-completions
+                      zsh-history-substring-search (oh-my-zsh — AUR или из репозитория проекта)
+  разное:             fd ripgrep python (>= 3.11, генератор темы) gcc tree-sitter-cli (парсеры neovim)
+                      ttf-jetbrains-mono-nerd ttf-nerd-fonts-symbols
+EOF
+}
+
+# Переменные, которые на NixOS задаёт система (DOT-12), а на других системах — пользователь:
+# приложения находят конфиг через переменную окружения, а не через ~/.config.
+print_env_hint() {
+  cat <<EOF
+
+Переменные окружения (DOT-12) — добавьте в ~/.zshenv (или профиль своего шелла):
+  export ZDOTDIR="$config_home/zsh"
+  export STARSHIP_CONFIG="$config_home/starship/starship.toml"
 EOF
 }
 
@@ -72,6 +92,17 @@ install_machine_stubs() {
     local dest="$machine_dir/$name"
     [ -e "$dest" ] || cp "$stub" "$dest"
   done
+  # Обои (hyprpaper/hyprlock подключают hypr-wallpaper.conf через source=; на NixOS файл пишет
+  # dotfiles-link.nix тем же содержимым). Без него hyprpaper отказывается читать конфиг (R9.5).
+  local wp="$machine_dir/hypr-wallpaper.conf" wp_file
+  if [ ! -e "$wp" ]; then
+    wp_file="$(python3 -c "
+import sys, tomllib
+p = tomllib.load(open(sys.argv[1], 'rb'))
+print(p['variant'][p['active']]['wallpaper']['file'])" "$repo_root/theme/palette.toml" 2>/dev/null || true)"
+    printf '# Сгенерировано install.sh (DOT-5): путь к обоям активного варианта палитры.\n$wallpaper = %s/theme/wallpapers/%s\n' \
+      "$repo_root" "${wp_file:-forest-river.jpg}" > "$wp"
+  fi
   echo "machine.d заглушки в $machine_dir (правьте под свой хост)"
 }
 
@@ -85,6 +116,7 @@ case "${1:-}" in
     done
     link_agent_paths
     install_machine_stubs
+    print_env_hint
     ;;
   *)
     echo "usage: $0 [--check-deps]" >&2
