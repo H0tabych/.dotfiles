@@ -22,8 +22,8 @@ check_deps() {
   eww-панель:         eww из master (Arch: AUR `eww-git`; AUR-пакет `eww` 0.6.0 старее и не разбирает
                       `:focusable "none"`); нужны GTK3 и gtk-layer-shell
                       jq socat playerctl brightnessctl networkmanager bluez bluez-utils wireplumber
-                      pipewire libnotify
-  сессия Hyprland:    hyprpaper hyprlock
+                      pipewire libnotify util-linux (rfkill)
+  сессия Hyprland:    hyprpaper hyprlock grim slurp swappy (скриншоты, hypr/scripts/screenshot)
   zsh-плагины:        zsh-autosuggestions zsh-syntax-highlighting zsh-completions
                       zsh-history-substring-search (oh-my-zsh — Arch: AUR `oh-my-zsh-git`)
   разное:             fd ripgrep python (>= 3.11, генератор темы) gcc tree-sitter-cli (парсеры neovim)

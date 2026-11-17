@@ -3,6 +3,9 @@
 # проверяет, что приложения реестра (REGISTRY.md) принимают свои конфиги и стартуют.
 # Запуск на чистой не-Nix системе: ./install.sh && checks/portability.sh [--live]
 # Только чтение: ничего не правит в репозитории (проверки без tty и без дисплея).
+# --session  внутри уже работающей сессии Hyprland (реальная машина или ВМ с графикой; нужны
+#         XDG_RUNTIME_DIR и WAYLAND_DISPLAY из сессии): hyprctl, окна eww, мако, swayosd, hyprpaper,
+#         foot, скриншот (grim) на живом композиторе.
 # --live  дополнительно: headless-сессия Hyprland (AQ_BACKENDS=headless) и старт мако,
 #         swayosd, hyprpaper, foot и (если установлен) eww на ней.
 # Код выхода 0 — нет FAIL; SKIP (нет пакета/нет дисплея) выводится с причиной и не провал.
@@ -10,8 +13,8 @@ set -uo pipefail
 
 repo_root="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 config_home="${XDG_CONFIG_HOME:-$HOME/.config}"
-live=0
-[ "${1:-}" = "--live" ] && live=1
+live=0 session=0
+case "${1:-}" in --live) live=1 ;; --session) session=1 ;; esac
 
 pass=0 fail=0 skip=0
 row() { printf '%-10s %-5s %-34s %s\n' "$1" "$2" "$3" "$4"; }
@@ -39,7 +42,7 @@ export ZDOTDIR="$config_home/zsh"
 export STARSHIP_CONFIG="$config_home/starship/starship.toml"
 export XDG_CONFIG_HOME="$config_home"
 rt="$(mktemp -d)"; chmod 700 "$rt"   # XDG_RUNTIME_DIR: без него Hyprland/мako отказываются стартовать
-export XDG_RUNTIME_DIR="$rt"
+[ "$session" -eq 1 ] || export XDG_RUNTIME_DIR="$rt"
 
 echo "# $(. /etc/os-release 2>/dev/null; echo "${PRETTY_NAME:-?}"); конфиги: $config_home -> $repo_root"
 row приложение итог проверка версия/заметка
@@ -48,6 +51,7 @@ check install - "симлинки по реестру" bash -c '
   for d in nvim zsh starship foot hypr eww net rofi mako swayosd yazi mpv git MangoHud zathura lazygit btop fzf ai; do
     [ -L "'"$config_home"'/$d" ] || { echo "нет симлинка $d"; exit 1; }
   done'
+check install - "команды из скриптов dotfiles в PATH" bash -c 'm=""; for c in hyprctl jq socat playerctl brightnessctl nmcli bluetoothctl wpctl pactl pw-dump makoctl systemd-inhibit notify-send rfkill grim slurp swappy; do command -v $c >/dev/null 2>&1 || m="$m $c"; done; [ -z "$m" ] || { echo "нет:$m"; exit 1; }'
 check install - "нет /nix/store в dotfiles (DOT-1)" bash "$repo_root/checks/scan-forbidden.sh"
 check nvim "nvim --version" "nvim --headless -c quit" nvim --headless -c quit
 check zsh "zsh --version" "zsh -n .zshrc" zsh -n "$ZDOTDIR/.zshrc"
@@ -138,6 +142,45 @@ if [ "$live" -eq 1 ]; then
   fi
   kill "$hp" 2>/dev/null
   for f in dbus.pid sysbus.pid; do [ -s "$rt/$f" ] && kill "$(cat "$rt/$f")" 2>/dev/null; done
+fi
+
+if [ "$session" -eq 1 ]; then
+  echo "# --session: ${XDG_RUNTIME_DIR:-?} ${WAYLAND_DISPLAY:-?}"
+  hsig="$(ls "$XDG_RUNTIME_DIR/hypr" 2>/dev/null | head -1)"; export HYPRLAND_INSTANCE_SIGNATURE="$hsig"
+  check hypr "hyprctl version" "сессия Hyprland жива (hyprctl version)" hyprctl version
+  check hypr - "hyprctl configerrors пуст" bash -c '[ -z "$(hyprctl configerrors | tr -d "[:space:]")" ] || { hyprctl configerrors; exit 1; }'
+  check hypr - "есть монитор" bash -c 'hyprctl monitors | grep -q "^Monitor"'
+  sess_start() { # <приложение> <команда...>: если не запущено — запустить и дать 4 с
+    local app="$1"; shift
+    pgrep -x "$app" >/dev/null 2>&1 || { (setsid "$@" >"$rt/$app.log" 2>&1 </dev/null &); sleep 4; }
+  }
+  for app in mako swayosd-server hyprpaper; do
+    if ! command -v "$app" >/dev/null 2>&1; then row "$app" SKIP "в сессии" "нет пакета"; skip=$((skip + 1)); continue; fi
+    sess_start "$app" "$app"
+    if pgrep -x "$app" >/dev/null 2>&1; then row "$app" PASS "работает в сессии" "-"; pass=$((pass + 1))
+    elif grep -q "Failed to allocate a GBM buffer" "$rt/$app.log" 2>/dev/null; then
+      row "$app" SKIP "в сессии" "GBM не выделил буфер (виртуальный GPU без 3D, kms_swrast); на реальном GPU — ручная проверка"; skip=$((skip + 1))
+    else row "$app" FAIL "в сессии" "$(sed 's/\x1b\[[0-9;]*m//g' "$rt/$app.log" | head -3 | tr '\n' '|' | cut -c1-200)"; fail=$((fail + 1)); fi
+  done
+  if command -v eww >/dev/null 2>&1; then
+    pgrep -x eww >/dev/null 2>&1 || eww daemon >"$rt/eww.log" 2>&1
+    "$config_home/eww/scripts/bars" sync >"$rt/bars.log" 2>&1; sleep 3
+    check eww - "панель bar открыта на мониторе (layer eww-bar)" bash -c 'hyprctl layers | grep -q "namespace: eww-bar"'
+    "$config_home/eww/scripts/netpanel" open >"$rt/np.log" 2>&1; sleep 3
+    check eww - "окно сети открыто (layer eww-panel)" bash -c 'hyprctl layers | grep -q "namespace: eww-panel"'
+    "$config_home/eww/scripts/netpanel" close >/dev/null 2>&1
+  fi
+  if command -v foot >/dev/null 2>&1; then
+    (setsid foot -e sleep 20 >"$rt/foot.log" 2>&1 </dev/null &); sleep 3
+    check foot - "окно foot в сессии (hyprctl clients)" bash -c 'hyprctl clients | grep -q "class: foot"'
+  fi
+  if command -v notify-send >/dev/null 2>&1 && command -v makoctl >/dev/null 2>&1; then
+    notify-send -a portability "A15" "проверка" 2>/dev/null; sleep 1
+    check mako - "уведомление дошло (makoctl list)" bash -c 'makoctl list | grep -q "A15"'
+  fi
+  if command -v grim >/dev/null 2>&1; then
+    check grim - "снимок экрана (grim)" bash -c 'f=$(mktemp --suffix=.png) && timeout 20 grim "$f" && [ -s "$f" ]'
+  fi
 fi
 
 echo "# итого: PASS $pass, FAIL $fail, SKIP $skip"
