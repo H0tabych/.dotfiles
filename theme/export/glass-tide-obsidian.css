@@ -1,0 +1,44 @@
+/* Сгенерировано theme/gen/gen.py из theme/palette.toml (вариант forest, профиль ac) — не редактируйте */
+/* Тема Glass Tide для Obsidian (CSS-сниппет, DSN-CMP-17): положить в
+   <хранилище>/.obsidian/snippets/glass-tide.css и включить в Настройки → Внешний вид →
+   CSS-сниппеты. Окно сплошное (DSN-EXC-3). */
+.theme-dark {
+  --background-primary: #0E1A22;
+  --background-primary-alt: #0A141B;
+  --background-secondary: #0A141B;
+  --background-secondary-alt: #070D12;
+  --background-modifier-border: #1F313D;
+  --background-modifier-border-hover: #2A3F4D;
+  --background-modifier-hover: #1F313D;
+  --background-modifier-active-hover: #2A3F4D;
+  --background-modifier-form-field: #16252F;
+  --background-modifier-cover: #070D12CC;
+  --text-normal: #DCE7EC;
+  --text-muted: #A6B7BF;
+  --text-faint: #839AA5;
+  --text-on-accent: #070D12;
+  --text-accent: #1BACD1;
+  --text-accent-hover: #1BACD1;
+  --text-selection: #1BACD144;
+  --text-highlight-bg: #E3891244;
+  --text-error: #F47A77;
+  --text-warning: #E38912;
+  --text-success: #6FB020;
+  --interactive-accent: #1BACD1;
+  --interactive-accent-hover: #1BACD1;
+  --interactive-normal: #16252F;
+  --interactive-hover: #1F313D;
+  --color-red: #F47A77;
+  --color-orange: #F17F4C;
+  --color-yellow: #E38912;
+  --color-green: #6FB020;
+  --color-cyan: #24B56C;
+  --color-blue: #829AF5;
+  --color-purple: #AE8DF1;
+  --font-interface-theme: "Inter";
+  --font-text-theme: "Inter";
+  --font-monospace-theme: "JetBrains Mono";
+  --radius-s: 8px;
+  --radius-m: 8px;
+  --radius-l: 12px;
+}

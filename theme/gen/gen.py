@@ -91,6 +91,7 @@ EXPORT_DIR = REPO_ROOT / "theme" / "export"
 GENERATED_HEADER = {
     ".lua": "-- Сгенерировано theme/gen/gen.py из theme/palette.toml (вариант {variant}, профиль {profile}) — не редактируйте\n",
     ".conf": "# Сгенерировано theme/gen/gen.py из theme/palette.toml (вариант {variant}, профиль {profile}) — не редактируйте\n",
+    ".json": "// Сгенерировано theme/gen/gen.py из theme/palette.toml (вариант {variant}, профиль {profile}) — не редактируйте\n",
     ".css": "/* Сгенерировано theme/gen/gen.py из theme/palette.toml (вариант {variant}, профиль {profile}) — не редактируйте */\n",
     ".rasi": "/* Сгенерировано theme/gen/gen.py из theme/palette.toml (вариант {variant}, профиль {profile}) — не редактируйте */\n",
     ".ini": "# Сгенерировано theme/gen/gen.py из theme/palette.toml (вариант {variant}, профиль {profile}) — не редактируйте\n",
@@ -117,6 +118,9 @@ PLAIN_DEST = {
     "btop-theme.theme.tmpl": "btop/themes/glass-tide.theme",
     "lazygit-config.yml.tmpl": "lazygit/config.yml",
     "fzf-theme.zsh.tmpl": "fzf/theme.zsh",
+    "zed-theme.json.tmpl": "zed/themes/glass-tide.json",
+    "zed-settings.json.tmpl": "zed/settings.json",
+    "obsidian-snippet.css.tmpl": "theme/export/glass-tide-obsidian.css",
 }
 
 PROFILES = ("ac", "battery", "solid", "game")
