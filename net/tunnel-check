@@ -90,7 +90,7 @@ check_listeners() {
     if [ -z "${bad// /}" ]; then
       emit 2 listeners OK "на хосте нет TCP-слушателей вне loopback (процессы клиента не видны без прав)"
     else
-      emit 2 listeners WARN "вне loopback слушает: $bad— принадлежность клиенту не определена без прав"
+      emit 2 listeners SKIP "клиент не проверен без прав; вне loopback слушает: $bad(sudo покажет принадлежность)"
     fi
   fi
 }
