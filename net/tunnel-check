@@ -8,13 +8,15 @@
 #   tunnel-check            по строке на проверку: «СТАТУС имя подробности»
 #   tunnel-check --json     массив {name,status,detail} (для индикатора)
 #
+# Под sudo конфиг пользователя не виден: sudo XDG_CONFIG_HOME=$HOME/.config tunnel-check.
+#
 # СТАТУС: OK | WARN | FAIL | SKIP. Код выхода 1, если есть хотя бы один FAIL.
 #
 # Необязательные переменные (машинный слой или окружение):
 #   TUNNEL_MODE              m1 | m2 (пишет Nix)
 #   TUNNEL_KILLSWITCH_UNIT   юнит, загружающий kill switch (пишет Nix, в m1 пуст)
 #   TUNNEL_CHECK_IP_URL      сервис, отвечающий внешним адресом строкой
-#   TUNNEL_CHECK_LOCAL_URL   то же, но ресурс в зоне локальной юрисдикции (маршрут «напрямую»);
+#   TUNNEL_CHECK_LOCAL_URL   то же, но сервис «мой IP» в зоне локальной юрисдикции (маршрут «напрямую»);
 #                            не задан — проверка пропускается
 #   TUNNEL_CHECK_DL_URL      ресурс не менее 1 МБ для проверки загрузки
 #   TUNNEL_CHECK_DNS_NAME    зарубежное имя для проверки DNS
@@ -82,21 +84,33 @@ check_listeners() {
   elif printf '%s\n' "$out" | grep -qE "pid=($(tr ' ' '|' <<<"${pids# }")),"; then
     emit 2 listeners OK "только loopback"
   else
-    emit 2 listeners WARN "процессы клиента не видны (нужны права), слушатели не проверены"
+    # Процессы динамического пользователя без прав не видны: проверяем всё, что слушает
+    # снаружи loopback на хосте (VPN-A3 требует loopback; чужие слушатели — повод посмотреть).
+    bad="$(printf '%s\n' "$out" | awk '$4 !~ /^(127\.|\[::1\]:)/ {print $4}' | tr '\n' ' ')"
+    if [ -z "${bad// /}" ]; then
+      emit 2 listeners OK "на хосте нет TCP-слушателей вне loopback (процессы клиента не видны без прав)"
+    else
+      emit 2 listeners WARN "вне loopback слушает: $bad— принадлежность клиенту не определена без прав"
+    fi
   fi
 }
 
-fetch_ip() { curl -fsS --max-time "$t" "$1" 2>/dev/null | tr -d '[:space:]'; }
+fetch_ip() { curl -fsS --max-time "$t" "$1" 2>/dev/null | head -c 200 | tr -d '[:space:]'; }
+
+# Сервис адреса должен отвечать только адресом: страница редиректа или портал — не адрес.
+is_ip() { [[ "$1" =~ ^[0-9]{1,3}(\.[0-9]{1,3}){3}$ || "$1" =~ ^[0-9a-fA-F]*:[0-9a-fA-F:.]+$ ]]; }
 
 # 3. Внешний адрес как его видит мир (через то, что система считает путём наружу).
 check_ip() {
   local ip
   ip="$(fetch_ip "$ip_url" || true)"
-  if [ -n "$ip" ]; then
+  if [ -z "$ip" ]; then
+    emit 3 external-ip FAIL "нет ответа от $ip_url"
+  elif ! is_ip "$ip"; then
+    emit 3 external-ip FAIL "$ip_url отвечает не адресом: ${ip:0:40}"
+  else
     echo "$ip" >"$work/ip_tunnel"
     emit 3 external-ip OK "$ip"
-  else
-    emit 3 external-ip FAIL "нет ответа от $ip_url"
   fi
 }
 
@@ -108,11 +122,13 @@ check_local() {
     return
   fi
   ip="$(fetch_ip "$local_url" || true)"
-  if [ -n "$ip" ]; then
+  if [ -z "$ip" ]; then
+    emit 4 local-ip FAIL "нет ответа от $local_url"
+  elif ! is_ip "$ip"; then
+    emit 4 local-ip FAIL "$local_url отвечает не адресом (нужен сервис «мой IP» в локальной зоне): ${ip:0:40}"
+  else
     echo "$ip" >"$work/ip_local"
     emit 4 local-ip OK "$ip"
-  else
-    emit 4 local-ip FAIL "нет ответа от $local_url"
   fi
 }
 
