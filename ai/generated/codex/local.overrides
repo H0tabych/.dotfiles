@@ -1,0 +1,10 @@
+# Сгенерировано ai/gen/gen.py из ai/mcp-servers.toml — не править руками (AI-CTX-3).
+# Переопределения конфигурации Codex (stdio-серверы MCP): `codex -c <строка>`.
+mcp_servers.lsp-python.command="code-context-lsp"
+mcp_servers.lsp-python.args=["python"]
+mcp_servers.lsp-cpp.command="code-context-lsp"
+mcp_servers.lsp-cpp.args=["cpp"]
+mcp_servers.lsp-rust.command="code-context-lsp"
+mcp_servers.lsp-rust.args=["rust"]
+mcp_servers.playwright.command="playwright-mcp"
+mcp_servers.playwright.args=[]

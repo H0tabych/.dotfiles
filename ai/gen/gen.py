@@ -16,6 +16,12 @@
 `generated/dsh/local.cordis.yml` (stdio-серверы) и `generated/dsh/gateway.cordis.yml` (вход
 MCP-шлюза; адрес и ключ читает из окружения процесса, поэтому адаптер подключает его только
 когда они заданы).
+
+Для Codex CLI — `generated/codex/local.overrides`: по одной строке `ключ=значение` на каждое
+переопределение конфигурации (`codex -c ключ=значение`, значение — TOML) для stdio-серверов.
+`~/.codex/config.toml` ведёт сам Codex (пишет в него настройки и доверие каталогам), поэтому
+список передаётся опциями запуска, а не файлом; вход MCP-шлюза адаптер добавляет сам, когда
+заданы адрес и ключ.
 """
 import json
 import re
@@ -162,12 +168,26 @@ def render(servers: dict) -> dict[str, str]:
         )
         return head + "- insert:\n" + "\n".join(rows) + "\n"
 
+    def codex_overrides() -> str:
+        rows = []
+        for n, s in servers.items():
+            if s["type"] != "stdio":
+                continue
+            rows.append(f"mcp_servers.{n}.command={json.dumps(s['command'])}")
+            rows.append(f"mcp_servers.{n}.args={json.dumps(s.get('args', []))}")
+        head = (
+            "# Сгенерировано ai/gen/gen.py из ai/mcp-servers.toml — не править руками (AI-CTX-3).\n"
+            "# Переопределения конфигурации Codex (stdio-серверы MCP): `codex -c <строка>`.\n"
+        )
+        return head + "\n".join(rows) + "\n"
+
     return {
         f"{MARKET}/.claude-plugin/marketplace.json": dump(market),
         f"{MARKET}/plugins/{PLUGIN}/.claude-plugin/plugin.json": dump(plugin),
         f"{MARKET}/plugins/{PLUGIN}/.mcp.json": dump({"mcpServers": mcp}),
         "dsh/local.cordis.yml": dsh_rows("stdio"),
         "dsh/gateway.cordis.yml": dsh_rows("http"),
+        "codex/local.overrides": codex_overrides(),
     }
 
 
