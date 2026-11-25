@@ -1,0 +1,194 @@
+#!/usr/bin/env bash
+# net/tunnel-check (VPN-OPS-2, VPN-A15): диагностика туннеля одной командой, ≤ 5 с.
+# Проверки идут параллельно, у каждой свой таймаут. Работает с контрактом подсистемы
+# (юниты клиента, файл маршрута, режим) из машинного слоя ~/.config/machine.d/tunnel-env;
+# имени реализации и констант хоста здесь нет (DOT-1, SLOT-3). Без этого файла (хост без
+# туннеля) скрипт молчит и выходит с кодом 0, как net/tunnel (DOT-5).
+#
+#   tunnel-check            по строке на проверку: «СТАТУС имя подробности»
+#   tunnel-check --json     массив {name,status,detail} (для индикатора)
+#
+# СТАТУС: OK | WARN | FAIL | SKIP. Код выхода 1, если есть хотя бы один FAIL.
+#
+# Необязательные переменные (машинный слой или окружение):
+#   TUNNEL_MODE              m1 | m2 (пишет Nix)
+#   TUNNEL_KILLSWITCH_UNIT   юнит, загружающий kill switch (пишет Nix, в m1 пуст)
+#   TUNNEL_CHECK_IP_URL      сервис, отвечающий внешним адресом строкой
+#   TUNNEL_CHECK_LOCAL_URL   то же, но ресурс в зоне локальной юрисдикции (маршрут «напрямую»);
+#                            не задан — проверка пропускается
+#   TUNNEL_CHECK_DL_URL      ресурс не менее 1 МБ для проверки загрузки
+#   TUNNEL_CHECK_DNS_NAME    зарубежное имя для проверки DNS
+set -u
+
+dir="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"
+env_file="${XDG_CONFIG_HOME:-$HOME/.config}/machine.d/tunnel-env"
+[ -r "$env_file" ] || exit 0
+# shellcheck disable=SC1090
+. "$env_file"
+
+json=false
+[ "${1:-}" = --json ] && json=true
+
+ip_url="${TUNNEL_CHECK_IP_URL:-https://api.ipify.org}"
+local_url="${TUNNEL_CHECK_LOCAL_URL:-}"
+dl_url="${TUNNEL_CHECK_DL_URL:-https://speed.cloudflare.com/__down?bytes=2000000}"
+dns_name="${TUNNEL_CHECK_DNS_NAME:-example.com}"
+mode="${TUNNEL_MODE:-}"
+t=4 # потолок каждой сетевой проверки, секунды
+
+work="$(mktemp -d "${XDG_RUNTIME_DIR:-/tmp}/tunnel-check.XXXXXX")"
+trap 'rm -rf "$work"' EXIT
+
+# emit <порядок> <имя> <статус> <подробности>: результат шага — в свой файл.
+emit() { printf '%s\t%s\t%s\n' "$2" "$3" "$4" >"$work/$1"; }
+
+route="$("$dir/tunnel" route 2>/dev/null || echo unknown)"
+
+# 1. Сервис и режим.
+check_service() {
+  local unit bad="" n=0
+  for unit in ${TUNNEL_ROUTE_UNITS:-}; do
+    n=$((n + 1))
+    systemctl is-active --quiet "$unit" || bad="$bad $unit"
+  done
+  if [ "$n" -eq 0 ]; then
+    emit 1 service SKIP "юниты клиента не заданы"
+  elif [ -n "$bad" ]; then
+    emit 1 service FAIL "режим ${mode:-?}, не активны:$bad"
+  else
+    emit 1 service OK "режим ${mode:-?}, активны: ${TUNNEL_ROUTE_UNITS}"
+  fi
+}
+
+# 2. Слушатели клиента: только loopback (VPN-A3). Адрес процессу сопоставляется по MainPID;
+# без прав на чужие процессы ss их не показывает — это WARN, а не OK.
+check_listeners() {
+  local unit pid pids="" out bad
+  for unit in ${TUNNEL_ROUTE_UNITS:-}; do
+    pid="$(systemctl show -p MainPID --value "$unit" 2>/dev/null || true)"
+    [ -n "$pid" ] && [ "$pid" != 0 ] && pids="$pids $pid"
+  done
+  if [ -z "$pids" ]; then
+    emit 2 listeners SKIP "нет запущенного клиента"
+    return
+  fi
+  out="$(ss -ltnpH 2>/dev/null || true)"
+  bad=""
+  for pid in $pids; do
+    bad="$bad$(printf '%s\n' "$out" | grep -F "pid=$pid," | awk '$4 !~ /^(127\.|\[::1\]:)/ {print $4}' | tr '\n' ' ')"
+  done
+  if [ -n "${bad// /}" ]; then
+    emit 2 listeners FAIL "не loopback: $bad"
+  elif printf '%s\n' "$out" | grep -qE "pid=($(tr ' ' '|' <<<"${pids# }")),"; then
+    emit 2 listeners OK "только loopback"
+  else
+    emit 2 listeners WARN "процессы клиента не видны (нужны права), слушатели не проверены"
+  fi
+}
+
+fetch_ip() { curl -fsS --max-time "$t" "$1" 2>/dev/null | tr -d '[:space:]'; }
+
+# 3. Внешний адрес как его видит мир (через то, что система считает путём наружу).
+check_ip() {
+  local ip
+  ip="$(fetch_ip "$ip_url" || true)"
+  if [ -n "$ip" ]; then
+    echo "$ip" >"$work/ip_tunnel"
+    emit 3 external-ip OK "$ip"
+  else
+    emit 3 external-ip FAIL "нет ответа от $ip_url"
+  fi
+}
+
+# 4. Адрес для ресурса в локальной зоне: политика должна отправить его напрямую.
+check_local() {
+  local ip
+  if [ -z "$local_url" ]; then
+    emit 4 local-ip SKIP "TUNNEL_CHECK_LOCAL_URL не задан"
+    return
+  fi
+  ip="$(fetch_ip "$local_url" || true)"
+  if [ -n "$ip" ]; then
+    echo "$ip" >"$work/ip_local"
+    emit 4 local-ip OK "$ip"
+  else
+    emit 4 local-ip FAIL "нет ответа от $local_url"
+  fi
+}
+
+# 5. DNS: имя разрешается.
+check_dns() {
+  local out
+  out="$(timeout "$t" getent ahosts "$dns_name" 2>/dev/null | awk 'NR==1 {print $1}')"
+  if [ -n "$out" ]; then emit 5 dns OK "$dns_name → $out"; else emit 5 dns FAIL "$dns_name не разрешается"; fi
+}
+
+# 6. Загрузка ≥ 1 МБ без остановки на 15–20 КБ (VPN-RES-4).
+check_download() {
+  local size
+  size="$(curl -fsS --max-time "$t" -o /dev/null -w '%{size_download}' "$dl_url" 2>/dev/null || echo 0)"
+  if [ "${size:-0}" -ge 1048576 ]; then
+    emit 6 download OK "$((size / 1024)) КиБ"
+  else
+    emit 6 download FAIL "получено ${size:-0} Б из ≥ 1048576"
+  fi
+}
+
+# 7. Kill switch: в m2 его юнит должен быть активен; в m1 его нет по контракту.
+check_killswitch() {
+  if [ "$mode" != m2 ]; then
+    emit 7 killswitch SKIP "режим ${mode:-?} (kill switch только в m2)"
+  elif [ -z "${TUNNEL_KILLSWITCH_UNIT:-}" ]; then
+    emit 7 killswitch SKIP "юнит не задан"
+  elif systemctl is-active --quiet "$TUNNEL_KILLSWITCH_UNIT"; then
+    emit 7 killswitch OK "$TUNNEL_KILLSWITCH_UNIT активен"
+  else
+    emit 7 killswitch FAIL "$TUNNEL_KILLSWITCH_UNIT не активен — таблица не загружена"
+  fi
+}
+
+# 8. Маршрут (NET-13) и связность: net/tunnel сам ходит в сеть (до 3 с), поэтому идёт параллельно.
+check_route() {
+  local health
+  health="$("$dir/tunnel" health 2>/dev/null || echo none)"
+  case "$health" in
+    ok) emit 8 route OK "маршрут $route, связь есть" ;;
+    direct) emit 8 route WARN "маршрут direct — защита снята" ;;
+    down) emit 8 route FAIL "маршрут $route, нет связи" ;;
+    *) emit 8 route SKIP "route-switch на хосте нет" ;;
+  esac
+}
+
+check_service &
+check_listeners &
+check_ip &
+check_local &
+check_dns &
+check_download &
+check_killswitch &
+check_route &
+wait
+
+# Сверка адресов: в маршруте tunnel локальный ресурс должен идти мимо выхода.
+if [ -r "$work/ip_tunnel" ] && [ -r "$work/ip_local" ] && [ "$route" = tunnel ]; then
+  if [ "$(cat "$work/ip_tunnel")" = "$(cat "$work/ip_local")" ]; then
+    emit 9 policy WARN "локальный ресурс виден с адреса выхода — политика его не отделяет"
+  else
+    emit 9 policy OK "локальный и внешний адреса различаются"
+  fi
+fi
+
+rc=0
+if $json; then
+  cat "$work"/[0-9]* 2>/dev/null | jq -Rsc '
+    split("\n") | map(select(length > 0) | split("\t") | {name: .[0], status: .[1], detail: .[2]})'
+  grep -q $'\tFAIL\t' < <(cat "$work"/[0-9]* 2>/dev/null) && rc=1
+else
+  for f in "$work"/[0-9]*; do
+    [ -e "$f" ] || continue
+    IFS=$'\t' read -r name status detail <"$f"
+    printf '%-4s %-12s %s\n' "$status" "$name" "$detail"
+    [ "$status" = FAIL ] && rc=1
+  done
+fi
+exit "$rc"
