@@ -119,7 +119,6 @@ PLAIN_DEST = {
     "lazygit-config.yml.tmpl": "lazygit/config.yml",
     "fzf-theme.zsh.tmpl": "fzf/theme.zsh",
     "zed-theme.json.tmpl": "zed/themes/glass-tide.json",
-    "zed-settings.json.tmpl": "zed/settings.json",
     "obsidian-snippet.css.tmpl": "theme/export/glass-tide-obsidian.css",
 }
 

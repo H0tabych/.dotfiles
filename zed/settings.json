@@ -1,18 +1,30 @@
-// Сгенерировано theme/gen/gen.py из theme/palette.toml (вариант forest, профиль ac) — не редактируйте
-// Настройки Zed (реестр dotfiles, REGISTRY.md) — шрифты и тема из палитры,
-// поэтому файл целиком из генератора (DSN-TOK-4/8: в Zed нет include, имён шрифтов вне
-// сгенерированных файлов быть не должно). Правьте шаблон theme/gen/templates/zed-settings.json.tmpl.
+// Настройки Zed ведёт сам Zed (интерфейс записывает сюда изменения), файл НЕ генерируется
+// (REGISTRY.md). Генерируется только тема themes/glass-tide.json (theme/gen). Шрифты здесь не
+// задаются: имена шрифтов вне генератора запрещены (DSN-TOK-8) — действуют умолчания Zed.
 {
+  "agent": {
+    "default_model": {
+      "provider": "ollama",
+      "model": "qwen2.5-coder:1.5b-base",
+      "enable_thinking": false
+    },
+    "favorite_models": [],
+    "model_parameters": []
+  },
+  "agent_servers": {
+    "claude-acp": {
+      "type": "registry"
+    }
+  },
+  "session": {
+    "trust_all_worktrees": true
+  },
   "theme": { "mode": "dark", "dark": "Glass Tide", "light": "Glass Tide" },
-  "ui_font_family": "Inter",
-  "buffer_font_family": "JetBrains Mono",
-  
-  "terminal": { "font_family": "JetBrains Mono" },
 
   // Телеметрия и автообновление выключены: пакет ставит Nix (DOT-2).
   "telemetry": { "diagnostics": false, "metrics": false },
   "auto_update": false,
-  "vim_mode": false,
+  "vim_mode": true,
 
   // AI-CMP-8: локальный инференс. Zed не читает окружение, поэтому адрес и модель — литералом
   // (роль local-fast из machine.d/ai-env: qwen2.5-coder:1.5b-base). Схема — zed.dev/docs/ai/edit-prediction.
