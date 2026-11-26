@@ -410,7 +410,8 @@ def check_literals(p: dict) -> list[str]:
         for m in LITERAL_RGB_RE.finditer(text):
             errs.append(f"DSN-TOK-8: литерал rgb()/rgba() в {path.relative_to(REPO_ROOT)}")
         for name in font_names:
-            if name and name in text:
+            # Имя шрифта как отдельное слово: «Inter» не должно срабатывать на «Interface».
+            if name and re.search(rf"(?<!\w){re.escape(name)}(?!\w)", text):
                 errs.append(f"DSN-TOK-8: имя шрифта {name!r} в {path.relative_to(REPO_ROOT)}")
     return errs
 
