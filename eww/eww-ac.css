@@ -101,8 +101,12 @@ tooltip label {
     padding: 3px 0;
 }
 
+/* Активный стол: surface1 против surface0 даёт 1,17:1 (R9.9, DSN-COL-4: индикатор ≥ 3:1),
+   поэтому добавлено кольцо `accent` — внутренняя тень не меняет размеры (DSN-MOT-4) и даёт
+   второй канал, кроме цвета (DSN-COL-8). */
 .ws.active {
     background-color: @surface1;
+    box-shadow: inset 0 0 0 2px @accent;
 }
 
 .ws.active .ws-num {

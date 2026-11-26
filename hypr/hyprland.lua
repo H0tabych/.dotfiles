@@ -77,9 +77,12 @@ hl.window_rule({ name = "solid-float",   match = { float = true }, no_blur = tru
 -- fullscreen_state_internal=2 — именно FSMODE_FULLSCREEN (SUPER+F); match={fullscreen=true}
 -- матчил бы и maximize (FSMODE_MAXIMIZED=1), который по DSN-EXC-5 должен оставаться скруглённым
 hl.window_rule({ name = "flat-fullscreen", match = { fullscreen_state_internal = 2 }, rounding = 0, border_size = 0 })
--- Профили battery/solid: терминал становится сплошным без перезапуска (DSN-PWR-3)
+-- Профили battery/solid: терминал становится сплошным без перезапуска (DSN-PWR-3).
+-- opaque только отключает множители прозрачности композитора, а альфу самого foot (0.85)
+-- не трогает — без блюра сквозь окно проступали обои (R9.9, проверка M2). force_rgbx
+-- заставляет композитор игнорировать альфа-канал поверхности: окно сплошное.
 if fx.terminal_opaque then
-  hl.window_rule({ name = "term-opaque", match = { class = "^(foot|footclient)$" }, opaque = true })
+  hl.window_rule({ name = "term-opaque", match = { class = "^(foot|footclient)$" }, opaque = true, force_rgbx = true })
 end
 
 ---------------------
